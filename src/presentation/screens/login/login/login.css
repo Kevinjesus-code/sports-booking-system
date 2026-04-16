@@ -1,0 +1,241 @@
+/* ── Reset & Base ─────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  background-color: #f4f6f8;
+  color: #2d2d2d;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Page Layout ──────────────────────────────── */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background-color: #f4f6f8;
+}
+
+/* ── Card ─────────────────────────────────────── */
+.login-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+  padding: 40px 36px 32px;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Logo Icon ────────────────────────────────── */
+.login-logo {
+  width: 56px;
+  height: 56px;
+  background: #fff0f0;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.12);
+}
+
+/* ── Headings ─────────────────────────────────── */
+.login-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -0.3px;
+  margin-bottom: 6px;
+}
+
+.login-subtitle {
+  font-size: 0.875rem;
+  color: #888;
+  margin-bottom: 28px;
+}
+
+/* ── Form ─────────────────────────────────────── */
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #444;
+  letter-spacing: 0.2px;
+}
+
+/* ── Entrada con icono ──────────────────────────── */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 14px 10px 38px;
+  border: 1.5px solid #e2e6ea;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #333;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+}
+
+.form-input::placeholder {
+  color: #bbb;
+}
+
+.form-input:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+/* ── Recordar / Olvidé mi contraseña Row ────────────────────── */
+.form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: -4px;
+}
+
+.remember-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.82rem;
+  color: #555;
+  cursor: pointer;
+  user-select: none;
+}
+
+.remember-checkbox {
+  width: 15px;
+  height: 15px;
+  accent-color: #4caf50;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.forgot-link {
+  font-size: 0.82rem;
+  color: #4caf50;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.forgot-link:hover {
+  color: #388e3c;
+  text-decoration: underline;
+}
+
+/* ── Error ────────────────────────────────────── */
+.login-error {
+  font-size: 0.8rem;
+  color: #e53935;
+  background: #fff5f5;
+  border: 1px solid #ffc6c6;
+  border-radius: 6px;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+/* ── Botón principal ───────────────────────────── */
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+  margin-top: 4px;
+}
+
+.btn-primary:hover {
+  background: #43a047;
+  box-shadow: 0 4px 14px rgba(76, 175, 80, 0.4);
+}
+
+.btn-primary:active {
+  background: #388e3c;
+  transform: translateY(1px);
+  box-shadow: 0 2px 6px rgba(76, 175, 80, 0.25);
+}
+
+/* ── Register Link ────────────────────────────── */
+.login-register {
+  margin-top: 20px;
+  font-size: 0.82rem;
+  color: #888;
+}
+
+.register-link {
+  color: #4caf50;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.register-link:hover {
+  color: #388e3c;
+  text-decoration: underline;
+}
+
+/* ── Footer ───────────────────────────────────── */
+.login-footer {
+  margin-top: 28px;
+  font-size: 0.75rem;
+  color: #bbb;
+  text-align: center;
+}
+
+/* ── Responsive ───────────────────────────────── */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 32px 20px 28px;
+    border-radius: 12px;
+  }
+
+  .login-title {
+    font-size: 1.4rem;
+  }
+}
