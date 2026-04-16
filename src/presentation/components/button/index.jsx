@@ -3,8 +3,7 @@ import "./button.css";
 const Button = ({
   children,
   variant = "solid",    
-  color = "primary",   
-  size = "md",         
+  color = "primary",        
   iconLeft,            
   iconRight,
   disabled = false,
@@ -12,7 +11,7 @@ const Button = ({
 }) => {
   return (
     <button
-      className={`btn btn-${variant}-${color} btn-${size}`}
+      className={`btn btn-${variant}-${color}`}
       disabled={disabled}
       onClick={onClick}
     >

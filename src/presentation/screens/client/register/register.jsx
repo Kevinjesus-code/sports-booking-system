@@ -1,10 +1,10 @@
 import "./register.css";
-import { DSAButton } from "../../../components";
+import { DSAButton, DSAText } from "../../../components";
 const Register = () => {
   return (
     <>
       <div class="container">
-        <h2>Crear cuenta</h2>
+        <DSAText variant="subtitle" align={"center"}>Crear cuenta</DSAText>
         <p class="subtitle">Completa el formulario para registrarte</p>
 
         <form id="form">
@@ -66,7 +66,7 @@ const Register = () => {
               <a href="#">política de privacidad</a>
             </span>
           </div>
-          <DSAButton variant="outline">Crear cuenta</DSAButton>
+          <DSAButton variant="solid">Crear cuenta</DSAButton>
         </form>
       </div>
     </>

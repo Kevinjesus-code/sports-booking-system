@@ -1,0 +1,22 @@
+.typography {
+  margin: 0;
+  padding: 0;
+}
+
+.typography-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.typography-subtitle {
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.typography-text {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.7;
+}
