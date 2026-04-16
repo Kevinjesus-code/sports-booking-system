@@ -1,0 +1,96 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s,
+    transform 0.08s;
+  white-space: nowrap;
+  outline: none;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+.btn svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+/* Tamaños */
+.btn-sm {
+  padding: 7px 14px;
+  font-size: 13px;
+}
+.btn-lg {
+  padding: 13px 28px;
+  font-size: 15px;
+}
+
+/* Solid */
+.btn-solid-primary {
+  background: #28a745;
+  color: #fff;
+  border-color: #28a745;
+}
+.btn-solid-primary:hover {
+  background: #218838;
+  border-color: #218838;
+}
+.btn-solid-secondary {
+  background: #f0f0ec;
+  color: #2c2c2a;
+  border-color: #d3d1c7;
+}
+.btn-solid-secondary:hover {
+  background: #d3d1c7;
+}
+.btn-solid-danger {
+  background: #dc3545;
+  color: #fff;
+  border-color: #dc3545;
+}
+.btn-solid-danger:hover {
+  background: #b02a37;
+  border-color: #b02a37;
+}
+
+/* Outline */
+.btn-outline-primary {
+  background: transparent;
+  color: #28a745;
+  border-color: #28a745;
+}
+.btn-outline-primary:hover {
+  background: #f0faf3;
+}
+.btn-outline-secondary {
+  background: transparent;
+  color: #2c2c2a;
+  border-color: #888780;
+}
+.btn-outline-secondary:hover {
+  background: #f1efe8;
+}
+.btn-outline-danger {
+  background: transparent;
+  color: #dc3545;
+  border-color: #dc3545;
+}
+.btn-outline-danger:hover {
+  background: #fff5f5;
+}
