@@ -1,0 +1,29 @@
+.time-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.time-label {
+  font-size: 14px;
+  color: #374151;
+}
+
+.time-input-wrapper {
+  position: relative;
+}
+
+.time-input {
+  width: 100%;
+  padding: 12px 40px 12px 16px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  outline: none;
+  font-size: 14px;
+}
+
+.time-input:focus {
+  border-color: #22c55e;
+}
+

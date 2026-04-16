@@ -1,0 +1,8 @@
+.containerRecepcionist{
+    display: flex;
+}
+.containerContent{
+    flex: 1;
+    padding: 10px ;
+    
+}

@@ -1,0 +1,14 @@
+.selectable-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: white;
+}
+
+.selectable-label {
+  font-size: 14px;
+  color: #111827;
+}

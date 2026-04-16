@@ -1,11 +1,11 @@
-import Client from "./screens/client"
+import Recepcionist from "./screens/receptionist"
   
 function App() {
   
 
   return (
     <>
-       <Client/>
+       <Recepcionist />
     </>
   )
 }

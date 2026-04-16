@@ -1,0 +1,107 @@
+.container {
+  width: 220px;
+  height: 100vh;
+  background-color: #ffffff;
+  border-right: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px;
+  margin-bottom: 24px;
+}
+
+.logo {
+  width: 36px;
+  height: 36px;
+  background-color: #22c55e;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo svg {
+  width: 20px;
+  height: 20px;
+  color: #ffffff;
+  stroke: currentColor;
+}
+
+.brand-name {
+  font-size: 17px;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.3px;
+}
+
+/* ── Nav ── */
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  list-style: none;
+}
+
+/*ITEM */
+.nav-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+
+  background: none;
+  border: none;
+  text-align: left;
+
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+/* Hover */
+.nav-item:hover {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+/* Active */
+.nav-item.active {
+  background-color: #ecfdf5;
+  color: #22c55e; /* 🔥 controla texto + icono */
+}
+
+/* Icon */
+.nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor; /* 🔥 sincroniza con texto */
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: inherit; /* misma animación */
+}
+
+/* Label */
+.nav-label {
+  white-space: nowrap;
+}
