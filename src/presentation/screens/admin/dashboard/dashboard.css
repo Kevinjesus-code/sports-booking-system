@@ -1,0 +1,11 @@
+.containerHeader{
+    padding: 15px 10px;
+    margin-bottom: 10px;
+}
+.containerCards{
+    display: flex;
+    gap: 10px;
+}
+.containerReservations{
+    margin-top: 10px;
+}

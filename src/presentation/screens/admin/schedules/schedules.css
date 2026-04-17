@@ -1,0 +1,81 @@
+.containerHeader {
+  margin-bottom: 20px;
+}
+
+/* Card contenedor */
+.scheduleCard {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+}
+
+/* Grid */
+.scheduleGrid {
+  display: grid;
+  grid-template-columns: 140px repeat(4, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+/* Headers */
+.scheduleHeader {
+  font-weight: 600;
+  text-align: center;
+  color: #374151;
+}
+
+/* Hora */
+.scheduleHour {
+  font-size: 14px;
+  color: #374151;
+}
+
+/* Celda base */
+.scheduleCell {
+  border: 1px solid;
+  border-radius: 14px;
+  padding: 10px 0;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.scheduleCell:hover {
+  transform: scale(1.03);
+}
+
+/* Estados */
+.available {
+  background-color: #e6f9f0;
+  color: #059669;
+  border-color: #34d399;
+}
+
+.available:hover {
+  background-color: #d1fae5;
+}
+
+.occupied {
+  background-color: #fde8e8;
+  color: #dc2626;
+  border-color: #f87171;
+  cursor: not-allowed;
+}
+
+.blocked {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border-color: #d1d5db;
+}
+
+/* Footer */
+.scheduleFooter {
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 10px;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  font-size: 13px;
+}
