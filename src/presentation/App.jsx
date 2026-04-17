@@ -1,9 +1,26 @@
-import Admin from "./screens/admin";
-import { useState } from "react";
-import Recepcionist from "./screens/receptionist";
-import Client from "./screens/client";
-import Login from "./screens/login";
-import Register from "./screens/register/register";
+import { useState, lazy, Suspense } from "react";
+
+// Lazy-loaded screens — cada pantalla se carga solo cuando el usuario la necesita
+const Admin       = lazy(() => import("./screens/admin"));
+const Recepcionist = lazy(() => import("./screens/receptionist"));
+const Client      = lazy(() => import("./screens/client"));
+const Login       = lazy(() => import("./screens/login"));
+const Register    = lazy(() => import("./screens/register/register"));
+
+const Loader = () => (
+  <div style={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: "100vh",
+    background: "#fff",
+    fontSize: 14,
+    color: "#9ca3af",
+    fontFamily: "system-ui, sans-serif",
+  }}>
+    Cargando…
+  </div>
+);
 
 function App() {
   const [currentFlow, setCurrentFlow] = useState("login");
@@ -23,13 +40,13 @@ function App() {
   };
 
   return (
-    <>
-      {currentFlow === "admin" && <Admin />}
+    <Suspense fallback={<Loader />}>
+      {currentFlow === "admin"       && <Admin />}
       {currentFlow === "receptionist" && <Recepcionist />}
-      {currentFlow === "client" && <Client />}
-      {currentFlow === "login" && <Login onLogin={handleLogin} onRegister={() => setCurrentFlow("register")} />}
-      {currentFlow === "register" && <Register onGoToLogin={() => setCurrentFlow("login")} />}
-    </>
+      {currentFlow === "client"      && <Client />}
+      {currentFlow === "login"       && <Login onLogin={handleLogin} onRegister={() => setCurrentFlow("register")} />}
+      {currentFlow === "register"    && <Register onGoToLogin={() => setCurrentFlow("login")} />}
+    </Suspense>
   );
 }
 

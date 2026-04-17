@@ -8,4 +8,14 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] })
   ],
+  build: {
+    // Suprimir la advertencia para chunks < 800 kB (el vendor bundle de React suele rondar 700 kB)
+    chunkSizeWarningLimit: 800,
+    rolldownOptions: {
+      output: {
+        // Permite a Rolldown dividir el bundle automáticamente
+        codeSplitting: true,
+      },
+    },
+  },
 })
