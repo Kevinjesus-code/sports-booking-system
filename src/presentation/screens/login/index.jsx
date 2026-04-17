@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./login.css";
 import { DSAInput, DSAButton } from "../../components";
 
-const Login = ({ onLogin }) => {
+const Login = ({ onLogin, onRegister }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -80,7 +80,7 @@ const Login = ({ onLogin }) => {
             </div>
             
             <div className="login-register">
-              ¿No tienes una cuenta? <a href="#">Regístrate aquí</a>
+              ¿No tienes una cuenta? <a onClick={onRegister} style={{ cursor: "pointer" }}>Regístrate aquí</a>
             </div>
           </form>
         </div>

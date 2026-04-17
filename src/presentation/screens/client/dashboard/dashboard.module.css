@@ -1,0 +1,116 @@
+.wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  color: #1e293b;
+}
+
+.welcomeTitle {
+  font-size: 32px;
+  margin: 0;
+  font-weight: 700;
+}
+
+.welcomeSub {
+  color: #94a3b8;
+  margin: 5px 0 0 0;
+  font-size: 16px;
+}
+
+.searchBox {
+  margin: 30px 0;
+  background: #fdfdfd;
+  border: 1px solid #edf2f7;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  color: #94a3b8;
+  gap: 12px;
+}
+
+.searchInput {
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-size: 15px;
+  outline: none;
+  color: #1e293b;
+}
+
+.sectionLabel {
+  font-size: 19px;
+  font-weight: 700;
+  margin: 45px 0 20px 0;
+}
+
+.gridTypes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.gridBenefits {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.benefitCard {
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 28px;
+}
+
+.bIcon {
+  color: #28bc6b;
+  margin-bottom: 18px;
+}
+
+.benefitTitle {
+  font-size: 16px;
+  margin: 0 0 8px 0;
+  font-weight: 600;
+}
+
+.benefitDesc {
+  font-size: 13.5px;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.ctaGreen {
+  background: #28bc6b;
+  border-radius: 20px;
+  padding: 60px 40px;
+  text-align: center;
+  color: white;
+  margin-top: 60px;
+}
+
+.ctaTitle {
+  font-size: 28px;
+  margin: 0 0 12px 0;
+  font-weight: 700;
+}
+
+.ctaDesc {
+  opacity: 0.9;
+  margin: 0 0 35px 0;
+  font-size: 15px;
+}
+
+.btnWhite {
+  background: white;
+  color: #28bc6b;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
