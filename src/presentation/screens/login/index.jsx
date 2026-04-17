@@ -1,14 +1,11 @@
-import "./login.css"
+import Login from "./login./login";
 
 
 const Login = ()=> {
 
 return (
     <>
-    
-
-
-    
+    <Login />
     </>
 )
 }
