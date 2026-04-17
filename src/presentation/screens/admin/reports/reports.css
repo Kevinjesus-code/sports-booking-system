@@ -1,0 +1,9 @@
+.containerCardsGraphics{
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 20px;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    
+}

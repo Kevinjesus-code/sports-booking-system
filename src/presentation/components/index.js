@@ -11,7 +11,13 @@ export {default as DSAInput} from "./input"
 export {default as DSAFormSection} from "./form-section"
 export {default as DSATimeInput} from "./time-input"
 export {default as DSASelectableItem} from "./selectable-item"
-
+export {default as DSACourtsTable} from "./courts-table"
+export {default as DSAUsersTable} from "./users-table"
+export {default as DSABarChart} from "./bar-chart"
+export {default as DSALineChart} from "./line-chart"
+export {default as DSAResumenCard} from "./resumen-card"
+export {default as DSANavbarClient} from "./navbar-client"
+export {default as DSACourtCard} from "./court-card"
 
 
 

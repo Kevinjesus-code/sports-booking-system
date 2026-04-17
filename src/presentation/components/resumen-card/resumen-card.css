@@ -1,0 +1,35 @@
+.resumen {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.resumen-title {
+  margin-bottom: 10px;
+}
+
+/* Filas */
+.resumen-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.resumen-row:last-child {
+  border-bottom: none;
+}
+
+/* Valores */
+.resumen-row strong {
+  color: #111827;
+  font-weight: 500;
+}
+
+/* Verde (ocupación) */
+.green {
+  color: #16a34a;
+}
