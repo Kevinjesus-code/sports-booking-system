@@ -1,5 +1,5 @@
 import { DSAButton, DSACourtsTable, DSAText } from "../../../components";
-import "./courts.module.css";
+import styles from "./courts.module.css";
 
 const Courts = () => {
   const mockCourts = [

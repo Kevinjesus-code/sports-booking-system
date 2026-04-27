@@ -1,4 +1,4 @@
-import "./admin.module.css";
+import styles from "./admin.module.css";
 import { DSANavbarVertical, DSATopBar } from "../../components";
 import { useState } from "react";
 import Dashboard from "./dashboard/dashboard";
