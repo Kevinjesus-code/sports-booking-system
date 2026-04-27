@@ -1,5 +1,6 @@
 import { DSANavbarClient } from "../../components";
 // import  Dashboard  from "./dashboard/dashboard";
+import Home from "./home/home";
 import Courts from "./courts/courts";
 import Schedules from "./schedules/schedules";
 import ConfirmReserve from "./confirm-reserve/confirm-reserve";
@@ -8,6 +9,7 @@ import styles from "./client.module.css";
 import { useState } from "react";
 
 const Client = () => {
+  const [showhome, setShowhome] = useState(true);
   const [selectedCourt, setSelectedCourt] = useState(null);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -51,7 +53,6 @@ const Client = () => {
   return (
     <>
       <div className={styles.container}>
-        <DSANavbarClient />
         {/* <Dashboard /> */}
         {isReserved ? (
           <Resumen
@@ -77,7 +78,38 @@ const Client = () => {
             onSelectSchedule={handleSelectSchedule} 
           />
         ) : (
-          <Courts onSelectCourt={setSelectedCourt} />
+          <div className={styles.container}>
+  <DSANavbarClient />
+
+  {showhome ? (
+    <Home onStart={() => setShowhome(false)} />
+  ) : isReserved ? (
+    <Resumen
+      court={selectedCourt}
+      schedule={selectedSchedule}
+      date={selectedDate}
+      customerData={customerData}
+      onNewReservation={handleNewReservation}
+      onViewReservations={handleViewReservations}
+    />
+  ) : selectedSchedule ? (
+    <ConfirmReserve
+      court={selectedCourt}
+      schedule={selectedSchedule}
+      date={selectedDate}
+      onBack={handleBackToSchedules}
+      onConfirm={handleConfirmReservation}
+    />
+  ) : selectedCourt ? (
+    <Schedules 
+      court={selectedCourt} 
+      onBack={handleBackToCourts} 
+      onSelectSchedule={handleSelectSchedule} 
+    />
+  ) : (
+    <Courts onSelectCourt={setSelectedCourt} />
+  )}
+</div>
         )}
       </div>
     </>

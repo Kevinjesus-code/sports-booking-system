@@ -1,14 +1,14 @@
-import "./clients-table.css";
+import styles from"./clients-table.module.css";
 
 const ClientTable = ({ data = [] }) => {
  return (
-    <div className="table-card">
-      <div className="table-header">
+    <div className={styles["table-card"]}>
+      <div className={styles["table-header"]}>
         <h3>Reservas de hoy</h3>
-        <span className="view-all">Ver todas</span>
+        <span className={styles["view-all"]}>Ver todas</span>
       </div>
 
-      <div className="table-wrapper">
+      <div className={styles["table-wrapper"]}>
         <table>
           <thead>
             <tr>
@@ -27,7 +27,7 @@ const ClientTable = ({ data = [] }) => {
                 <td>{item.email}</td>
                 <td>
                   <span
-                   className="status-green-reservation"
+                  className={styles["status-green-reservation"]}
                   >
                     {item.reservas } reservas
                   </span>

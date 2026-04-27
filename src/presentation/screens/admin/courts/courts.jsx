@@ -1,5 +1,5 @@
 import { DSAButton, DSACourtsTable, DSAText } from "../../../components";
-import "./courts.css";
+import "./courts.module.css";
 
 const Courts = () => {
   const mockCourts = [
@@ -31,18 +31,18 @@ const Courts = () => {
   return (
     <>
       <div>
-        <div className="containerHeaderCourts">
+        <div className={styles.containerHeaderCourts}>
           <div>
             <DSAText variant="title">Canchas</DSAText>
             <DSAText variant="text" color={"#6B7280"}>
               Gestiona las canchas deportivas
             </DSAText>
           </div>
-         <div className="containerButtonCourts">
+         <div className={styles.containerButtonCourts}>
            <DSAButton>Crear cancha</DSAButton>
          </div>
         </div>
-        <div className="containerReservations">
+        <div className={styles.containerReservations}>
           <DSACourtsTable data={mockCourts} />
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./navbar-vertical.css";
+import styles from "./navbar-vertical.module.css";
 
 const NavbarVertical = ({ contenido = [], onChange}) => {
   const [activeItem, setActiveItem] = useState("dashboard");
@@ -10,10 +10,10 @@ const NavbarVertical = ({ contenido = [], onChange}) => {
   };
 
   return (
-    <div className="container">
+    <div className={styles.container}>
       {/* Header / Logo */}
-      <div className="header">
-        <div className="logo">
+      <div className={styles.header}>
+        <div className={styles.logo}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -25,19 +25,19 @@ const NavbarVertical = ({ contenido = [], onChange}) => {
             <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v1h14V3a1 1 0 0 0-1-1zm13 3H1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1z" />
           </svg>
         </div>
-        <span className="brand-name">Kancha</span>
+        <span className={styles["brand-name"]}>Kancha</span>
       </div>
 
       {/* Navigation */}
-      <ul className="nav-menu">
+      <ul className={styles["nav-menu"]}>
         {contenido.map((item) => (
           <li
             key={item.id}
-            className={`nav-item ${activeItem === item.id ? "active" : ""}`}
+            className={`${styles["nav-item"]} ${activeItem === item.id ? styles.active : ""}`}
             onClick={() => handleClick(item)}
           >
-            <span className="nav-icon">{item.icon}</span>
-            <span className="nav-label">{item.label}</span>
+            <span className={styles["nav-icon"]}>{item.icon}</span>
+            <span className={styles["nav-label"]}>{item.label}</span>
           </li>
         ))}
       </ul>

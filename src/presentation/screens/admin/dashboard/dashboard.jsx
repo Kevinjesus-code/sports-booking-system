@@ -1,4 +1,4 @@
-import "./dashboard.css";
+import "./dashboard.module.css";
 import {
   DSAText,
   DSAReservationsTable,
@@ -27,13 +27,13 @@ const Dashboard = () => {
   return (
     <>
       <div>
-        <div className="containerHeader">
+        <div className={styles.containerHeader}>
           <DSAText variant="title">Dashboard</DSAText>
           <DSAText variant="text" color={"#6B7280"}>
             Resumen de reservas y estado de canchas
           </DSAText>
         </div>
-        <div className="containerReservations">
+        <div className={styles.containerReservations}>
           <DSAReservationsTable data={reservations} />
         </div>
       </div>

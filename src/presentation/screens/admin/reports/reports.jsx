@@ -6,7 +6,7 @@ import {
   DSACard,
   DSAResumenCard,
 } from "../../../components";
-import "./reports.css";
+import "./reports.module.css";
 
 const barData = {
   dataset: [
@@ -108,14 +108,14 @@ const Reports = () => {
   return (
     <>
       <div>
-        <div className="containerHeader">
+        <div className={styles.containerHeader}>
           <DSAText variant="title">Reportes</DSAText>
           <DSAText variant="text" color={"#6B7280"}>
             Análisis de rendimiento y estadísticas
           </DSAText>
         </div>
 
-        <div className="containerCards">
+        <div className={styles.containerCards}>
           {stats.map((item) => (
             <DSAStatCard
               key={item.id}
@@ -126,7 +126,7 @@ const Reports = () => {
           ))}
         </div>
 
-        <div className="containerCardsGraphics">
+        <div className={styles.containerCardsGraphics}>
           <DSACard>
             <DSAText variant="subtitle">Tendencia de Reservas</DSAText>
             <DSALineChart data={lineData.data} config={lineData.config} />
@@ -136,7 +136,7 @@ const Reports = () => {
             <DSABarChart dataset={barData.dataset} config={barData.config} />
           </DSACard>
         </div>
-        <div className="containerCardsGraphics">
+        <div className={styles.containerCardsGraphics}>
           <DSAResumenCard data={resumen} />
         </div>
       </div>

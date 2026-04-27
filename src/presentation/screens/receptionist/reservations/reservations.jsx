@@ -1,4 +1,4 @@
-import "./reservations.css"
+import styles from "./reservations.module.css";
 import { DSAText, DSAReservationsTable } from "../../../components";
 const Reservations = () => {
   const reservations = [
@@ -23,7 +23,7 @@ const Reservations = () => {
   ];
   return (
     <>
-      <div className="containerReservations">
+       <div className={styles.containerReservations}>
         <div>
           <DSAText variant="title">Reservas</DSAText>
           <DSAText variant="text" color={"#6B7280"}>

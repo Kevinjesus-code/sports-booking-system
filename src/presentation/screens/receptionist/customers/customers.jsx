@@ -1,4 +1,4 @@
-import "./customers.css";
+import "./customers.module.css";
 import { DSAText, DSAClientsTable } from "../../../components";
 const Customers = () => {
   const clients = [
@@ -26,7 +26,7 @@ const Customers = () => {
   ];
   return (
     <>
-      <div className="containerClients">
+      <div className={styles.containerClients}>
         <div>
           <DSAText variant="title">Clientes</DSAText>
           <DSAText variant="text" color={"#6B7280"}>

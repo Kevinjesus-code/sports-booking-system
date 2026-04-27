@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { DSAText } from "../../../components";
-import "./schedules.css";
+import "./schedules.module.css";
 
 const hours = [
   "08:00 - 09:00",
@@ -60,19 +60,19 @@ const Schedule = () => {
 
   return (
     <div>
-      <div className="containerHeader">
+      <div className={styles.containerHeader}>
         <DSAText variant="title">Horarios</DSAText>
         <DSAText variant="text" color={"#6B7280"}>
           Configura los horarios disponibles para cada cancha
         </DSAText>
       </div>
 
-      <div className="scheduleCard">
-        <div className="scheduleGrid">
+      <div className={styles.scheduleCard}>
+        <div className={styles.scheduleGrid}>
           {/* Header */}
-          <div className="scheduleHeader">Hora</div>
+          <div className={styles.scheduleHeader}>Hora</div>
           {courts.map((court) => (
-            <div key={court} className="scheduleHeader">
+            <div key={court} className={styles.scheduleHeader}>
               {court}
             </div>
           ))}
@@ -80,12 +80,12 @@ const Schedule = () => {
           {/* Filas */}
           {hours.map((hour) => (
             <React.Fragment key={hour}>
-              <div className="scheduleHour">{hour}</div>
+              <div className={styles.scheduleHour}>{hour}</div>
 
               {data[hour].map((status, i) => (
                 <button
                   key={`${hour}-${i}`}
-                  className={`scheduleCell ${getStatusClass(status)}`}
+                  className={`${styles.scheduleCell} ${styles[getStatusClass(status)]}`}
                   onClick={() => handleClick(hour, i)}
                   disabled={status === "Ocupado"}
                 >
@@ -97,7 +97,7 @@ const Schedule = () => {
         </div>
       </div>
 
-      <div className="scheduleFooter">
+      <div className={styles.scheduleFooter}>
         <strong>Instrucciones:</strong> Haz clic en un horario disponible para
         bloquearlo o desbloquearlo. Los horarios ocupados no se pueden
         modificar.

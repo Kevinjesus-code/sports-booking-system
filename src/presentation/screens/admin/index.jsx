@@ -1,4 +1,4 @@
-import "./admin.css";
+import "./admin.module.css";
 import { DSANavbarVertical, DSATopBar } from "../../components";
 import { useState } from "react";
 import Dashboard from "./dashboard/dashboard";
@@ -102,9 +102,9 @@ const Admin = () => {
 
   return (
     <>
-      <div className="containerRecepcionist">
+      <div className={styles.containerRecepcionist}>
         <DSANavbarVertical contenido={NAV_ITEMS} onChange={setSeccionActiva} />
-        <main className="containerContent">
+        <main className={styles.containerContent}>
           <DSATopBar initials="AD" />
           <div>{renderContenido()}</div>
         </main>

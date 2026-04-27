@@ -1,4 +1,4 @@
-import "./recepcionist.css";
+import styles from "./recepcionist.module.css";
 import { DSANavbarVertical, DSATopBar } from "../../components";
 import { useState } from "react";
 import Dashboard from "./dashboard/dashboard";
@@ -77,9 +77,9 @@ const Recepcionist = () => {
 
   return (
     <>
-      <div className="containerRecepcionist">
-        <DSANavbarVertical contenido={NAV_ITEMS} onChange={setSeccionActiva} />
-        <main className="containerContent">
+         <div className={styles.containerRecepcionist}>
+          <DSANavbarVertical contenido={NAV_ITEMS} onChange={setSeccionActiva} />
+        <main className={styles.containerContent}>
           <DSATopBar />
           <div>
             {renderContenido()}
