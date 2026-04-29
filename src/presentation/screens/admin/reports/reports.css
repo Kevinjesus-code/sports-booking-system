@@ -1,9 +1,59 @@
+:root{
+    --gap-cards: clamp(0.75rem, 2vw, 1.5rem);
+    --margin-section: clamp(1rem, 3vw, 2rem);
+    --max-width: 1280px;
+    --card-min-width: 260px;
+}
+
+
 .containerCardsGraphics{
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+    margin-top: var(--margin-section);
+    margin-bottom: var(--margin-section);
+    padding-inline: 1rem;
     display: flex;
-    gap: 20px;
-    justify-content: space-evenly;
+    flex-direction: column;
+    gap: var(--gap-cards);
     flex-wrap: wrap;
+    width: 100%;
+    max-width: var(--max-width);
+    margin-inline: auto;
+    box-sizing: border-box;
     
+}
+
+.containerCardsGraphics > * {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (min-width: 600px) {
+    .containerCardsGraphics{
+        flex-direction: row;
+        justify-self: flex-start;
+    }
+
+    .containerCardsGraphics > * {
+        flex: 1 1 calc(50% - var(--gap-cards));
+        min-width: var(--card-min-width);
+    }
+}
+
+@media (min-width: 1024px) {
+    .containerCardsGraphics{
+        padding-inline: 2rem;
+    }
+
+    .containerCardsGraphics > * {
+        flex: 1 1 calc(33.333% - var(--gap-cards));
+    }
+}
+
+@media (min-width: 1440px) {
+    .containerCardsGraphics{
+        padding-inline: 3rem;
+    }
+
+    .containerCardsGraphics > * {
+        flex: 1 1 calc(25% - var(--gap-cards));
+    }
 }

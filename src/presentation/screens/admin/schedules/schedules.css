@@ -1,45 +1,93 @@
+:root{
+  --color-white: #ffffff;
+  --color-border: #e5e7eb;
+  -color-bg-footer: #f9fafb;
+  --colo-text-dark: #374151;
+  --color-text-muted: #6b7280;
+
+  --color-available-bg: #e6f9f0;
+  --color-available-text: #059669;
+  --color-available-border: #34d399;
+  --color-available-bg-hover: #d1fae5;
+
+  --color-occupied-bg: #fde8e8;
+  --color-occupied-text: #dc2626;
+  --color-occupied-border: #f87171;
+
+  --color-blocked-bg: #f3f4f6;
+  --color-blocked-text: #6b7280;
+  --color-blocked-border: #d1d5db;
+
+  --spacing-sm: clamp(0.5rem, 1.5vw, 0.75rem);
+  --spacing-md: clamp(0.75rem, 2vw, 1.25rem);
+  --spacing-lg: clamp(1rem, 3vw, 1.5rem);
+  --gap-grid: clamp(0.4rem, 1.5vw, 0.75rem);
+
+  --font-sm: clamp(0.7rem, 1.8vw, 0.8125rem);
+  --font-md: clamp(0.75rem, 2vw, 0.875rem);
+}
+
+
+
+
 .containerHeader {
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-lg);
 }
 
 /* Card contenedor */
 .scheduleCard {
-  background: white;
-  padding: 20px;
-  border-radius: 16px;
-  border: 1px solid #e5e7eb;
+  background: var(--color-white);
+  padding: var(--spacing-md);
+  border-radius: clamp(0.75rem, 2vw, 1rem);
+  border: 1px solid var(--color-border);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Grid */
 .scheduleGrid {
   display: grid;
   grid-template-columns: 140px repeat(4, 1fr);
-  gap: 10px;
+  gap: var(--gap-grid);
   align-items: center;
+  min-width: 320px;
 }
 
 /* Headers */
 .scheduleHeader {
   font-weight: 600;
   text-align: center;
-  color: #374151;
+  color: var(--color-text-dark);
+  font-size: var(--font-md);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Hora */
 .scheduleHour {
-  font-size: 14px;
-  color: #374151;
+  font-size: var(--font-md);
+  color: var(--color-text-dark);
+  white-space: nowrap;
+  padding-right: var(--spacing-sm);
 }
 
 /* Celda base */
 .scheduleCell {
   border: 1px solid;
-  border-radius: 14px;
-  padding: 10px 0;
-  font-size: 13px;
+  border-radius: clamp(0.5rem, 2vw, 0.875rem);
+  padding: var(--spacing-sm) 0;
+  font-size: var(--font-sm);
   cursor: pointer;
   transition: all 0.2s ease;
   font-weight: 500;
+  text-align: center;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .scheduleCell:hover {
@@ -48,34 +96,38 @@
 
 /* Estados */
 .available {
-  background-color: #e6f9f0;
-  color: #059669;
-  border-color: #34d399;
+  background-color: var(--color-available-bg);
+  color: var(--color-available-text);
+  border-color: var(--color-available-border);
 }
 
 .available:hover {
-  background-color: #d1fae5;
+  background-color: var(--color-available-bg-hover);
 }
 
 .occupied {
-  background-color: #fde8e8;
-  color: #dc2626;
-  border-color: #f87171;
+  background-color: var(--color-occupied-bg);
+  color: var(--color-occupied-text);
+  border-color: var(--color-occupied-border);
   cursor: not-allowed;
 }
 
+.occupied:hover {
+  transform: none;
+}
+
 .blocked {
-  background-color: #f3f4f6;
-  color: #6b7280;
-  border-color: #d1d5db;
+  background-color: var(--color-blocked-bg);
+  color: var(--color-blocked-text);
+  border-color: var(--color-blocked-border);
 }
 
 /* Footer */
 .scheduleFooter {
-  margin-top: 20px;
-  padding: 12px;
-  border-radius: 10px;
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
-  font-size: 13px;
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-md);
+  border-radius: clamp(0.5rem, 1.5vw, 0.75rem);
+  background-color: var(--color-bg-footer);
+  border: 1px solid var(--color-border);
+  font-size: var(--font-sm);
 }
