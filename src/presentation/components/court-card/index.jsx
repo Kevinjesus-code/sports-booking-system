@@ -1,8 +1,8 @@
 import styles from "./court-card.module.css";
 
-const CourtCard = ({ court }) => {
+const CourtCard = ({ court, onClick }) => {
   return (
-    <div className={styles.card}>
+    <div className={styles.card} onClick={onClick}>
       <div className={styles.iconWrapper}>
         {court.icon}
       </div>
