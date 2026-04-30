@@ -4,15 +4,12 @@
   background-color: #f9fafb;
   border-radius: 16px;
   padding: 20px 24px;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   border: 1px solid #f0f0f0;
 }
 
-/* Info */
 .stat-info {
   display: flex;
   flex-direction: column;
@@ -31,23 +28,19 @@
   color: #111827;
 }
 
-/* Icon container */
 .stat-icon {
   width: 44px;
   height: 44px;
-  background-color: #fee2e2;
   border-radius: 12px;
-
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
-/* SVG */
 .stat-icon svg {
   width: 22px;
   height: 22px;
-  stroke: #22c55e;
   fill: none;
   stroke-width: 2;
 }
