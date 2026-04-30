@@ -1,11 +1,53 @@
 import styles from "./confirm-reserve.module.css";
 import { useState } from "react";
 
+const PaymentLogo = ({ id }) => {
+  if (id === "efectivo") return (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+      <rect width="48" height="48" rx="10" fill="#DCFCE7"/>
+      <rect x="8" y="16" width="32" height="20" rx="3" fill="#16A34A"/>
+      <circle cx="24" cy="26" r="5" fill="#BBF7D0" stroke="#15803D" strokeWidth="1"/>
+      <text x="24" y="30" textAnchor="middle" fontSize="7" fontWeight="700" fill="#15803D">S/.</text>
+      <rect x="10" y="18" width="4" height="3" rx="1" fill="#BBF7D0"/>
+      <rect x="34" y="31" width="4" height="3" rx="1" fill="#BBF7D0"/>
+    </svg>
+  );
+  if (id === "tarjeta") return (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+      <rect width="48" height="48" rx="10" fill="#EFF6FF"/>
+      <rect x="6" y="14" width="36" height="22" rx="4" fill="#1D4ED8"/>
+      <rect x="6" y="20" width="36" height="6" fill="#1E40AF"/>
+      <rect x="10" y="29" width="8" height="3" rx="1.5" fill="#BFDBFE"/>
+      <rect x="21" y="29" width="5" height="3" rx="1.5" fill="#BFDBFE"/>
+      <rect x="29" y="29" width="5" height="3" rx="1.5" fill="#BFDBFE"/>
+      <rect x="10" y="15" width="6" height="4" rx="1" fill="#FCD34D"/>
+    </svg>
+  );
+  if (id === "yape") return (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+      <rect width="48" height="48" rx="10" fill="#F3E8FF"/>
+      <circle cx="24" cy="24" r="16" fill="#7C3AED"/>
+      <text x="24" y="20" textAnchor="middle" fontSize="8" fontWeight="700" fill="white" fontFamily="Arial, sans-serif">YAPE</text>
+      <path d="M18 23 L24 32 L30 23" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+      <line x1="24" y1="23" x2="24" y2="32" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+    </svg>
+  );
+  if (id === "plin") return (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+      <rect width="48" height="48" rx="10" fill="#E0F2FE"/>
+      <circle cx="24" cy="24" r="16" fill="#0284C7"/>
+      <text x="24" y="20" textAnchor="middle" fontSize="8" fontWeight="700" fill="white" fontFamily="Arial, sans-serif">PLIN</text>
+      <path d="M17 23 Q17 31 24 31 Q31 31 31 23" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
+      <circle cx="24" cy="23" r="3" fill="white"/>
+    </svg>
+  );
+};
+
 const PAYMENT_METHODS = [
-  { id: "efectivo", label: "Efectivo", icon: "💵" },
-  { id: "tarjeta",  label: "Tarjeta",  icon: "💳" },
-  { id: "yape",     label: "Yape",     icon: "📱" },
-  { id: "plin",     label: "Plin",     icon: "📲" },
+  { id: "efectivo", label: "Efectivo" },
+  { id: "tarjeta",  label: "Tarjeta"  },
+  { id: "yape",     label: "Yape"     },
+  { id: "plin",     label: "Plin"     },
 ];
 
 const ConfirmReserve = ({ court, schedule, date, onBack, onConfirm }) => {
@@ -13,8 +55,6 @@ const ConfirmReserve = ({ court, schedule, date, onBack, onConfirm }) => {
   const [telefono,      setTelefono]      = useState("");
   const [observaciones, setObservaciones] = useState("");
   const [payment,       setPayment]       = useState(null);
-
-  // Campos extra por método
   const [cardNumber,    setCardNumber]    = useState("");
   const [cardExpiry,    setCardExpiry]    = useState("");
   const [cardCvv,       setCardCvv]       = useState("");
@@ -29,10 +69,7 @@ const ConfirmReserve = ({ court, schedule, date, onBack, onConfirm }) => {
         telefono: telefono || "912123123",
         observaciones,
         payment,
-        paymentDetails: {
-          cardNumber, cardExpiry, cardCvv,
-          yapePhone, plinPhone,
-        },
+        paymentDetails: { cardNumber, cardExpiry, cardCvv, yapePhone, plinPhone },
       });
     }
   };
@@ -40,7 +77,6 @@ const ConfirmReserve = ({ court, schedule, date, onBack, onConfirm }) => {
   return (
     <div className={styles.container}>
 
-      {/* Header */}
       <header className={styles.header}>
         <button onClick={onBack} className={styles.backButton}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -54,10 +90,9 @@ const ConfirmReserve = ({ court, schedule, date, onBack, onConfirm }) => {
         </div>
       </header>
 
-      {/* Columna izquierda */}
+      {/* ── Columna izquierda ── */}
       <div className={styles.leftCol}>
 
-        {/* Resumen */}
         <section className={styles.summaryCard}>
           <div className={styles.summaryTitle}>Resumen de tu reserva</div>
           <div className={styles.summaryCourt}>
@@ -86,20 +121,21 @@ const ConfirmReserve = ({ court, schedule, date, onBack, onConfirm }) => {
           </div>
         </section>
 
-        {/* Método de pago */}
         <section className={styles.paymentContainer}>
           <h2 className={styles.formTitle}>Método de pago</h2>
           <div className={styles.paymentGrid}>
             {PAYMENT_METHODS.map(method => (
-              <button key={method.id} type="button"
+              <button
+                key={method.id}
+                type="button"
                 className={`${styles.paymentOption} ${payment === method.id ? styles.paymentSelected : ""}`}
                 onClick={() => setPayment(method.id)}
               >
-                <span className={styles.paymentIcon}>{method.icon}</span>
+                <PaymentLogo id={method.id} />
                 <span className={styles.paymentLabel}>{method.label}</span>
                 {payment === method.id && (
                   <span className={styles.paymentCheck}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
                       stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="20 6 9 17 4 12" />
                     </svg>
@@ -109,39 +145,37 @@ const ConfirmReserve = ({ court, schedule, date, onBack, onConfirm }) => {
             ))}
           </div>
 
-          {/* ── Campos dinámicos ── */}
           {payment === "tarjeta" && (
             <div className={styles.paymentFields}>
+              <div className={styles.paymentInfo}>
+                <span className={styles.paymentInfoIcon}>💳</span>
+                <div>
+                  <p className={styles.paymentInfoTitle}>Pago con tarjeta</p>
+                  <p className={styles.paymentInfoText}>Ingresa los datos de tu tarjeta débito o crédito.</p>
+                </div>
+              </div>
               <div className={styles.formGroup}>
                 <label className={styles.label}>Número de tarjeta</label>
-                <input className={styles.input} type="text"
-                  placeholder="1234 5678 9012 3456" maxLength={19}
-                  value={cardNumber}
-                  onChange={e => setCardNumber(
-                    e.target.value.replace(/\D/g,"").replace(/(.{4})/g,"$1 ").trim()
-                  )}
-                />
+                <input className={styles.input} type="text" placeholder="1234 5678 9012 3456"
+                  maxLength={19} value={cardNumber}
+                  onChange={e => setCardNumber(e.target.value.replace(/\D/g,"").replace(/(.{4})/g,"$1 ").trim())} />
               </div>
               <div className={styles.cardRow}>
                 <div className={styles.formGroup}>
                   <label className={styles.label}>Vencimiento</label>
-                  <input className={styles.input} type="text"
-                    placeholder="MM/AA" maxLength={5}
+                  <input className={styles.input} type="text" placeholder="MM/AA" maxLength={5}
                     value={cardExpiry}
                     onChange={e => {
                       let v = e.target.value.replace(/\D/g,"");
                       if (v.length >= 3) v = v.slice(0,2) + "/" + v.slice(2,4);
                       setCardExpiry(v);
-                    }}
-                  />
+                    }} />
                 </div>
                 <div className={styles.formGroup}>
                   <label className={styles.label}>CVV</label>
-                  <input className={styles.input} type="password"
-                    placeholder="•••" maxLength={4}
+                  <input className={styles.input} type="password" placeholder="•••" maxLength={4}
                     value={cardCvv}
-                    onChange={e => setCardCvv(e.target.value.replace(/\D/g,""))}
-                  />
+                    onChange={e => setCardCvv(e.target.value.replace(/\D/g,""))} />
                 </div>
               </div>
             </div>
@@ -149,57 +183,60 @@ const ConfirmReserve = ({ court, schedule, date, onBack, onConfirm }) => {
 
           {payment === "yape" && (
             <div className={styles.paymentFields}>
-              <div className={styles.paymentInfo}>
-                <span className={styles.paymentInfoIcon}>📱</span>
+              <div className={styles.paymentInfo} style={{borderColor: "#7C3AED", background: "#FAF5FF"}}>
+                <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
+                  <circle cx="24" cy="24" r="20" fill="#7C3AED"/>
+                  <text x="24" y="20" textAnchor="middle" fontSize="8" fontWeight="700" fill="white" fontFamily="Arial">YAPE</text>
+                  <path d="M18 23 L24 32 L30 23" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                  <line x1="24" y1="23" x2="24" y2="32" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+                </svg>
                 <div>
-                  <p className={styles.paymentInfoTitle}>Paga con Yape</p>
-                  <p className={styles.paymentInfoText}>
-                    Yapea al número <strong>987 654 321</strong> y adjunta el número de operación.
-                  </p>
+                  <p className={styles.paymentInfoTitle}>Yapea al <strong>987 654 321</strong></p>
+                  <p className={styles.paymentInfoText}>Luego ingresa el número de operación.</p>
                 </div>
               </div>
               <div className={styles.formGroup}>
                 <label className={styles.label}>N° de operación Yape</label>
-                <input className={styles.input} type="text"
-                  placeholder="Ej: 123456789"
-                  value={yapePhone}
-                  onChange={e => setYapePhone(e.target.value)}
-                />
+                <input className={styles.input} type="text" placeholder="Ej: 123456789"
+                  value={yapePhone} onChange={e => setYapePhone(e.target.value)} />
               </div>
             </div>
           )}
 
           {payment === "plin" && (
             <div className={styles.paymentFields}>
-              <div className={styles.paymentInfo}>
-                <span className={styles.paymentInfoIcon}>📲</span>
+              <div className={styles.paymentInfo} style={{borderColor: "#0284C7", background: "#F0F9FF"}}>
+                <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
+                  <circle cx="24" cy="24" r="20" fill="#0284C7"/>
+                  <text x="24" y="20" textAnchor="middle" fontSize="8" fontWeight="700" fill="white" fontFamily="Arial">PLIN</text>
+                  <path d="M17 23 Q17 31 24 31 Q31 31 31 23" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
+                  <circle cx="24" cy="23" r="3" fill="white"/>
+                </svg>
                 <div>
-                  <p className={styles.paymentInfoTitle}>Paga con Plin</p>
-                  <p className={styles.paymentInfoText}>
-                    Envía el pago al número <strong>987 654 321</strong> y adjunta el número de operación.
-                  </p>
+                  <p className={styles.paymentInfoTitle}>Plin al <strong>987 654 321</strong></p>
+                  <p className={styles.paymentInfoText}>Luego ingresa el número de operación.</p>
                 </div>
               </div>
               <div className={styles.formGroup}>
                 <label className={styles.label}>N° de operación Plin</label>
-                <input className={styles.input} type="text"
-                  placeholder="Ej: 123456789"
-                  value={plinPhone}
-                  onChange={e => setPlinPhone(e.target.value)}
-                />
+                <input className={styles.input} type="text" placeholder="Ej: 123456789"
+                  value={plinPhone} onChange={e => setPlinPhone(e.target.value)} />
               </div>
             </div>
           )}
 
           {payment === "efectivo" && (
             <div className={styles.paymentFields}>
-              <div className={styles.paymentInfo}>
-                <span className={styles.paymentInfoIcon}>💵</span>
+              <div className={styles.paymentInfo} style={{borderColor: "#16A34A", background: "#F0FDF4"}}>
+                <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
+                  <rect width="48" height="48" rx="10" fill="#DCFCE7"/>
+                  <rect x="6" y="14" width="36" height="22" rx="3" fill="#16A34A"/>
+                  <circle cx="24" cy="25" r="6" fill="#BBF7D0" stroke="#15803D" strokeWidth="1"/>
+                  <text x="24" y="29" textAnchor="middle" fontSize="7" fontWeight="700" fill="#15803D">S/.</text>
+                </svg>
                 <div>
                   <p className={styles.paymentInfoTitle}>Pago en efectivo</p>
-                  <p className={styles.paymentInfoText}>
-                    Realiza el pago directamente en recepción al momento de llegar.
-                  </p>
+                  <p className={styles.paymentInfoText}>Paga directamente en recepción al llegar.</p>
                 </div>
               </div>
             </div>
@@ -207,10 +244,9 @@ const ConfirmReserve = ({ court, schedule, date, onBack, onConfirm }) => {
         </section>
       </div>
 
-      {/* Columna derecha */}
+      {/* ── Columna derecha ── */}
       <div className={styles.rightCol}>
 
-        {/* Datos de contacto */}
         <section className={styles.formContainer}>
           <h2 className={styles.formTitle}>Datos de contacto</h2>
           <div className={styles.formGroup}>
@@ -253,12 +289,9 @@ const ConfirmReserve = ({ court, schedule, date, onBack, onConfirm }) => {
           </div>
         </section>
 
-        {/* Botones */}
         <div className={styles.actions}>
           <button className={styles.cancelBtn} onClick={onBack}>Cancelar</button>
-          <button className={styles.confirmBtn} onClick={handleConfirm}>
-            Confirmar reserva
-          </button>
+          <button className={styles.confirmBtn} onClick={handleConfirm}>Confirmar reserva</button>
         </div>
 
         <div className={styles.note}>
