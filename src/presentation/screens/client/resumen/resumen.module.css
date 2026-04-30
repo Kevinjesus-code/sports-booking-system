@@ -305,8 +305,60 @@
 
 @media (min-width: 1024px) {
   .container {
-    padding: var(--spacing-xl) var(--spacing-md);
+    max-width: 1000px;
+    padding: var(--spacing-lg) var(--spacing-md);
+
+    /* 2 columnas: detalles | pasos + acciones */
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    grid-template-rows: auto auto 1fr auto;
+    column-gap: 2.5rem;
+    align-items: start;
   }
+
+  /* Header centrado en las 2 columnas */
+  .successHeader {
+    grid-column: 1 / -1;
+    margin-bottom: var(--spacing-md);
+  }
+
+  /* Card de detalles ocupa toda la altura izquierda */
+  .card {
+    grid-column: 1;
+    grid-row: 2 / 4;
+    margin-bottom: 0;
+    align-self: stretch;
+  }
+
+  /* Pasos a la derecha arriba */
+  .nextSteps {
+    grid-column: 2;
+    grid-row: 2;
+    margin-bottom: var(--spacing-md);
+  }
+
+  /* Botones a la derecha abajo */
+  .actionButtons {
+    grid-column: 2;
+    grid-row: 3;
+    align-self: start;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+
+  /* Fecha y horario en 2 columnas dentro de la card */
+  .gridRow {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .contactRow {
+    flex-direction: row;
+    gap: var(--spacing-md);
+  }
+}
+
+@media (min-width: 1280px) {
+  .container { max-width: 1100px; column-gap: 3rem; }
 } 
 
 @media(prefers-reduced-motion: reduce) {
