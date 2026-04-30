@@ -1,4 +1,4 @@
-import styles from "./reservations-modal.css";
+import styles from "./reservations-modal.module.css";
 
 const ReservationsModal = ({ reservations, onClose }) => {
   return (
