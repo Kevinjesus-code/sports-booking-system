@@ -8,16 +8,18 @@ import Configuration from "./configuration/configuration";
 
 // Datos de ejemplo — luego los reemplazas con tu contexto/API
 const USER = {
-  name: "Kevin More",
+  name: "Kevin More Sandoval",
   role: "Recepcionista",
   initials: "KM",
   email: "kevin@kancha.com",
+  phone: "+51 987 654 321",
 };
 
 const INITIAL_NOTIFS = [
-  { id: 1, text: "Nueva reserva: Juan Pérez - 14:00", unread: true },
-  { id: 2, text: "Reserva cancelada: María González", unread: true },
-  { id: 3, text: "Cliente nuevo registrado: Luis Torres", unread: false },
+  { id:1, title:"Nueva reserva confirmada", desc:"Juan Pérez · Fútbol 5 · 14:00 – 15:00", time:"Hace 5 minutos",  unread:true,  iconClass:"ni-green", icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> },
+  { id:2, title:"Reserva cancelada",       desc:"María González · Fútbol 7 · 15:00 – 16:00", time:"Hace 23 minutos", unread:true, iconClass:"ni-red",   icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> },
+  { id:3, title:"Nuevo cliente registrado", desc:"Luis Torres se registró en el sistema", time:"Hace 1 hora", unread:false, iconClass:"ni-blue",  icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> },
+  { id:4, title:"Pago recibido",            desc:"S/ 80.00 · Cancha Fútbol 5 · Carlos Ramos", time:"Hace 2 horas", unread:false, iconClass:"ni-green", icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg> },
 ];
 
 const Recepcionist = () => {
@@ -136,42 +138,121 @@ const Recepcionist = () => {
           onOpenNotifs={(e)  => { e.stopPropagation(); toggleNotifs(); }}
         />
 
-        {/* ── Panel de notificaciones ── */}
-        {showNotifs && (
-          <div className="panel notifPanel" onClick={e => e.stopPropagation()}>
-            <div className="panelHeader">
-              <span>Notificaciones</span>
-              {unreadCount > 0 && (
-                <button className="markRead" onClick={markAllRead}>
-                  Marcar todas como leídas
-                </button>
-              )}
+        {/* ── Panel Notificaciones ── */}
+          {showNotifs && (
+            <div className="panel notifPanel" onClick={e => e.stopPropagation()}>
+              <div className="panelHeader">
+                <div>
+                  <span className="panelTitle">
+                    Notificaciones
+                    {unreadCount > 0 && <span className="notifBadge">{unreadCount} nuevas</span>}
+                  </span>
+                  <div className="panelSub">Actividad reciente</div>
+                </div>
+                <button className="panelClose" onClick={() => setShowNotifs(false)}>✕</button>
+              </div>
+
+              <div className="notifToolbar">
+                <div className="notifTabs">
+                  <button className="notifTab active">Todas</button>
+                  <button className="notifTab">Sin leer</button>
+                </div>
+                {unreadCount > 0 && (
+                  <button className="markReadBtn" onClick={markAllRead}>Marcar todas leídas</button>
+                )}
+              </div>
+
+              <ul className="notifList">
+                {notifs.map(n => (
+                  <li key={n.id} className={`notifItem ${n.unread ? "unread" : ""}`}>
+                    <span className={`notifDot ${n.unread ? "" : "read"}`} />
+                    <div className={`notifIcon ${n.iconClass}`}>
+                      {n.icon}
+                    </div>
+                    <div className="notifBody">
+                      <div className="notifItemTitle">{n.title}</div>
+                      <div className="notifItemDesc">{n.desc}</div>
+                      <div className="notifTime">{n.time}</div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="notifFooter">
+                <button className="viewAllBtn">Ver todas las notificaciones</button>
+              </div>
             </div>
-            <ul className="notifList">
-              {notifs.map(n => (
-                <li key={n.id} className={`notifItem ${n.unread ? "unread" : ""}`}>
-                  {n.unread && <span className="dot" />}
-                  {n.text}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+          )}
 
-        {/* ── Panel de perfil ── */}
-        {showProfile && (
-          <div className="panel profilePanel" onClick={e => e.stopPropagation()}>
-            <div className="profileAvatar">{USER.initials}</div>
-            <h3 className="profileName">{USER.name}</h3>
-            <p className="profileRole">{USER.role}</p>
-            <p className="profileEmail">{USER.email}</p>
-            <hr className="profileDivider" />
-            <button className="logoutBtn" onClick={() => alert("Cerrar sesión")}>
-              Cerrar sesión
-            </button>
-          </div>
-        )}
+          {/* ── Panel Perfil ── */}
+          {showProfile && (
+            <div className="panel profilePanel" onClick={e => e.stopPropagation()}>
+              <div className="panelHeader">
+                <div>
+                  <div className="panelTitle">Mi perfil</div>
+                  <div className="panelSub">Recepcionista · Kancha</div>
+                </div>
+                <button className="panelClose" onClick={() => setShowProfile(false)}>✕</button>
+              </div>
 
+              <div className="profileHero">
+                <div className="profileAvatarWrap">
+                  <div className="profileAvatar">{USER.initials}</div>
+                  <div className="profileStatusDot" />
+                </div>
+                <div style={{textAlign:"center"}}>
+                  <div className="profileName">{USER.name}</div>
+                  <div className="profileEmail">{USER.email}</div>
+                  <div className="profileBadge">En línea</div>
+                </div>
+              </div>
+
+              <div className="profileInfoList">
+                <div className="profileInfoRow">
+                  <div className="profileInfoIcon">
+                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  </div>
+                  <div>
+                    <div className="profileInfoLabel">Nombre completo</div>
+                    <div className="profileInfoValue">{USER.name}</div>
+                  </div>
+                </div>
+                <div className="profileInfoRow">
+                  <div className="profileInfoIcon">
+                    <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 11.39 18 19.5 19.5 0 0 1 8 14.61 19.79 19.79 0 0 1 4.12 6.18 2 2 0 0 1 6.1 4h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L10.09 11a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 24 18z"/></svg>
+                  </div>
+                  <div>
+                    <div className="profileInfoLabel">Teléfono</div>
+                    <div className="profileInfoValue">{USER.phone}</div>
+                  </div>
+                </div>
+                <div className="profileInfoRow">
+                  <div className="profileInfoIcon">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  </div>
+                  <div>
+                    <div className="profileInfoLabel">Rol</div>
+                    <div className="profileInfoValue">{USER.role}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="profileActions">
+                <button className="profileBtn">
+                  <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  Editar perfil
+                </button>
+                <button className="profileBtn">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  Configuración
+                </button>
+                <button className="profileBtn logout" onClick={() => alert("Cerrando sesión...")}>
+                  <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                  Cerrar sesión
+                </button>
+              </div>
+            </div>
+          )}
         <div>{renderContenido()}</div>
       </main>
     </div>

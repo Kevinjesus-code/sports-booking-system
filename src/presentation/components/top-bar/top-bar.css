@@ -85,6 +85,39 @@
   height: 22px;
 }
 
+/* Botón de notificaciones con badge */
+.icon-btn {
+  position: relative; /* ← añade esto al .icon-btn que ya tienes */
+}
+
+.notif-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #ef4444;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* Avatar como botón */
+.avatar {
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.2s ease;
+}
+
+.avatar:hover {
+  opacity: 0.85;
+}
+
 @media (max-width: 599px) {
   .topbar-menu-btn {
     display: flex;
