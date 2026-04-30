@@ -1,4 +1,4 @@
-.container {
+.navbar-container {
   width: 220px;
   height: 100vh;
   background-color: #ffffff;
@@ -6,9 +6,9 @@
   display: flex;
   flex-direction: column;
   padding: 24px 16px;
+  flex-shrink: 0;
 }
 
-/* ── Header ── */
 .header {
   display: flex;
   align-items: center;
@@ -42,7 +42,6 @@
   letter-spacing: -0.3px;
 }
 
-/* ── Nav ── */
 .nav-menu {
   display: flex;
   flex-direction: column;
@@ -50,7 +49,6 @@
   list-style: none;
 }
 
-/*ITEM */
 .nav-item {
   width: 100%;
   display: flex;
@@ -59,31 +57,25 @@
   padding: 10px 12px;
   border-radius: 10px;
   cursor: pointer;
-
   background: none;
   border: none;
   text-align: left;
-
   color: #6b7280;
   font-size: 14px;
   font-weight: 500;
-
   transition: color 0.2s ease, background-color 0.2s ease;
 }
 
-/* Hover */
 .nav-item:hover {
   background-color: #f9fafb;
   color: #111827;
 }
 
-/* Active */
 .nav-item.active {
   background-color: #ecfdf5;
-  color: #22c55e; /* 🔥 controla texto + icono */
+  color: #22c55e;
 }
 
-/* Icon */
 .nav-icon {
   display: flex;
   align-items: center;
@@ -93,22 +85,21 @@
 .nav-icon svg {
   width: 18px;
   height: 18px;
-  stroke: currentColor; /* 🔥 sincroniza con texto */
+  stroke: currentColor;
   fill: none;
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: inherit; /* misma animación */
+  transition: inherit;
 }
 
-/* Label */
 .nav-label {
   white-space: nowrap;
 }
 
 @media (max-width: 599px) {
-  .container {
-    position: fixed !important;
+  .navbar-container {
+    position: fixed;
     top: 0;
     left: -260px;
     z-index: 100;
@@ -117,7 +108,7 @@
     transition: left 0.25s ease;
   }
 
-  .container.is-open {
+  .navbar-container.is-open {
     left: 0;
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
   }

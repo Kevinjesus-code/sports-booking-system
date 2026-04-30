@@ -10,7 +10,7 @@ const NavbarVertical = ({ contenido = [], onChange, isOpen}) => {
   };
 
   return (
-    <div className={`container ${isOpen ? "is-open" : ""}`}>
+    <div className={`navbar-container ${isOpen ? "is-open" : ""}`}>
       {/* Header / Logo */}
       <div className="header">
         <div className="logo">
