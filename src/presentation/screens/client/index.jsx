@@ -50,8 +50,9 @@ const Client = () => {
 
   return (
     <>
+      <DSANavbarClient />
       <div className={styles.container}>
-        <DSANavbarClient />
+        
         {/* <Dashboard /> */}
         {isReserved ? (
           <Resumen
