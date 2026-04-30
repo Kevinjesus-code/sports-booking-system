@@ -1,4 +1,6 @@
 import styles from "./navbar.module.css";
+import logo from "../../../assets/Logo.png";
+
 
 const Navbar = ({ 
   initials = "U", 
@@ -17,6 +19,7 @@ const Navbar = ({
             <path d="M5 10v10h14V10" />
           </svg>
         </button>
+        <img src={logo} alt="Logo Kancha" className={styles.logo} />
         <span className={styles.brand}>Kancha</span>
       </div>
 

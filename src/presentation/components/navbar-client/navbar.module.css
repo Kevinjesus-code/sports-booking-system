@@ -13,12 +13,18 @@
   gap: 12px;
 }
 
+.logo {
+  height: 55px;       /* ajusta al tamaño que quieras */
+  width: auto;
+  object-fit: contain;
+}
 /* ─── Left ─── */
 .left {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-shrink: 0;        /* ← nunca se comprime */
+  gap: 1px;
+  flex-shrink: 0;  
+  margin-right: -4px;      
 }
 
 .homeIcon {
