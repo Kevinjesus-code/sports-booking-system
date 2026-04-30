@@ -1,5 +1,4 @@
-import "./start-card.css";
-export { default as StatCard } from "./stat-card";
+import "./stat-card";
 const StatCard = ({ title, value, icon, iconBg = "#fee2e2", iconColor = "#22c55e" }) => {
   return (
     <div className="stat-card">
