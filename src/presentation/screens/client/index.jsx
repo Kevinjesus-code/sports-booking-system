@@ -3,21 +3,37 @@ import Courts from "./courts/courts";
 import Schedules from "./schedules/schedules";
 import ConfirmReserve from "./confirm-reserve/confirm-reserve";
 import Resumen from "./resumen/resumen";
-import ReservationsModal from "../../components/reservations-modal"; // ← NUEVO
+import ReservationsModal from "../../components/reservations-modal";
+import ProfileModal from "../../components/profile-modal"; // ← NUEVO
 import styles from "./client.module.css";
 import { useState } from "react";
 
-const Client = () => {
-  const [selectedCourt, setSelectedCourt]     = useState(null);
-  const [selectedSchedule, setSelectedSchedule] = useState(null);
-  const [selectedDate, setSelectedDate]       = useState(null);
-  const [isReserved, setIsReserved]           = useState(false);
-  const [customerData, setCustomerData]       = useState(null);
+// Datos del cliente (más adelante vendrían de una API/auth)
+const CLIENT_DATA = {
+  nombre: "Juan Pérez",
+  email: "juan.perez@email.com",
+  telefono: "912 123 123",
+  initials: "JP",
+};
 
-  // ── NUEVO ──────────────────────────────────────────
-  const [reservations, setReservations]       = useState([]);
-  const [showModal, setShowModal]             = useState(false);
-  // ───────────────────────────────────────────────────
+const Client = () => {
+  const [selectedCourt, setSelectedCourt]       = useState(null);
+  const [selectedSchedule, setSelectedSchedule] = useState(null);
+  const [selectedDate, setSelectedDate]         = useState(null);
+  const [isReserved, setIsReserved]             = useState(false);
+  const [customerData, setCustomerData]         = useState(null);
+  const [reservations, setReservations]         = useState([]);
+  const [showModal, setShowModal]               = useState(false);
+  const [showProfile, setShowProfile]           = useState(false); // ← NUEVO
+
+  // ── Vuelve al estado inicial ──────────────────────
+  const handleHome = () => {
+    setSelectedCourt(null);
+    setSelectedSchedule(null);
+    setSelectedDate(null);
+    setIsReserved(false);
+    setCustomerData(null);
+  };
 
   const handleSelectSchedule = (schedule, date) => {
     setSelectedSchedule(schedule);
@@ -35,8 +51,6 @@ const Client = () => {
   const handleConfirmReservation = (data) => {
     setCustomerData(data);
     setIsReserved(true);
-
-    // ── NUEVO: guardar reserva en el array ──
     setReservations(prev => [...prev, {
       id: Date.now(),
       court: selectedCourt,
@@ -57,8 +71,11 @@ const Client = () => {
   return (
     <>
       <DSANavbarClient
-        onOpenReservations={() => setShowModal(true)}  // ← NUEVO
-        reservationCount={reservations.length}         // ← NUEVO (badge en 🔔)
+        initials={CLIENT_DATA.initials}
+        onHome={handleHome}                          // ← NUEVO
+        onOpenReservations={() => setShowModal(true)}
+        reservationCount={reservations.length}
+        onOpenProfile={() => setShowProfile(true)}   // ← NUEVO
       />
 
       <div className={styles.container}>
@@ -69,7 +86,7 @@ const Client = () => {
             date={selectedDate}
             customerData={customerData}
             onNewReservation={handleNewReservation}
-            onViewReservations={() => setShowModal(true)} // ← NUEVO
+            onViewReservations={() => setShowModal(true)}
           />
         ) : selectedSchedule ? (
           <ConfirmReserve
@@ -90,11 +107,19 @@ const Client = () => {
         )}
       </div>
 
-      {/* ── NUEVO: modal global ── */}
       {showModal && (
         <ReservationsModal
           reservations={reservations}
           onClose={() => setShowModal(false)}
+        />
+      )}
+
+      {/* ── NUEVO ── */}
+      {showProfile && (
+        <ProfileModal
+          client={CLIENT_DATA}
+          reservationCount={reservations.length}
+          onClose={() => setShowProfile(false)}
         />
       )}
     </>

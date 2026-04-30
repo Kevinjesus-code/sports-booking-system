@@ -29,7 +29,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  transition: background 0.2s;
   flex-shrink: 0;
+}
+
+.homeIcon:hover {
+  background: rgba(255, 255, 255, 0.35);
 }
 
 .homeIcon svg {
@@ -126,9 +134,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
   flex-shrink: 0;
+  transition: opacity 0.2s, transform 0.15s;
+
 }
+
+.avatar:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
 
 /* ─── Mobile: ocultar search ─── */
 @media (max-width: 480px) {
