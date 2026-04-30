@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./navbar-vertical.css";
 
-const NavbarVertical = ({ contenido = [], onChange}) => {
+const NavbarVertical = ({ contenido = [], onChange, isOpen}) => {
   const [activeItem, setActiveItem] = useState("dashboard");
 
   const handleClick = (item) => {
@@ -10,7 +10,7 @@ const NavbarVertical = ({ contenido = [], onChange}) => {
   };
 
   return (
-    <div className="container">
+    <div className={`container ${isOpen ? "is-open" : ""}`}>
       {/* Header / Logo */}
       <div className="header">
         <div className="logo">

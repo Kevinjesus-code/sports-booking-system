@@ -78,6 +78,7 @@ const Admin = () => {
     },
   ];
   const [seccionActiva, setSeccionActiva] = useState("dashboard");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const renderContenido = () => {
     switch (seccionActiva) {
       case "dashboard":
@@ -103,12 +104,29 @@ const Admin = () => {
   return (
     <>
       <div className="containerRecepcionist">
-        <DSANavbarVertical contenido={NAV_ITEMS} onChange={setSeccionActiva} />
-        <main className="containerContent">
-          <DSATopBar initials="AD" />
-          <div>{renderContenido()}</div>
-        </main>
-      </div>
+    {/* Overlay mobile */}
+    <div
+      className={`sidebar-overlay ${sidebarOpen ? "is-open" : ""}`}
+      onClick={() => setSidebarOpen(false)}
+    />
+
+    <DSANavbarVertical
+      contenido={NAV_ITEMS}
+      onChange={(id) => {
+        setSeccionActiva(id);
+        setSidebarOpen(false);
+      }}
+      isOpen={sidebarOpen}
+    />
+
+    <main className="containerContent">
+      <DSATopBar
+        initials="AD"
+        onMenuClick={() => setSidebarOpen(true)}
+      />
+      <div>{renderContenido()}</div>
+    </main>
+  </div>
     </>
   );
 };

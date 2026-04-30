@@ -1,8 +1,15 @@
 import "./top-bar.css";
 
-const TopBar = ({ initials = "KM" }) => {
+const TopBar = ({ initials = "KM" ,onMenuClick}) => {
   return (
     <div className="topbar">
+      <button className="topbar-menu-btn" onClick={onMenuClick} aria-label="Abrir menú">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round">
+          <line x1="3" y1="6"  x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button> 
       {/* Search */}
       <div className="search-container">
         <input
@@ -10,7 +17,7 @@ const TopBar = ({ initials = "KM" }) => {
           placeholder="Buscar reservas, clientes..."
           className="search-input"
         />
-      </div>
+      </div>  
 
       {/* Right section */}
       <div className="topbar-right">
