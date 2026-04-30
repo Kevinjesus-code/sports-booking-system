@@ -17,6 +17,63 @@
   pointer-events: none;
 }
 
+/* ── Paneles flotantes ── */
+.panel {
+  position: absolute;
+  top: 64px;          /* altura de tu top-bar */
+  right: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.1);
+  z-index: 100;
+  min-width: 280px;
+  padding: 16px;
+}
+
+/* Notificaciones */
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.markRead { font-size: 12px; color: #22c55e; background: none; border: none; cursor: pointer; }
+.notifList { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.notifItem {
+  font-size: 13px;
+  color: #374151;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.notifItem.unread { background: #f0fdf4; font-weight: 500; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
+
+/* Perfil */
+.profilePanel { text-align: center; min-width: 220px; }
+.profileAvatar {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: #22c55e; color: #fff;
+  font-size: 20px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 12px;
+}
+.profileName  { font-size: 16px; font-weight: 600; }
+.profileRole  { font-size: 13px; color: #6b7280; margin-top: 2px; }
+.profileEmail { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+.profileDivider { border: none; border-top: 1px solid #e5e7eb; margin: 12px 0; }
+.logoutBtn {
+  width: 100%; padding: 8px;
+  border: 1px solid #fee2e2; border-radius: 8px;
+  background: #fff; color: #ef4444;
+  font-size: 13px; cursor: pointer;
+}
+.logoutBtn:hover { background: #fef2f2; }
+
 @media (max-width: 599px) {
   .containerRecepcionist {
     flex-direction: column;

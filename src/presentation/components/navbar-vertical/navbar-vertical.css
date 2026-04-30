@@ -9,31 +9,6 @@
   flex-shrink: 0;
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 8px;
-  margin-bottom: 24px;
-}
-
-.logo {
-  width: 36px;
-  height: 36px;
-  background-color: #22c55e;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.logo svg {
-  width: 20px;
-  height: 20px;
-  color: #ffffff;
-  stroke: currentColor;
-}
 
 .brand-name {
   font-size: 17px;
@@ -95,6 +70,19 @@
 
 .nav-label {
   white-space: nowrap;
+}
+
+.brand-logo {
+  height: 35px;
+  width: auto;
+  object-fit: contain;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 4px;         /* distancia entre logo y "Kancha" */
+  padding: 0 0 24px 0;
 }
 
 @media (max-width: 599px) {

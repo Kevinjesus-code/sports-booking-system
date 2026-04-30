@@ -6,6 +6,20 @@ import Customers from "./customers/customers";
 import Reservations from "./reservations/reservations";
 import Configuration from "./configuration/configuration";
 
+// Datos de ejemplo — luego los reemplazas con tu contexto/API
+const USER = {
+  name: "Kevin More",
+  role: "Recepcionista",
+  initials: "KM",
+  email: "kevin@kancha.com",
+};
+
+const INITIAL_NOTIFS = [
+  { id: 1, text: "Nueva reserva: Juan Pérez - 14:00", unread: true },
+  { id: 2, text: "Reserva cancelada: María González", unread: true },
+  { id: 3, text: "Cliente nuevo registrado: Luis Torres", unread: false },
+];
+
 const Recepcionist = () => {
   const NAV_ITEMS = [
     {
@@ -56,8 +70,34 @@ const Recepcionist = () => {
     },
   ];
 
-  const [seccionActiva, setSeccionActiva] = useState("dashboard");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [seccionActiva, setSeccionActiva]   = useState("dashboard");
+  const [sidebarOpen, setSidebarOpen]       = useState(false);
+
+  // ── Perfil ──────────────────────────────────────────────
+  const [showProfile, setShowProfile]       = useState(false);
+
+  // ── Notificaciones ───────────────────────────────────────
+  const [showNotifs, setShowNotifs]         = useState(false);
+  const [notifs, setNotifs]                 = useState(INITIAL_NOTIFS);
+  const unreadCount                         = notifs.filter(n => n.unread).length;
+
+  const markAllRead = () =>
+    setNotifs(prev => prev.map(n => ({ ...n, unread: false })));
+
+  const closeAll = () => {
+    setShowProfile(false);
+    setShowNotifs(false);
+  };
+
+  const toggleProfile = () => {
+    setShowNotifs(false);          // cierra notifs si estaba abierto
+    setShowProfile(prev => !prev);
+  };
+
+  const toggleNotifs = () => {
+    setShowProfile(false);         // cierra perfil si estaba abierto
+    setShowNotifs(prev => !prev);
+  };
 
   const renderContenido = () => {
     switch (seccionActiva) {
@@ -71,10 +111,12 @@ const Recepcionist = () => {
 
   return (
     <div className="containerRecepcionist">
+      {/* Overlay para sidebar móvil */}
       <div
         className={`sidebar-overlay ${sidebarOpen ? "is-open" : ""}`}
         onClick={() => setSidebarOpen(false)}
       />
+
       <DSANavbarVertical
         contenido={NAV_ITEMS}
         onChange={(id) => {
@@ -83,8 +125,53 @@ const Recepcionist = () => {
         }}
         isOpen={sidebarOpen}
       />
-      <main className="containerContent">
-        <DSATopBar onMenuClick={() => setSidebarOpen(true)} />
+
+      <main className="containerContent" onClick={closeAll}>
+        <DSATopBar
+          onMenuClick={() => setSidebarOpen(true)}
+          // ── nuevas props ──
+          initials={USER.initials}
+          unreadCount={unreadCount}
+          onOpenProfile={(e) => { e.stopPropagation(); toggleProfile(); }}
+          onOpenNotifs={(e)  => { e.stopPropagation(); toggleNotifs(); }}
+        />
+
+        {/* ── Panel de notificaciones ── */}
+        {showNotifs && (
+          <div className="panel notifPanel" onClick={e => e.stopPropagation()}>
+            <div className="panelHeader">
+              <span>Notificaciones</span>
+              {unreadCount > 0 && (
+                <button className="markRead" onClick={markAllRead}>
+                  Marcar todas como leídas
+                </button>
+              )}
+            </div>
+            <ul className="notifList">
+              {notifs.map(n => (
+                <li key={n.id} className={`notifItem ${n.unread ? "unread" : ""}`}>
+                  {n.unread && <span className="dot" />}
+                  {n.text}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* ── Panel de perfil ── */}
+        {showProfile && (
+          <div className="panel profilePanel" onClick={e => e.stopPropagation()}>
+            <div className="profileAvatar">{USER.initials}</div>
+            <h3 className="profileName">{USER.name}</h3>
+            <p className="profileRole">{USER.role}</p>
+            <p className="profileEmail">{USER.email}</p>
+            <hr className="profileDivider" />
+            <button className="logoutBtn" onClick={() => alert("Cerrar sesión")}>
+              Cerrar sesión
+            </button>
+          </div>
+        )}
+
         <div>{renderContenido()}</div>
       </main>
     </div>
