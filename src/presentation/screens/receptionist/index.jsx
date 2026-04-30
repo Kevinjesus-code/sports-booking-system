@@ -131,8 +131,9 @@ const Recepcionist = () => {
       <main className="containerContent" onClick={closeAll}>
         <DSATopBar
           onMenuClick={() => setSidebarOpen(true)}
-          // ── nuevas props ──
           initials={USER.initials}
+          userName={USER.name}      
+          userRole={USER.role}      
           unreadCount={unreadCount}
           onOpenProfile={(e) => { e.stopPropagation(); toggleProfile(); }}
           onOpenNotifs={(e)  => { e.stopPropagation(); toggleNotifs(); }}
