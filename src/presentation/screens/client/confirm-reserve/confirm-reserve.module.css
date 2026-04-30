@@ -272,156 +272,107 @@
     gap: var(--spacing-sm);
   }
 }
-/* ─── REEMPLAZA el bloque @media (min-width: 1024px) existente ─── */
-
+/* ── Columnas explícitas (reemplaza grid en container) ── */
 @media (min-width: 1024px) {
   .container {
-    max-width: 960px;
+    max-width: 1000px;
     padding: var(--spacing-lg) var(--spacing-md);
-
-    /* 2 columnas: resumen | formulario */
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto 1fr auto auto;
+    grid-template-rows: auto 1fr;
     column-gap: 2rem;
     align-items: start;
   }
 
-  /* El header ocupa las 2 columnas */
+  /* Header ocupa las 2 columnas */
   .header {
     grid-column: 1 / -1;
+    grid-row: 1;
   }
 
-  /* Columna izquierda: la card de resumen crece para igualar altura */
-  .summaryCard {
+  /* Columna izquierda: wrapper */
+  .leftCol {
     grid-column: 1;
-    grid-row: 2 / 4;
-    margin-bottom: 0;
-    align-self: stretch;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
   }
 
-  /* Columna derecha: formulario */
-  .formContainer {
+  /* Columna derecha: wrapper */
+  .rightCol {
     grid-column: 2;
     grid-row: 2;
-    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
   }
 
-  /* Columna derecha: botones debajo del formulario */
-  .actions {
-    grid-column: 2;
-    grid-row: 3;
-    margin-bottom: 0;
-    flex-direction: row;
-  }
-
-  /* Nota ocupa las 2 columnas al fondo */
-  .note {
-    grid-column: 1 / -1;
-    grid-row: 4;
-  }
-
-  .summaryDetails {
-    gap: 2rem;
-    flex-wrap: nowrap;
-    flex-direction: column;   /* verticales en la card izquierda */
-  }
-}
-
-@media (min-width: 1280px) {
-  .container {
-    max-width: 1100px;
-    column-gap: 3rem;
-  }
-}
-/* ── Método de pago ── */
-.paymentContainer {
-  background: var(--color-bg-form);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
-}
-
-.paymentGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-xs);
-}
-
-.paymentOption {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  padding: var(--spacing-sm);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-white);
-  cursor: pointer;
-  transition: all 0.18s;
-  font-family: inherit;
-}
-
-.paymentOption:hover {
-  border-color: var(--color-primary);
-  background: #f0fdf8;
-}
-
-.paymentSelected {
-  border-color: var(--color-primary);
-  background: #f0fdf8;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
-}
-
-.paymentIcon  { font-size: 1.5rem; }
-
-.paymentLabel {
-  font-size: var(--font-sm);
-  font-weight: 600;
-  color: var(--color-text-dark);
-}
-
-.paymentCheck {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 18px;
-  height: 18px;
-  background: var(--color-primary);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-/* ── Desktop: 2 columnas ── */
-@media (min-width: 1024px) {
-  .container {
-    max-width: 960px;
-    padding: var(--spacing-lg) var(--spacing-md);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto 1fr auto auto auto;
-    column-gap: 2rem;
-    align-items: start;
-  }
-
-  .header          { grid-column: 1 / -1; }
-  .summaryCard     { grid-column: 1; grid-row: 2 / 5; margin-bottom: 0; align-self: stretch; }
-  .formContainer   { grid-column: 2; grid-row: 2; margin-bottom: 0; }
-  .paymentContainer{ grid-column: 2; grid-row: 3; margin-bottom: 0; }
-  .actions         { grid-column: 2; grid-row: 4; margin-bottom: 0; }
-  .note            { grid-column: 1 / -1; grid-row: 5; }
-
-  .summaryDetails  { flex-direction: column; gap: var(--spacing-sm); }
+  .summaryCard   { margin-bottom: 0; }
+  .paymentContainer { margin-bottom: 0; }
+  .formContainer { margin-bottom: 0; }
+  .actions       { margin-bottom: 0; }
+  .summaryDetails { flex-direction: column; gap: var(--spacing-sm); }
 }
 
 @media (min-width: 1280px) {
   .container { max-width: 1100px; column-gap: 3rem; }
 }
 
+/* ── Campos dinámicos de pago ── */
+.paymentFields {
+  margin-top: var(--spacing-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cardRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xs);
+}
+
+.paymentInfo {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  background: rgba(16, 185, 129, 0.06);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm);
+}
+
+.paymentInfoIcon { font-size: 1.75rem; flex-shrink: 0; }
+
+.paymentInfoTitle {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--color-text-dark);
+  margin: 0 0 4px 0;
+}
+
+.paymentInfoText {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Wrappers móvil (sin grid) */
+.leftCol, .rightCol {
+  display: contents; /* en móvil fluye normal */
+}
+
+@media (max-width: 1023px) {
+  .leftCol, .rightCol { display: contents; }
+}
 
 @media(prefers-reduced-motion: reduce) {
   .backButton,
