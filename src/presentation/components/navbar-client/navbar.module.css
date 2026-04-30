@@ -151,3 +151,26 @@
     display: none;    /* ← solo ícono en tablet pequeño */
   }
 }
+
+/* En navbar.module.css — añadir al final */
+.iconBtn {
+  position: relative; /* necesario para el badge */
+}
+
+.badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ef4444;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #34c36b;
+  pointer-events: none;
+}

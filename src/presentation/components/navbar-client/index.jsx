@@ -1,8 +1,8 @@
 import styles from "./navbar.module.css";
 
-const Navbar = ({ initials = "U" }) => {
+const Navbar = ({ initials = "U", onOpenReservations, reservationCount = 0 }) => {
   return (
-    <div className={styles.navbar}>
+    <nav className={styles.navbar}>
       {/* Left */}
       <div className={styles.left}>
         <div className={styles.homeIcon}>
@@ -14,14 +14,13 @@ const Navbar = ({ initials = "U" }) => {
         <span className={styles.brand}>Kancha</span>
       </div>
 
-      {/* Search */}
+      {/* Center */}
       <div className={styles.center}>
         <div className={styles.searchWrapper}>
           <svg viewBox="0 0 24 24">
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
-
           <input
             type="text"
             placeholder="Buscar canchas..."
@@ -32,16 +31,25 @@ const Navbar = ({ initials = "U" }) => {
 
       {/* Right */}
       <div className={styles.right}>
-        <div className={styles.iconBtn}>
+
+        {/* 🔔 campana con badge ← NUEVO */}
+        <button
+          className={styles.iconBtn}
+          onClick={onOpenReservations}
+          aria-label="Ver mis reservas"
+        >
           <svg viewBox="0 0 24 24">
             <path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18s-3 0-3-7" />
             <path d="M13.73 21a2 2 0 01-3.46 0" />
           </svg>
-        </div>
+          {reservationCount > 0 && (
+            <span className={styles.badge}>{reservationCount}</span>
+          )}
+        </button>
 
         <div className={styles.avatar}>{initials}</div>
       </div>
-    </div>
+    </nav>
   );
 };
 
