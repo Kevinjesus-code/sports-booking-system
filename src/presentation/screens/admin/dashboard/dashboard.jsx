@@ -1,7 +1,6 @@
 import "./dashboard.css";
 import { useState } from "react";
-import { DSAText, DSAReservationsTable, StatCard } from "../../../components";
-
+import { DSAText, DSAReservationsTable, DSAStatCard } from "../../../components";
 const Dashboard = () => {
   const [fecha, setFecha] = useState("2026-04-02");
 

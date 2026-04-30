@@ -18,6 +18,3 @@ export {default as DSALineChart} from "./line-chart"
 export {default as DSAResumenCard} from "./resumen-card"
 export {default as DSANavbarClient} from "./navbar-client"
 export {default as DSACourtCard} from "./court-card"
-
-
-

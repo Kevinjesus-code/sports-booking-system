@@ -1,5 +1,6 @@
-import "./stat-card";
-const StatCard = ({ title, value, icon, iconBg = "#fee2e2", iconColor = "#22c55e" }) => {
+import "./start-card.css";
+
+const DSAStatCard = ({ title, value, icon, iconBg = "#fee2e2", iconColor = "#22c55e" }) => {
   return (
     <div className="stat-card">
       <div className="stat-info">
@@ -15,4 +16,4 @@ const StatCard = ({ title, value, icon, iconBg = "#fee2e2", iconColor = "#22c55e
   );
 };
 
-export default StatCard;
+export default DSAStatCard;
