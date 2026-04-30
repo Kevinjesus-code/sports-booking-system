@@ -61,14 +61,23 @@
 
 .sidebar-overlay {
   display: none;
+  pointer-events: none;
 }
 
 @media (max-width: 599px) {
-  .sidebar-overlay.is-open {
+  .sidebar-overlay {
     display: block;
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.4);
     z-index: 99;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+
+  .sidebar-overlay.is-open {
+    opacity: 1;
+    pointer-events: all;
   }
 }
