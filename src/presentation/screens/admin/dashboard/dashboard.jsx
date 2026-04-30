@@ -79,7 +79,7 @@ const Dashboard = () => {
 
       <div className="containerCards">
         {stats.map((stat, i) => (
-          <StatCard
+          <DSAStatCard
             key={i}
             title={stat.title}
             value={stat.value}

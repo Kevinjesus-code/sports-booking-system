@@ -1,58 +1,62 @@
 .table-card {
   background: #ffffff;
   border-radius: 16px;
-  padding: 20px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  padding: 8px 0;
 }
 
-/* Header */
-.table-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.table-header h3 {
-  font-size: 18px;
-  font-weight: 600;
-  color: #111827;
-}
-
-.view-all {
-  font-size: 14px;
-  color: #22c55e;
-  cursor: pointer;
-}
-
-/* Table */
 .table-wrapper {
+  width: 100%;
   overflow-x: auto;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 14px;
 }
 
-thead th {
+thead {
+  background-color: #f9fafb;
+}
+
+th {
   text-align: left;
-  font-size: 13px;
-  color: #6b7280;
+  padding: 16px;
   font-weight: 500;
-  padding: 12px 0;
+  font-size: 13px;
+  color: #9ca3af;
 }
 
-tbody td {
-  padding: 14px 0;
-  border-top: 1px solid #f3f4f6;
+th:first-child,
+td:first-child {
+  padding-left: 24px;
+}
+
+th:last-child,
+td:last-child {
+  padding-right: 24px;
+}
+
+td {
+  padding: 16px;
+  border-top: 1px solid #f1f5f9;
   font-size: 14px;
   color: #111827;
 }
 
-/* Status */
+tbody tr {
+  transition: background 0.2s ease;
+}
+
+tbody tr:hover {
+  background-color: #fafafa;
+}
+
 .status {
-  padding: 4px 10px;
+  display: inline-block;
+  padding: 4px 12px;
   border-radius: 999px;
   font-size: 12px;
   font-weight: 500;
@@ -60,10 +64,10 @@ tbody td {
 
 .status-green {
   background-color: #dcfce7;
-  color: #22c55e;
+  color: #16a34a;
 }
 
 .status-red {
   background-color: #fee2e2;
-  color: #ef4444;
+  color: #dc2626;
 }
