@@ -55,38 +55,40 @@ const Recepcionist = () => {
       ),
     },
   ];
+
   const [seccionActiva, setSeccionActiva] = useState("dashboard");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const renderContenido = () => {
     switch (seccionActiva) {
-      case "dashboard":
-        return <Dashboard />;
-
-      case "clientes":
-        return <Customers />;
-
-      case "reservas":
-        return <Reservations />;
-
-      case "configuracion":
-        return <Configuration />;
-
-      default:
-        return <h1>Selecciona algo</h1>;
+      case "dashboard":    return <Dashboard />;
+      case "clientes":     return <Customers />;
+      case "reservas":     return <Reservations />;
+      case "configuracion":return <Configuration />;
+      default:             return <h1>Selecciona algo</h1>;
     }
   };
 
   return (
-    <>
-      <div className="containerRecepcionist">
-        <DSANavbarVertical contenido={NAV_ITEMS} onChange={setSeccionActiva} />
-        <main className="containerContent">
-          <DSATopBar />
-          <div>
-            {renderContenido()}
-          </div>
-        </main>
-      </div>
-    </>
+    <div className="containerRecepcionist">
+      <div
+        className={`sidebar-overlay ${sidebarOpen ? "is-open" : ""}`}
+        onClick={() => setSidebarOpen(false)}
+      />
+      <DSANavbarVertical
+        contenido={NAV_ITEMS}
+        onChange={(id) => {
+          setSeccionActiva(id);
+          setSidebarOpen(false);
+        }}
+        isOpen={sidebarOpen}
+      />
+      <main className="containerContent">
+        <DSATopBar onMenuClick={() => setSidebarOpen(true)} />
+        <div>{renderContenido()}</div>
+      </main>
+    </div>
   );
 };
+
 export default Recepcionist;
