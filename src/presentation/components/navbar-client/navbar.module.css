@@ -5,28 +5,31 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 0 16px;
   position: sticky;
   top: 0;
   z-index: 100;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  gap: 12px;
 }
 
-/* Left */
+/* ─── Left ─── */
 .left {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;        /* ← nunca se comprime */
 }
 
 .homeIcon {
   width: 36px;
   height: 36px;
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .homeIcon svg {
@@ -40,23 +43,26 @@
 .brand {
   color: white;
   font-weight: 600;
+  font-size: 15px;
+  white-space: nowrap;
 }
 
-/* Center */
+/* ─── Center (search) ─── */
 .center {
   flex: 1;
   display: flex;
   justify-content: center;
+  min-width: 0;          /* ← permite que flex shrink funcione */
 }
 
 .searchWrapper {
-  width: 60%;
+  width: 100%;           /* ← ocupa todo el espacio disponible */
   max-width: 420px;
   height: 38px;
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 20px;
   padding: 0 14px;
 }
@@ -67,6 +73,7 @@
   stroke: white;
   fill: none;
   stroke-width: 2;
+  flex-shrink: 0;
 }
 
 .searchInput {
@@ -76,23 +83,25 @@
   background: transparent;
   color: white;
   font-size: 14px;
+  min-width: 0;          /* ← evita overflow del input */
 }
 
 .searchInput::placeholder {
-  color: rgba(255,255,255,0.8);
+  color: rgba(255, 255, 255, 0.8);
 }
 
-/* Right */
+/* ─── Right ─── */
 .right {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0;        /* ← nunca se comprime */
 }
 
 .iconBtn {
   width: 36px;
   height: 36px;
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -108,7 +117,6 @@
   stroke-width: 2;
 }
 
-/* Avatar */
 .avatar {
   width: 36px;
   height: 36px;
@@ -119,4 +127,27 @@
   align-items: center;
   justify-content: center;
   font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* ─── Mobile: ocultar search ─── */
+@media (max-width: 480px) {
+  .center {
+    display: none;
+  }
+
+  .brand {
+    font-size: 16px;
+  }
+}
+
+/* ─── Tablet: search más angosto ─── */
+@media (min-width: 481px) and (max-width: 768px) {
+  .searchWrapper {
+    max-width: 240px;
+  }
+
+  .brand {
+    display: none;    /* ← solo ícono en tablet pequeño */
+  }
 }
