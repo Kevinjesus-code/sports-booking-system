@@ -123,6 +123,7 @@ const Admin = () => {
       <DSATopBar
         initials="AD"
         onMenuClick={() => setSidebarOpen(true)}
+        unreadCount={3}
       />
       <div>{renderContenido()}</div>
     </main>
