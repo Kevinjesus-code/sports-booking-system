@@ -1,8 +1,151 @@
+/* ─────────────────────────────────────────
+   CLIENTS TABLE
+───────────────────────────────────────── */
+.table-card {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #f0f0ef;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
 
-.status-green-reservation{
-background-color: #FEE2E2;
-  color: #22c55e;
-  text-align: center;
-  padding: 5px 20px;
+/* ─── Header ─── */
+.table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f4f4f3;
+}
+
+.table-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a18;
+  letter-spacing: -0.01em;
+}
+
+.table-total {
+  font-size: 12px;
+  font-weight: 500;
+  color: #888780;
+  background: #f5f4f2;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+/* ─── Wrapper ─── */
+.table-wrapper {
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #e8e7e4 transparent;
+}
+
+/* ─── Table ─── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+thead tr {
+  background: #fafaf9;
+}
+
+th {
+  text-align: left;
+  padding: 10px 20px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #888780;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  border-bottom: 1px solid #f4f4f3;
+}
+
+tbody tr {
+  border-bottom: 1px solid #fafaf9;
+  transition: background 0.12s ease;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background: #fafaf9;
+}
+
+td {
+  padding: 12px 20px;
+  color: #2c2c2a;
+  vertical-align: middle;
+}
+
+/* ─── Index column ─── */
+.table-index {
+  color: #b4b2a9;
+  font-size: 12px;
+  font-weight: 500;
+  width: 32px;
+}
+
+/* ─── Name cell with avatar ─── */
+.client-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.client-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #16a34a, #4ade80);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ─── Email ─── */
+.table-email {
+  color: #5f5e5a;
+  font-size: 13px;
+}
+
+/* ─── Reservas badge ─── */
+.reservas-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
   border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.reservas-badge--activo {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.reservas-badge--cero {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 599px) {
+  th, td {
+    padding: 10px 14px;
+  }
+
+  .table-header {
+    padding: 14px 16px;
+  }
 }
