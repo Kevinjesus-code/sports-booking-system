@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import "./customers.css";
-import ClientTable from "../../components/clients-table";
+import ClientTable from "../../../components/clients-table";
 
 // ─── Datos mock — reemplaza con useEffect + fetch cuando tengas API ───
 const CLIENTES_MOCK = [
