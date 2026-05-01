@@ -1,4 +1,4 @@
-import "./dashboard.css";
+import styles from "./dashboard.module.css";
 import { useState } from "react";
 import { DSAText, DSAReservationsTable, DSAStatCard } from "../../../components";
 const Dashboard = () => {
@@ -57,27 +57,27 @@ const Dashboard = () => {
 
   return (
     <div>
-      <div className="containerHeader">
-        <div className="headerTop">
+      <div className={styles["containerHeader"]}>
+        <div className={styles["headerTop"]}>
           <div>
             <DSAText variant="title">Dashboard</DSAText>
             <DSAText variant="text" color="#6B7280">
               Resumen de reservas y estado de canchas
             </DSAText>
           </div>
-          <div className="headerActions">
+          <div className={styles["headerActions"]}>
             <input
               type="date"
-              className="dateInput"
+              className={styles["dateInput"]}
               value={fecha}
               onChange={(e) => setFecha(e.target.value)}
             />
-            <button className="filterBtn">Filter</button>
+            <button className={styles["filterBtn"]}>Filter</button>
           </div>
         </div>
       </div>
 
-      <div className="containerCards">
+      <div className={styles["containerCards"]}>
         {stats.map((stat, i) => (
           <DSAStatCard
             key={i}
@@ -90,7 +90,7 @@ const Dashboard = () => {
         ))}
       </div>
 
-      <div className="containerReservations">
+      <div className={styles["containerReservations"]}>
         <DSAText variant="subtitle">Reservas de Hoy</DSAText>
         <DSAReservationsTable data={reservations} />
       </div>

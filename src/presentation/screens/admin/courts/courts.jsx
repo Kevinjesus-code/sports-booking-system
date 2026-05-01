@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { DSAButton, DSACourtsTable, DSAText, DSAInput } from "../../../components";
-import "./courts.css";
+import styles from "./courts.module.css";
 
 const Courts = () => {
   const [tipoFiltro, setTipoFiltro]     = useState("Todos los tipos");
@@ -33,35 +33,35 @@ const Courts = () => {
 
   return (
     <div>
-      <div className="containerHeaderCourts">
+      <div className={styles["containerHeaderCourts"]}>
         <div>
           <DSAText variant="title">Canchas</DSAText>
           <DSAText variant="text" color="#6B7280">Gestiona las canchas deportivas</DSAText>
         </div>
-        <div className="containerButtonCourts">
+        <div className={styles["containerButtonCourts"]}>
           <DSAButton onClick={() => setShowModal(true)}>+ Crear Cancha</DSAButton>
         </div>
       </div>
 
-      <div className="containerFiltersCourts">
-        <select className="filterSelect" value={tipoFiltro} onChange={(e) => setTipoFiltro(e.target.value)}>
+      <div className={styles["containerFiltersCourts"]}>
+        <select className={styles["filterSelect"]} value={tipoFiltro} onChange={(e) => setTipoFiltro(e.target.value)}>
           {tipos.map((t) => <option key={t}>{t}</option>)}
         </select>
-        <select className="filterSelect" value={estadoFiltro} onChange={(e) => setEstadoFiltro(e.target.value)}>
+        <select className={styles["filterSelect"]} value={estadoFiltro} onChange={(e) => setEstadoFiltro(e.target.value)}>
           {estados.map((e) => <option key={e}>{e}</option>)}
         </select>
       </div>
 
-      <div className="containerTableCourts">
+      <div className={styles["containerTableCourts"]}>
         <DSACourtsTable data={filtered} />
       </div>
 
       {showModal && (
-        <div className="modalOverlay" onClick={() => setShowModal(false)}>
-          <div className="modalBox" onClick={(e) => e.stopPropagation()}>
-            <div className="modalHeader">
+        <div className={styles["modalOverlay"]} onClick={() => setShowModal(false)}>
+          <div className={styles["modalBox"]} onClick={(e) => e.stopPropagation()}>
+            <div className={styles["modalHeader"]}>
               <DSAText variant="subtitle">Crear Cancha</DSAText>
-              <button className="modalClose" onClick={() => setShowModal(false)}>✕</button>
+              <button className={styles["modalClose"]} onClick={() => setShowModal(false)}>✕</button>
             </div>
             <DSAInput
               label="Nombre"
@@ -75,10 +75,10 @@ const Courts = () => {
               value={form.type}
               onChange={(v) => setForm({ ...form, type: v })}
             />
-            <div className="inputGroup">
-              <label className="inputLabel">Estado</label>
+            <div className={styles["inputGroup"]}>
+              <label className={styles["inputLabel"]}>Estado</label>
               <select
-                className="filterSelect fullWidth"
+                className={`${styles["filterSelect"]} ${styles["fullWidth"]}`}
                 value={form.state}
                 onChange={(e) => setForm({ ...form, state: e.target.value })}
               >
@@ -87,8 +87,8 @@ const Courts = () => {
                 <option>Mantenimiento</option>
               </select>
             </div>
-            <div className="modalActions">
-              <button className="cancelBtn" onClick={() => setShowModal(false)}>Cancelar</button>
+            <div className={styles["modalActions"]}>
+              <button className={styles["cancelBtn"]} onClick={() => setShowModal(false)}>Cancelar</button>
               <DSAButton onClick={handleCreate}>Crear</DSAButton>
             </div>
           </div>

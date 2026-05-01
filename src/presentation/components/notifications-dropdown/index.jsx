@@ -1,4 +1,4 @@
-import "./notifications-dropdown.css";
+import styles from "./notifications-dropdown.module.css";
 
 const CheckAllIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
@@ -27,17 +27,17 @@ const NotificationsDropdown = ({ notifications = [], onItemClick, onMarkAll }) =
   const unreadCount = items.filter((n) => n.unread).length;
 
   return (
-    <div className="notif-dropdown">
+    <div className={styles["notif-dropdown"]}>
       {/* Header */}
-      <div className="notif-dropdown-header">
-        <div className="notif-dropdown-title-wrap">
-          <span className="notif-dropdown-title">Notificaciones</span>
+      <div className={styles["notif-dropdown-header"]}>
+        <div className={styles["notif-dropdown-title-wrap"]}>
+          <span className={styles["notif-dropdown-title"]}>Notificaciones</span>
           {unreadCount > 0 && (
-            <span className="notif-dropdown-count">{unreadCount}</span>
+            <span className={styles["notif-dropdown-count"]}>{unreadCount}</span>
           )}
         </div>
         {unreadCount > 0 && onMarkAll && (
-          <button className="notif-mark-all-btn" onClick={onMarkAll}>
+          <button className={styles["notif-mark-all-btn"]} onClick={onMarkAll}>
             <CheckAllIcon />
             Marcar todo
           </button>
@@ -45,22 +45,22 @@ const NotificationsDropdown = ({ notifications = [], onItemClick, onMarkAll }) =
       </div>
 
       {/* List */}
-      <div className="notif-dropdown-list">
+      <div className={styles["notif-dropdown-list"]}>
         {items.length === 0 ? (
-          <div className="notif-empty">
+          <div className={styles["notif-empty"]}>
             <span>Sin notificaciones</span>
           </div>
         ) : (
           items.map((item) => (
             <button
               key={item.id}
-              className={`notif-item${item.unread ? " notif-item--unread" : ""}`}
+              className={`${styles["notif-item"]} ${item.unread ? styles["notif-item--unread"] : ""}`}
               onClick={() => onItemClick && onItemClick(item)}
             >
-              <span className={`notif-item-dot${item.unread ? " notif-item-dot--active" : ""}`} />
-              <span className="notif-item-body">
-                <span className="notif-item-text">{item.text}</span>
-                {item.sub && <span className="notif-item-sub">{item.sub}</span>}
+              <span className={`${styles["notif-item-dot"]} ${item.unread ? styles["notif-item-dot--active"] : ""}`} />
+              <span className={styles["notif-item-body"]}>
+                <span className={styles["notif-item-text"]}>{item.text}</span>
+                {item.sub && <span className={styles["notif-item-sub"]}>{item.sub}</span>}
               </span>
             </button>
           ))
@@ -68,8 +68,8 @@ const NotificationsDropdown = ({ notifications = [], onItemClick, onMarkAll }) =
       </div>
 
       {/* Footer */}
-      <div className="notif-dropdown-footer">
-        <button className="notif-see-all-btn">Ver todas</button>
+      <div className={styles["notif-dropdown-footer"]}>
+        <button className={styles["notif-see-all-btn"]}>Ver todas</button>
       </div>
     </div>
   );

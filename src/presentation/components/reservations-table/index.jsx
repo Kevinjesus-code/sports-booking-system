@@ -1,9 +1,9 @@
-import "./reservation-table.css";
+import styles from "./reservation-table.module.css";
 
 const ReservationsTable = ({ data = [] }) => {
   return (
-    <div className="table-card">
-      <div className="table-wrapper">
+    <div className={styles["table-card"]}>
+      <div className={styles["table-wrapper"]}>
         <table>
           <thead>
             <tr>
@@ -20,7 +20,7 @@ const ReservationsTable = ({ data = [] }) => {
                 <td>{item.hora}</td>
                 <td>{item.cancha}</td>
                 <td>
-                  <span className={`status ${item.estado === "disponible" ? "status-green" : "status-red"}`}>
+                  <span className={`${styles["status"]} ${item.estado === "disponible" ? styles["status-green"] : styles["status-red"]}`}>
                     {item.estado === "disponible" ? "Disponible" : "Ocupado"}
                   </span>
                 </td>

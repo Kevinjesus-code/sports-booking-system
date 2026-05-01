@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import "./customers.css";
+import styles from "./customers.module.css";
 import ClientTable from "../../../components/clients-table";
 
 // ─── Datos mock — reemplaza con useEffect + fetch cuando tengas API ───
@@ -50,32 +50,32 @@ const Customers = () => {
   }, [query]);
 
   return (
-    <div className="customers-screen">
+    <div className={styles["customers-screen"]}>
 
       {/* ── Encabezado ── */}
-      <div className="customers-header">
+      <div className={styles["customers-header"]}>
         <div>
-          <h2 className="customers-title">Clientes</h2>
-          <p className="customers-sub">
+          <h2 className={styles["customers-title"]}>Clientes</h2>
+          <p className={styles["customers-sub"]}>
             {CLIENTES_MOCK.length} clientes registrados
           </p>
         </div>
       </div>
 
       {/* ── Barra de búsqueda ── */}
-      <div className="customers-toolbar">
-        <div className="search-box">
-          <span className="search-box-icon"><SearchIcon /></span>
+      <div className={styles["customers-toolbar"]}>
+        <div className={styles["search-box"]}>
+          <span className={styles["search-box-icon"]}><SearchIcon /></span>
           <input
             type="text"
-            className="search-box-input"
+            className={styles["search-box-input"]}
             placeholder="Buscar por nombre, email o teléfono..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
           {query && (
             <button
-              className="search-box-clear"
+              className={styles["search-box-clear"]}
               onClick={() => setQuery("")}
               aria-label="Limpiar búsqueda"
             >
@@ -86,7 +86,7 @@ const Customers = () => {
 
         {/* Contador de resultados cuando hay búsqueda activa */}
         {query && (
-          <span className="search-results-count">
+          <span className={styles["search-results-count"]}>
             {clientesFiltrados.length === 0
               ? "Sin resultados"
               : `${clientesFiltrados.length} resultado${clientesFiltrados.length !== 1 ? "s" : ""}`}
@@ -98,8 +98,8 @@ const Customers = () => {
       {clientesFiltrados.length > 0 ? (
         <ClientTable data={clientesFiltrados} />
       ) : (
-        <div className="customers-empty">
-          <div className="customers-empty-icon">
+        <div className={styles["customers-empty"]}>
+          <div className={styles["customers-empty-icon"]}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
               strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
               width="40" height="40">
@@ -107,14 +107,14 @@ const Customers = () => {
               <line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
           </div>
-          <p className="customers-empty-title">
+          <p className={styles["customers-empty-title"]}>
             No se encontró "{query}"
           </p>
-          <p className="customers-empty-sub">
+          <p className={styles["customers-empty-sub"]}>
             Intenta con otro nombre, email o teléfono
           </p>
           <button
-            className="customers-empty-btn"
+            className={styles["customers-empty-btn"]}
             onClick={() => setQuery("")}
           >
             Limpiar búsqueda

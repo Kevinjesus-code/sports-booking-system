@@ -13,18 +13,32 @@
   gap: 12px;
 }
 
+@media (min-width: 1024px) {
+  .navbar {
+    width: calc(100% - 48px);
+    margin: 0px auto 0 auto;
+    border-radius: 12px;
+    top: 5px;
+  }
+}
+
 .logo {
-  height: 55px;       /* ajusta al tamaño que quieras */
+  height: 40px;
   width: auto;
   object-fit: contain;
+  border-radius: 1rem;
 }
+
 /* ─── Left ─── */
 .left {
   display: flex;
   align-items: center;
-  gap: 1px;
-  flex-shrink: 0;  
-  margin-right: -4px;      
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.left:hover {
+  cursor: pointer;
 }
 
 .homeIcon {
@@ -57,20 +71,20 @@
 .brand {
   color: white;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 20px;
   white-space: nowrap;
 }
 
-/* ─── Center (search) ─── */
+/* ─── Center ─── */
 .center {
   flex: 1;
   display: flex;
   justify-content: flex-end;
-  min-width: 0;          /* ← permite que flex shrink funcione */
+  min-width: 0;
 }
 
 .searchWrapper {
-  width: 100%;           /* ← ocupa todo el espacio disponible */
+  width: 100%;
   max-width: 420px;
   height: 38px;
   display: flex;
@@ -97,7 +111,7 @@
   background: transparent;
   color: white;
   font-size: 14px;
-  min-width: 0;          /* ← evita overflow del input */
+  min-width: 0;
 }
 
 .searchInput::placeholder {
@@ -109,7 +123,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-shrink: 0;        /* ← nunca se comprime */
+  flex-shrink: 0;
 }
 
 .iconBtn {
@@ -121,6 +135,8 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border: none;
+  position: relative;
 }
 
 .iconBtn svg {
@@ -145,8 +161,9 @@
   cursor: pointer;
   border: none;
   flex-shrink: 0;
-  transition: opacity 0.2s, transform 0.15s;
-
+  transition:
+    opacity 0.2s,
+    transform 0.15s;
 }
 
 .avatar:hover {
@@ -154,34 +171,7 @@
   transform: scale(1.05);
 }
 
-
-/* ─── Mobile: ocultar search ─── */
-@media (max-width: 480px) {
-  .center {
-    display: none;
-  }
-
-  .brand {
-    font-size: 16px;
-  }
-}
-
-/* ─── Tablet: search más angosto ─── */
-@media (min-width: 481px) and (max-width: 768px) {
-  .searchWrapper {
-    max-width: 240px;
-  }
-
-  .brand {
-    display: none;    /* ← solo ícono en tablet pequeño */
-  }
-}
-
-/* En navbar.module.css — añadir al final */
-.iconBtn {
-  position: relative; /* necesario para el badge */
-}
-
+/* ─── Badge ─── */
 .badge {
   position: absolute;
   top: -4px;
@@ -198,4 +188,26 @@
   justify-content: center;
   border: 2px solid #34c36b;
   pointer-events: none;
+}
+
+/* ─── Mobile ─── */
+@media (max-width: 480px) {
+  .center {
+    display: none;
+  }
+
+  .brand {
+    font-size: 16px;
+  }
+}
+
+/* ─── Tablet ─── */
+@media (min-width: 481px) and (max-width: 768px) {
+  .searchWrapper {
+    max-width: 240px;
+  }
+
+  .brand {
+    display: none;
+  }
 }

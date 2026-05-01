@@ -1,4 +1,4 @@
-import "./switch.css";
+import styles from "./switch.module.css";
 
 const Switch = ({
   checked = false,
@@ -6,14 +6,14 @@ const Switch = ({
   disabled = false,
 }) => {
   return (
-    <label className={`switch ${disabled ? "disabled" : ""}`}>
+    <label className={`${styles["switch"]} ${disabled ? styles["disabled"] : ""}`}>
       <input
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange?.(e.target.checked)}
         disabled={disabled}
       />
-      <span className="slider"></span>
+      <span className={styles["slider"]}></span>
     </label>
   );
 };

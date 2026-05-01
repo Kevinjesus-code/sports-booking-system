@@ -1,4 +1,4 @@
-import "./dashboard.css";
+import styles from "./dashboard.module.css";
 import { DSAStatCard, DSAText, DSAReservationsTable } from "../../../components";
 const Dashboard = () => {
   const stats = [
@@ -61,13 +61,13 @@ const Dashboard = () => {
   return (
     <>
       <div>
-        <div className="containerHeader">
+        <div className={styles["containerHeader"]}>
           <DSAText variant="title">Dashboard</DSAText>
           <DSAText variant="text" color={"#6B7280"}>
             Resumen de reservas y disponibilidad
           </DSAText>
         </div>
-        <div className="containerCards">
+        <div className={styles["containerCards"]}>
           {stats.map((item) => (
             <DSAStatCard
               key={item.id}
@@ -77,7 +77,7 @@ const Dashboard = () => {
             />
           ))}
         </div>
-        <div className="containerReservations">
+        <div className={styles["containerReservations"]}>
             <DSAReservationsTable data={reservations} />
         </div>
       </div>

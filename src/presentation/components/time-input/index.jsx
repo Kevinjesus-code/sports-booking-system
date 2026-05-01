@@ -1,16 +1,16 @@
-import "./time-input.css";
+import styles from "./time-input.module.css";
 
 const TimeInput = ({ label, value, onChange }) => {
   return (
-    <div className="time-input-group">
-      {label && <label className="time-label">{label}</label>}
+    <div className={styles["time-input-group"]}>
+      {label && <label className={styles["time-label"]}>{label}</label>}
 
-      <div className="time-input-wrapper">
+      <div className={styles["time-input-wrapper"]}>
         <input
           type="time"
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
-          className="time-input"
+          className={styles["time-input"]}
         />
       </div>
     </div>

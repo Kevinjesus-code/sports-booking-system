@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { DSAStatCard, DSAText, DSABarChart, DSALineChart, DSACard, DSAResumenCard } from "../../../components";
-import "./reports.css";
+import styles from "./reports.module.css";
 
 const periodos = ["Esta semana", "Este mes", "Este año"];
 
@@ -83,16 +83,16 @@ const Reports = () => {
 
   return (
     <div>
-      <div className="containerHeaderReports">
+      <div className={styles["containerHeaderReports"]}>
         <div>
           <DSAText variant="title">Reportes</DSAText>
           <DSAText variant="text" color="#6B7280">Análisis de rendimiento y estadísticas</DSAText>
         </div>
-        <div className="periodoTabs">
+        <div className={styles["periodoTabs"]}>
           {periodos.map((p) => (
             <button
               key={p}
-              className={`periodoTab ${periodo === p ? "active" : ""}`}
+              className={`${styles["periodoTab"]} ${periodo === p ? styles["active"] : ""}`}
               onClick={() => setPeriodo(p)}
             >
               {p}
@@ -101,7 +101,7 @@ const Reports = () => {
         </div>
       </div>
 
-      <div className="containerCardsReports">
+      <div className={styles["containerCardsReports"]}>
         {stats.map((item, i) => (
           <DSAStatCard
             key={item.id}
@@ -114,7 +114,7 @@ const Reports = () => {
         ))}
       </div>
 
-      <div className="containerCardsGraphics">
+      <div className={styles["containerCardsGraphics"]}>
         <DSACard>
           <DSAText variant="subtitle">Tendencia de Reservas</DSAText>
           <DSALineChart data={line.data} config={line.config} />
@@ -125,7 +125,7 @@ const Reports = () => {
         </DSACard>
       </div>
 
-      <div className="containerResumen">
+      <div className={styles["containerResumen"]}>
         <DSAResumenCard data={resumen} />
       </div>
     </div>

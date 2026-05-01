@@ -1,4 +1,4 @@
-import "./register.css";
+import styles from "./register.module.css";
 import { DSAButton, DSAText } from "../../../components";
 const Register = () => {
   return (

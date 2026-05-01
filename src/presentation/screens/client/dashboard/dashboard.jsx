@@ -125,7 +125,7 @@ const Dashboard = () => {
 
       {/* CTA */}
       <div className={styles.ctaGreen}>
-        <h2 className={styles.ctaTitle}>¿Listo para reservar?</h2>
+        <h2 className={styles.ctaTitle}>¿Listo para reservar? xssxsxsx</h2>
         <p className={styles.ctaDesc}>
           Selecciona tu tipo de cancha favorito y encuentra el horario
           perfecto

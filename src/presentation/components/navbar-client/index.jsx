@@ -1,30 +1,30 @@
 import styles from "./navbar.module.css";
-import logo from "../../../assets/Logo.png";
+
 
 
 const Navbar = ({ 
   initials = "U", 
   onOpenReservations, 
-  reservationCount = 0,
+  reservationCount = 5,
   onHome,          // ← NUEVO
   onOpenProfile,   // ← NUEVO
 }) => {
   return (
     <nav className={styles.navbar}>
       {/* Left */}
-      <div className={styles.left}>
-        <button className={styles.homeIcon} onClick={onHome} aria-label="Inicio">
+      <div className={styles.left} onClick={onHome}>
+        {/* <button className={styles.homeIcon} onClick={onHome} aria-label="Inicio">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M3 10.5L12 3l9 7.5" />
             <path d="M5 10v10h14V10" />
           </svg>
-        </button>
-        <img src={logo} alt="Logo Kancha" className={styles.logo} />
+        </button> */}
+        <img src="/assets/img/Logo.JPG" alt="Logo Kancha" className={styles.logo}  />
         <span className={styles.brand}>Kancha</span>
       </div>
 
       {/* Center */}
-      <div className={styles.center}>
+      {/* <div className={styles.center}>
         <div className={styles.searchWrapper}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="11" cy="11" r="8" />
@@ -36,7 +36,7 @@ const Navbar = ({
             className={styles.searchInput}
           />
         </div>
-      </div>
+      </div> */}
 
       {/* Right */}
       <div className={styles.right}>

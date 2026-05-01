@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { DSAText, DSAUsersTable, DSAInput } from "../../../components";
-import "./users.css";
+import styles from "./users.module.css";
 
 const rolesOpciones = ["Cliente", "Administrador", "Recepcionista"];
 const rolesFiltro   = ["Todos los roles", ...rolesOpciones];
@@ -42,63 +42,63 @@ const Users = () => {
 
   return (
     <div>
-      <div className="containerHeaderUsers">
+      <div className={styles["containerHeaderUsers"]}>
         <div>
           <DSAText variant="title">Usuarios</DSAText>
           <DSAText variant="text" color="#6B7280">Gestiona los usuarios del sistema</DSAText>
         </div>
-        <button className="createUserBtn" onClick={() => setShowModal(true)}>
+        <button className={styles["createUserBtn"]} onClick={() => setShowModal(true)}>
           + Crear Usuario
         </button>
       </div>
 
-      <div className="containerFiltersUsers">
-        <div className="searchWrapper">
-          <svg className="searchIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <div className={styles["containerFiltersUsers"]}>
+        <div className={styles["searchWrapper"]}>
+          <svg className={styles["searchIcon"]} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
           <input
             type="text"
-            className="searchInput"
+            className={styles["searchInput"]}
             placeholder="Buscar usuario..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
           />
         </div>
-        <select className="filterSelect" value={rolFiltro} onChange={(e) => setRolFiltro(e.target.value)}>
+        <select className={styles["filterSelect"]} value={rolFiltro} onChange={(e) => setRolFiltro(e.target.value)}>
           {rolesFiltro.map((r) => <option key={r}>{r}</option>)}
         </select>
       </div>
 
-      <div className="containerTableUsers">
+      <div className={styles["containerTableUsers"]}>
         <DSAUsersTable data={filtered} />
       </div>
 
       {showModal && (
-        <div className="modalOverlay" onClick={() => setShowModal(false)}>
-          <div className="modalBox" onClick={(e) => e.stopPropagation()}>
-            <div className="modalHeader">
+        <div className={styles["modalOverlay"]} onClick={() => setShowModal(false)}>
+          <div className={styles["modalBox"]} onClick={(e) => e.stopPropagation()}>
+            <div className={styles["modalHeader"]}>
               <DSAText variant="subtitle">Crear Usuario</DSAText>
-              <button className="modalClose" onClick={() => setShowModal(false)}>✕</button>
+              <button className={styles["modalClose"]} onClick={() => setShowModal(false)}>✕</button>
             </div>
             <DSAInput label="Nombre" placeholder="Nombre completo" value={form.nombre} onChange={(v) => setForm({ ...form, nombre: v })} />
             <DSAInput label="DNI"    placeholder="12345678-9"       value={form.dni}    onChange={(v) => setForm({ ...form, dni: v })} />
             <DSAInput label="Correo" placeholder="correo@email.com" value={form.correo} onChange={(v) => setForm({ ...form, correo: v })} type="email" />
             <DSAInput label="Teléfono" placeholder="+569 1234 5678" value={form.telefono} onChange={(v) => setForm({ ...form, telefono: v })} />
-            <div className="inputGroup">
-              <label className="inputLabel">Rol</label>
+            <div className={styles["inputGroup"]}>
+              <label className={styles["inputLabel"]}>Rol</label>
               <select
-                className="filterSelect fullWidth"
+                className={`${styles["filterSelect"]} ${styles["fullWidth"]}`}
                 value={form.rol}
                 onChange={(e) => setForm({ ...form, rol: e.target.value })}
               >
                 {rolesOpciones.map((r) => <option key={r}>{r}</option>)}
               </select>
             </div>
-            <div className="modalActions">
-              <button className="cancelBtn" onClick={() => setShowModal(false)}>Cancelar</button>
-              <button className="createUserBtn" onClick={handleCreate}>Crear</button>
+            <div className={styles["modalActions"]}>
+              <button className={styles["cancelBtn"]} onClick={() => setShowModal(false)}>Cancelar</button>
+              <button className={styles["createUserBtn"]} onClick={handleCreate}>Crear</button>
             </div>
           </div>
         </div>

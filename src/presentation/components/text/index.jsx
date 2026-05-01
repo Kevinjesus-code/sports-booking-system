@@ -1,4 +1,4 @@
-import "./text.css";
+import styles from "./text.module.css";
  
 const Text = ({
   children,
@@ -8,7 +8,7 @@ const Text = ({
 }) => {
   return (
     <p
-      className={`typography typography-${variant}`}
+      className={`${styles["typography"]} ${styles[`typography-${variant}`]}`}
       style={{ color, textAlign: align }}
     >
       {children}

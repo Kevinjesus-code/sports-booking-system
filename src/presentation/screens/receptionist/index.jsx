@@ -1,4 +1,4 @@
-import "./recepcionist.css";
+import styles from "./recepcionist.module.css";
 import { DSANavbarVertical, DSATopBar } from "../../components";
 import { useState } from "react";
 import Dashboard from "./dashboard/dashboard";
@@ -112,10 +112,10 @@ const Recepcionist = () => {
   };
 
   return (
-    <div className="containerRecepcionist">
+    <div className={styles["containerRecepcionist"]}>
       {/* Overlay para sidebar móvil */}
       <div
-        className={`sidebar-overlay ${sidebarOpen ? "is-open" : ""}`}
+        className={`${styles["sidebar-overlay"]} ${sidebarOpen ? styles["is-open"] : ""}`}
         onClick={() => setSidebarOpen(false)}
       />
 
@@ -128,7 +128,7 @@ const Recepcionist = () => {
         isOpen={sidebarOpen}
       />
 
-      <main className="containerContent" onClick={closeAll}>
+      <main className={styles["containerContent"]} onClick={closeAll}>
         <DSATopBar
           onMenuClick={() => setSidebarOpen(true)}
           initials={USER.initials}
@@ -141,113 +141,113 @@ const Recepcionist = () => {
 
         {/* ── Panel Notificaciones ── */}
           {showNotifs && (
-            <div className="panel notifPanel" onClick={e => e.stopPropagation()}>
-              <div className="panelHeader">
+            <div className={`${styles["panel"]} ${styles["notifPanel"]}`} onClick={e => e.stopPropagation()}>
+              <div className={styles["panelHeader"]}>
                 <div>
-                  <span className="panelTitle">
+                  <span className={styles["panelTitle"]}>
                     Notificaciones
-                    {unreadCount > 0 && <span className="notifBadge">{unreadCount} nuevas</span>}
+                    {unreadCount > 0 && <span className={styles["notifBadge"]}>{unreadCount} nuevas</span>}
                   </span>
-                  <div className="panelSub">Actividad reciente</div>
+                  <div className={styles["panelSub"]}>Actividad reciente</div>
                 </div>
-                <button className="panelClose" onClick={() => setShowNotifs(false)}>✕</button>
+                <button className={styles["panelClose"]} onClick={() => setShowNotifs(false)}>✕</button>
               </div>
 
-              <div className="notifToolbar">
-                <div className="notifTabs">
-                  <button className="notifTab active">Todas</button>
-                  <button className="notifTab">Sin leer</button>
+              <div className={styles["notifToolbar"]}>
+                <div className={styles["notifTabs"]}>
+                  <button className={`${styles["notifTab"]} ${styles["active"]}`}>Todas</button>
+                  <button className={styles["notifTab"]}>Sin leer</button>
                 </div>
                 {unreadCount > 0 && (
-                  <button className="markReadBtn" onClick={markAllRead}>Marcar todas leídas</button>
+                  <button className={styles["markReadBtn"]} onClick={markAllRead}>Marcar todas leídas</button>
                 )}
               </div>
 
-              <ul className="notifList">
+              <ul className={styles["notifList"]}>
                 {notifs.map(n => (
-                  <li key={n.id} className={`notifItem ${n.unread ? "unread" : ""}`}>
-                    <span className={`notifDot ${n.unread ? "" : "read"}`} />
-                    <div className={`notifIcon ${n.iconClass}`}>
+                  <li key={n.id} className={`${styles["notifItem"]} ${n.unread ? styles["unread"] : ""}`}>
+                    <span className={`${styles["notifDot"]} ${n.unread ? "" : styles["read"]}`} />
+                    <div className={`${styles["notifIcon"]} ${n.iconClass}`}>
                       {n.icon}
                     </div>
-                    <div className="notifBody">
-                      <div className="notifItemTitle">{n.title}</div>
-                      <div className="notifItemDesc">{n.desc}</div>
-                      <div className="notifTime">{n.time}</div>
+                    <div className={styles["notifBody"]}>
+                      <div className={styles["notifItemTitle"]}>{n.title}</div>
+                      <div className={styles["notifItemDesc"]}>{n.desc}</div>
+                      <div className={styles["notifTime"]}>{n.time}</div>
                     </div>
                   </li>
                 ))}
               </ul>
 
-              <div className="notifFooter">
-                <button className="viewAllBtn">Ver todas las notificaciones</button>
+              <div className={styles["notifFooter"]}>
+                <button className={styles["viewAllBtn"]}>Ver todas las notificaciones</button>
               </div>
             </div>
           )}
 
           {/* ── Panel Perfil ── */}
           {showProfile && (
-            <div className="panel profilePanel" onClick={e => e.stopPropagation()}>
-              <div className="panelHeader">
+            <div className={`${styles["panel"]} ${styles["profilePanel"]}`} onClick={e => e.stopPropagation()}>
+              <div className={styles["panelHeader"]}>
                 <div>
-                  <div className="panelTitle">Mi perfil</div>
-                  <div className="panelSub">Recepcionista · Kancha</div>
+                  <div className={styles["panelTitle"]}>Mi perfil</div>
+                  <div className={styles["panelSub"]}>Recepcionista · Kancha</div>
                 </div>
-                <button className="panelClose" onClick={() => setShowProfile(false)}>✕</button>
+                <button className={styles["panelClose"]} onClick={() => setShowProfile(false)}>✕</button>
               </div>
 
-              <div className="profileHero">
-                <div className="profileAvatarWrap">
-                  <div className="profileAvatar">{USER.initials}</div>
-                  <div className="profileStatusDot" />
+              <div className={styles["profileHero"]}>
+                <div className={styles["profileAvatarWrap"]}>
+                  <div className={styles["profileAvatar"]}>{USER.initials}</div>
+                  <div className={styles["profileStatusDot"]} />
                 </div>
                 <div style={{textAlign:"center"}}>
-                  <div className="profileName">{USER.name}</div>
-                  <div className="profileEmail">{USER.email}</div>
-                  <div className="profileBadge">En línea</div>
+                  <div className={styles["profileName"]}>{USER.name}</div>
+                  <div className={styles["profileEmail"]}>{USER.email}</div>
+                  <div className={styles["profileBadge"]}>En línea</div>
                 </div>
               </div>
 
-              <div className="profileInfoList">
-                <div className="profileInfoRow">
-                  <div className="profileInfoIcon">
+              <div className={styles["profileInfoList"]}>
+                <div className={styles["profileInfoRow"]}>
+                  <div className={styles["profileInfoIcon"]}>
                     <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                   </div>
                   <div>
-                    <div className="profileInfoLabel">Nombre completo</div>
-                    <div className="profileInfoValue">{USER.name}</div>
+                    <div className={styles["profileInfoLabel"]}>Nombre completo</div>
+                    <div className={styles["profileInfoValue"]}>{USER.name}</div>
                   </div>
                 </div>
-                <div className="profileInfoRow">
-                  <div className="profileInfoIcon">
+                <div className={styles["profileInfoRow"]}>
+                  <div className={styles["profileInfoIcon"]}>
                     <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 11.39 18 19.5 19.5 0 0 1 8 14.61 19.79 19.79 0 0 1 4.12 6.18 2 2 0 0 1 6.1 4h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L10.09 11a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 24 18z"/></svg>
                   </div>
                   <div>
-                    <div className="profileInfoLabel">Teléfono</div>
-                    <div className="profileInfoValue">{USER.phone}</div>
+                    <div className={styles["profileInfoLabel"]}>Teléfono</div>
+                    <div className={styles["profileInfoValue"]}>{USER.phone}</div>
                   </div>
                 </div>
-                <div className="profileInfoRow">
-                  <div className="profileInfoIcon">
+                <div className={styles["profileInfoRow"]}>
+                  <div className={styles["profileInfoIcon"]}>
                     <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                   </div>
                   <div>
-                    <div className="profileInfoLabel">Rol</div>
-                    <div className="profileInfoValue">{USER.role}</div>
+                    <div className={styles["profileInfoLabel"]}>Rol</div>
+                    <div className={styles["profileInfoValue"]}>{USER.role}</div>
                   </div>
                 </div>
               </div>
 
-              <div className="profileActions">
-                <button className="profileBtn">
+              <div className={styles["profileActions"]}>
+                <button className={styles["profileBtn"]}>
                   <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                   Editar perfil
                 </button>
-                <button className="profileBtn">
+                <button className={styles["profileBtn"]}>
                   <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                   Configuración
                 </button>
-                <button className="profileBtn logout" onClick={() => alert("Cerrando sesión...")}>
+                <button className={`${styles["profileBtn"]} ${styles["logout"]}`} onClick={() => alert("Cerrando sesión...")}>
                   <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                   Cerrar sesión
                 </button>

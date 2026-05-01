@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { DSAText } from "../../../components";
-import "./schedules.css";
+import styles from "./schedules.module.css";
 
 const hours = [
   "08:00 - 09:00","09:00 - 10:00","10:00 - 11:00","11:00 - 12:00",
@@ -40,47 +40,47 @@ const Schedule = () => {
   };
 
   const getStatusClass = (status) => {
-    if (status === "Disponible") return "available";
-    if (status === "Ocupado")    return "occupied";
-    if (status === "Bloqueado")  return "blocked";
+    if (status === "Disponible") return styles.available;
+    if (status === "Ocupado")    return styles.occupied;
+    if (status === "Bloqueado")  return styles.blocked;
     return "";
   };
 
   return (
     <div>
-      <div className="containerHeader">
-        <div className="headerTopSchedule">
+      <div className={styles["containerHeader"]}>
+        <div className={styles["headerTopSchedule"]}>
           <div>
             <DSAText variant="title">Horarios</DSAText>
             <DSAText variant="text" color="#6B7280">
               Configura los horarios disponibles para cada cancha
             </DSAText>
           </div>
-          <div className="scheduleLegend">
-            <span className="legendItem available">● Disponible</span>
-            <span className="legendItem occupied">● Ocupado</span>
-            <span className="legendItem blocked">● Bloqueado</span>
+          <div className={styles["scheduleLegend"]}>
+            <span className={`${styles["legendItem"]} ${styles["available"]}`}>● Disponible</span>
+            <span className={`${styles["legendItem"]} ${styles["occupied"]}`}>● Ocupado</span>
+            <span className={`${styles["legendItem"]} ${styles["blocked"]}`}>● Bloqueado</span>
           </div>
         </div>
       </div>
 
-      <div className="scheduleCard">
-        <div className="scheduleGrid">
-          <div className="scheduleHeader">Hora</div>
+      <div className={styles["scheduleCard"]}>
+        <div className={styles["scheduleGrid"]}>
+          <div className={styles["scheduleHeader"]}>Hora</div>
           {courts.map((court) => (
-            <div key={court.name} className="scheduleHeader">
-              <span className="courtName">{court.name}</span>
-              <span className="courtType">{court.type}</span>
+            <div key={court.name} className={styles["scheduleHeader"]}>
+              <span className={styles["courtName"]}>{court.name}</span>
+              <span className={styles["courtType"]}>{court.type}</span>
             </div>
           ))}
 
           {hours.map((hour) => (
             <React.Fragment key={hour}>
-              <div className="scheduleHour">{hour}</div>
+              <div className={styles["scheduleHour"]}>{hour}</div>
               {data[hour].map((status, i) => (
                 <button
                   key={`${hour}-${i}`}
-                  className={`scheduleCell ${getStatusClass(status)}`}
+                  className={`${styles["scheduleCell"]} ${getStatusClass(status)}`}
                   onClick={() => handleClick(hour, i)}
                   disabled={status === "Ocupado"}
                 >
@@ -92,7 +92,7 @@ const Schedule = () => {
         </div>
       </div>
 
-      <div className="scheduleFooter">
+      <div className={styles["scheduleFooter"]}>
         <strong>Instrucciones:</strong> Haz clic en un horario disponible para
         bloquearlo o desbloquearlo. Los horarios ocupados no se pueden modificar
         hasta que finalice la reserva.

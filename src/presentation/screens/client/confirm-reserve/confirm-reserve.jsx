@@ -1,15 +1,11 @@
 import styles from "./confirm-reserve.module.css";
 import { useState } from "react";
-import efectivoImg from "../../../../assets/MetodoPago/efectivo.png";
-import plinImg     from "../../../../assets/MetodoPago/plin.png";
-import visaImg     from "../../../../assets/MetodoPago/visa.png";
-import yapeImg     from "../../../../assets/MetodoPago/yape.webp";
 
 const PAYMENT_LOGOS = {
-  efectivo: efectivoImg,
-  tarjeta:  visaImg,
-  yape:     yapeImg,
-  plin:     plinImg,
+  efectivo: "/assets/MetodoPago/efectivo.png",
+  tarjeta:  "/assets/MetodoPago/visa.png",
+  yape:     "/assets/MetodoPago/yape.webp",
+  plin:     "/assets/MetodoPago/plin.png",
 };
 
 const PaymentLogo = ({ id }) => (
@@ -166,7 +162,7 @@ const ConfirmReserve = ({ court, schedule, date, onBack, onConfirm }) => {
             {payment === "yape" && (
               <div className={styles.paymentFields}>
                 <div className={styles.paymentInfo} style={{borderColor: "#7C3AED", background: "#FAF5FF"}}>
-                  <img src={yapeImg} alt="Yape" style={{width: "32px", height: "32px", objectFit: "contain"}} />
+                  <img src={PAYMENT_LOGOS.yape} alt="Yape" style={{width: "32px", height: "32px", objectFit: "contain"}} />
                   <div>
                     <p className={styles.paymentInfoTitle}>Yapea al <strong>987 654 321</strong></p>
                     <p className={styles.paymentInfoText}>Luego ingresa el número de operación.</p>
@@ -183,7 +179,7 @@ const ConfirmReserve = ({ court, schedule, date, onBack, onConfirm }) => {
           {payment === "plin" && (
             <div className={styles.paymentFields}>
               <div className={styles.paymentInfo} style={{borderColor: "#0284C7", background: "#F0F9FF"}}>
-                <img src={plinImg} alt="Plin" style={{width: "32px", height: "32px", objectFit: "contain"}} />
+                <img src={PAYMENT_LOGOS.plin} alt="Plin" style={{width: "32px", height: "32px", objectFit: "contain"}} />
                 <div>
                   <p className={styles.paymentInfoTitle}>Plin al <strong>987 654 321</strong></p>
                   <p className={styles.paymentInfoText}>Luego ingresa el número de operación.</p>
@@ -201,7 +197,7 @@ const ConfirmReserve = ({ court, schedule, date, onBack, onConfirm }) => {
         {payment === "efectivo" && (
           <div className={styles.paymentFields}>
             <div className={styles.paymentInfo} style={{borderColor: "#16A34A", background: "#F0FDF4"}}>
-              <img src={efectivoImg} alt="Efectivo" style={{width: "32px", height: "32px", objectFit: "contain"}} />
+              <img src={PAYMENT_LOGOS.efectivo} alt="Efectivo" style={{width: "32px", height: "32px", objectFit: "contain"}} />
               <div>
                 <p className={styles.paymentInfoTitle}>Pago en efectivo</p>
                 <p className={styles.paymentInfoText}>Paga directamente en recepción al llegar.</p>

@@ -1,4 +1,4 @@
-import "./admin.css";
+import styles from "./admin.module.css";
 import { DSANavbarVertical, DSATopBar } from "../../components";
 import { useState } from "react";
 import Dashboard from "./dashboard/dashboard";
@@ -103,10 +103,10 @@ const Admin = () => {
 
   return (
     <>
-      <div className="containerRecepcionist">
+      <div className={styles["containerRecepcionist"]}>
     {/* Overlay mobile */}
     <div
-      className={`sidebar-overlay ${sidebarOpen ? "is-open" : ""}`}
+      className={`${styles["sidebar-overlay"]} ${sidebarOpen ? styles["is-open"] : ""}`}
       onClick={() => setSidebarOpen(false)}
     />
 
@@ -119,9 +119,11 @@ const Admin = () => {
       isOpen={sidebarOpen}
     />
 
-    <main className="containerContent">
+    <main className={styles["containerContent"]}>
       <DSATopBar
         initials="AD"
+        userName="Admin Principal"
+        userRole="Administrador"
         onMenuClick={() => setSidebarOpen(true)}
         unreadCount={3}
       />

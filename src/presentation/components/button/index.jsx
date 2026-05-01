@@ -1,4 +1,4 @@
-import "./button.css";
+import styles from "./button.module.css";
 
 const Button = ({
   children,
@@ -11,7 +11,7 @@ const Button = ({
 }) => {
   return (
     <button
-      className={`btn btn-${variant}-${color}`}
+      className={`${styles["btn"]} ${styles[`btn-${variant}-${color}`]}`}
       disabled={disabled}
       onClick={onClick}
     >

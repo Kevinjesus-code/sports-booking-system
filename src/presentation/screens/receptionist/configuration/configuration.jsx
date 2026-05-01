@@ -1,4 +1,4 @@
-import "./configuration.css";
+import styles from "./configuration.module.css";
 import {
   DSAText,
   DSAFormSection,
@@ -34,12 +34,12 @@ const Configuration = () => {
   });
   return (
     <>
-      <div className="containerConfiguration">
+      <div className={styles["containerConfiguration"]}>
         <DSAText variant="title">Configuración</DSAText>
         <DSAText variant="text" color={"#6B7280"}>
           Administra las opciones del sistema
         </DSAText>
-        <div className="containerForm">
+        <div className={styles["containerForm"]}>
           <DSACard>
             <DSAFormSection title="General">
               <DSAInput
@@ -61,7 +61,7 @@ const Configuration = () => {
           </DSACard>
           <DSACard>
             <DSAFormSection title="Horarios de operación">
-              <div className="form-row">
+              <div className={styles["form-row"]}>
                 <DSATimeInput
                   label="Hora de apertura"
                   value={schedule.open}
@@ -78,7 +78,7 @@ const Configuration = () => {
           </DSACard>
           <DSACard>
             <DSAFormSection title="Canchas disponibles">
-              <div className="list">
+              <div className={styles["list"]}>
                 <DSASelectableItem
                   label="Fútbol 5"
                   checked={fields.futbol5}
@@ -102,7 +102,7 @@ const Configuration = () => {
               </div>
             </DSAFormSection>
           </DSACard>
-          <div className="containerButton">
+          <div className={styles["containerButton"]}>
             <DSAButton>Guardar Cambios</DSAButton>
           </div>
         </div>

@@ -15,8 +15,8 @@ const UsersTable = ({ data = [] }) => {
   };
 
   return (
-    <div className={styles["table-card"]}>
-      <div className={styles["table-wrapper"]}>
+    <div className={styles[styles["table-card"]]}>
+      <div className={styles[styles["table-wrapper"]]}>
         <table>
           <thead>
             <tr>

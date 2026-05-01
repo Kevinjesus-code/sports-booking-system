@@ -1,4 +1,4 @@
-import "./top-bar.css";
+import styles from "./top-bar.module.css";
 import { useState, useRef, useEffect } from "react";
 import NotificationsDropdown from "../notifications-dropdown";
 // import { useNavigate } from "react-router-dom";
@@ -29,7 +29,7 @@ const BellIcon = () => (
 
 const TopBar = ({
   initials      = "KM",
-  userName      = "Kevin Mamani",
+  userName      = "Kevin More Sandoval",
   userRole      = "Administrador",
   onMenuClick,
   unreadCount   = 3,
@@ -60,38 +60,38 @@ const TopBar = ({
     setActiveMenu((prev) => (prev === menu ? null : menu));
 
   return (
-    <div className="topbar">
+    <div className={styles["topbar"]}>
 
       {/* Hamburger */}
-      <button className="topbar-menu-btn" onClick={onMenuClick} aria-label="Menú">
+      <button className={styles["topbar-menu-btn"]} onClick={onMenuClick} aria-label="Menú">
         <MenuIcon />
       </button>
 
       {/* Search */}
-      <div className={`search-container${searchFocused ? " search-container--focused" : ""}`}>
-        <span className="search-icon"><SearchIcon /></span>
+      <div className={`${styles["search-container"]} ${searchFocused ? styles["search-container--focused"] : ""}`}>
+        <span className={styles["search-icon"]}><SearchIcon /></span>
         <input
           type="text"
           placeholder="Buscar reservas, clientes..."
-          className="search-input"
+          className={styles["search-input"]}
           onFocus={() => setSearchFocused(true)}
           onBlur={() => setSearchFocused(false)}
         />
       </div>
 
       {/* Right */}
-      <div className="topbar-right">
+      <div className={styles["topbar-right"]}>
 
         {/* Notificaciones */}
-        <div className="menu-wrapper" ref={notifRef}>
+        <div className={styles["menu-wrapper"]} ref={notifRef}>
           <button
-            className={`icon-btn${activeMenu === "notif" ? " icon-btn--active" : ""}`}
+            className={`${styles["icon-btn"]} ${activeMenu === "notif" ? styles["icon-btn--active"] : ""}`}
             onClick={() => toggleMenu("notif")}
             aria-label="Notificaciones"
           >
             <BellIcon />
             {unreadCount > 0 && (
-              <span className="notif-badge">{unreadCount > 9 ? "9+" : unreadCount}</span>
+              <span className={styles["notif-badge"]}>{unreadCount > 9 ? "9+" : unreadCount}</span>
             )}
           </button>
 
@@ -107,22 +107,22 @@ const TopBar = ({
           )}
         </div>
 
-        <span className="topbar-divider" />
+        <span className={styles["topbar-divider"]} />
 
         {/* Perfil */}
-        <div className="menu-wrapper" ref={profileRef}>
+        <div className={styles["menu-wrapper"]} ref={profileRef}>
           <button
-            className={`topbar-profile-btn${activeMenu === "profile" ? " topbar-profile-btn--active" : ""}`}
+            className={`${styles["topbar-profile-btn"]} ${activeMenu === "profile" ? styles["topbar-profile-btn--active"] : ""}`}
             onClick={() => toggleMenu("profile")}
             aria-label="Perfil de usuario"
           >
-            <span className="avatar">{initials}</span>
-            <span className="topbar-user-info">
-              <span className="topbar-user-name">{userName}</span>
-              <span className="topbar-user-role">{userRole}</span>
+            <span className={styles["avatar"]}>{initials}</span>
+            <span className={styles["topbar-user-info"]}>
+              <span className={styles["topbar-user-name"]}>{userName}</span>
+              <span className={styles["topbar-user-role"]}>{userRole}</span>
             </span>
             <svg
-              className={`topbar-chevron${activeMenu === "profile" ? " topbar-chevron--open" : ""}`}
+              className={`${styles["topbar-chevron"]} ${activeMenu === "profile" ? styles["topbar-chevron--open"] : ""}`}
               viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)"
               strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
               width="12" height="12">
@@ -131,17 +131,17 @@ const TopBar = ({
           </button>
 
           {activeMenu === "profile" && (
-            <div className="profile-dropdown">
-              <div className="profile-dropdown-header">
-                <div className="profile-dropdown-avatar">{initials}</div>
+            <div className={styles["profile-dropdown"]}>
+              <div className={styles["profile-dropdown-header"]}>
+                <div className={styles["profile-dropdown-avatar"]}>{initials}</div>
                 <div>
-                  <p className="profile-dropdown-name">{userName}</p>
-                  <p className="profile-dropdown-role">{userRole}</p>
+                  <p className={styles["profile-dropdown-name"]}>{userName}</p>
+                  <p className={styles["profile-dropdown-role"]}>{userRole}</p>
                 </div>
               </div>
 
-              <div className="profile-dropdown-body">
-                <button className="profile-item" onClick={() => {
+              <div className={styles["profile-dropdown-body"]}>
+                <button className={styles["profile-item"]} onClick={() => {
                   // navigate("/perfil");
                   setActiveMenu(null);
                 }}>
@@ -153,7 +153,7 @@ const TopBar = ({
                   Mi perfil
                 </button>
 
-                <button className="profile-item" onClick={() => {
+                <button className={styles["profile-item"]} onClick={() => {
                   // navigate("/configuracion");
                   setActiveMenu(null);
                 }}>
@@ -166,8 +166,8 @@ const TopBar = ({
                 </button>
               </div>
 
-              <div className="profile-dropdown-footer">
-                <button className="profile-item profile-item--danger" onClick={() => {
+              <div className={styles["profile-dropdown-footer"]}>
+                <button className={`${styles["profile-item"]} ${styles["profile-item--danger"]}`} onClick={() => {
                   console.log("Cerrar sesión");
                   setActiveMenu(null);
                 }}>
