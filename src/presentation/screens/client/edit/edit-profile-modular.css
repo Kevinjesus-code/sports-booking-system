@@ -1,0 +1,203 @@
+/* ===============================
+   Edit-profile-modular.css
+   Diseño Profesional estilo GitHub
+================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+  background: #07944d;
+  color: #e6edf3;
+}
+
+/* CONTENEDOR GENERAL */
+.container-profile {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+/* TARJETA PERFIL */
+.profile-card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 14px;
+  padding: 30px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+}
+
+/* CABECERA PERFIL */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  margin-bottom: 25px;
+}
+
+.profile-header img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid #238636;
+  object-fit: cover;
+}
+
+.profile-info h2 {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.profile-info p {
+  color: #8b949e;
+  font-size: 15px;
+}
+
+/* DATOS */
+.profile-details {
+  margin-top: 20px;
+}
+
+.profile-details .row {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid #30363d;
+}
+
+.profile-details .row span:first-child {
+  color: #8b949e;
+}
+
+/* BOTONES */
+.profile-actions {
+  margin-top: 25px;
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.btn-edit {
+  background: #238636;
+  color: white;
+}
+
+.btn-edit:hover {
+  background: #2ea043;
+}
+
+.btn-password {
+  background: #1f6feb;
+  color: white;
+}
+
+.btn-password:hover {
+  background: #388bfd;
+}
+
+.btn-logout {
+  background: #da3633;
+  color: white;
+}
+
+.btn-logout:hover {
+  background: #f85149;
+}
+
+/* MODAL */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(1,4,9,0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* CAJA MODAL */
+.modal-content {
+  background: #161b22;
+  padding: 30px;
+  width: 420px;
+  border-radius: 14px;
+  border: 1px solid #30363d;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content h3 {
+  margin-bottom: 20px;
+  font-size: 22px;
+}
+
+/* INPUTS */
+.modal-content input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 14px;
+  border: 1px solid #30363d;
+  background: #0d1117;
+  color: white;
+  border-radius: 8px;
+  outline: none;
+}
+
+.modal-content input:focus {
+  border-color: #1f6feb;
+}
+
+/* BOTONES MODAL */
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ANIMACIÓN */
+@keyframes fadeIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-details .row {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .profile-actions {
+    flex-direction: column;
+  }
+
+  .modal-content {
+    width: 90%;
+  }
+}

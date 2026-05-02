@@ -5,6 +5,8 @@ import Client from "./screens/client";
 import Login from "./screens/login";
 import Register from "./screens/register/register";
 
+
+
 function App() {
   const [currentFlow, setCurrentFlow] = useState("login");
 
@@ -29,6 +31,7 @@ function App() {
       {currentFlow === "client" && <Client />}
       {currentFlow === "login" && <Login onLogin={handleLogin} onRegister={() => setCurrentFlow("register")} />}
       {currentFlow === "register" && <Register onGoToLogin={() => setCurrentFlow("login")} />}
+     
     </>
   );
 }
