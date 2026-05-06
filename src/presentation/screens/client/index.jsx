@@ -14,6 +14,10 @@ const CLIENT_DATA = {
   email: "juan.perez@email.com",
   telefono: "912 123 123",
   initials: "JP",
+  documento: "DNI",
+  numeroDocumento: "12345678",
+  metodoPago: "Yape",
+  direccion: "Lima, Perú",
 };
 
 const Client = () => {
@@ -72,12 +76,12 @@ const Client = () => {
     <>
       <DSANavbarClient
         initials={CLIENT_DATA.initials}
-        onHome={handleHome}                          // ← NUEVO
+        onHome={handleHome} // ← NUEVO
         onOpenReservations={() => setShowModal(true)}
         reservationCount={reservations.length}
-        onOpenProfile={() => setShowProfile(true)}   // ← NUEVO
+        onOpenProfile={() => setShowProfile(true)} // ← NUEVO
       />
-
+      
       <div className={styles.container}>
         {isReserved ? (
           <Resumen

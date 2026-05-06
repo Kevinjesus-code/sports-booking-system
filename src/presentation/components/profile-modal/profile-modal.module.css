@@ -134,5 +134,46 @@
   cursor: pointer;
   transition: background 0.2s;
 }
+.editBtn {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+  width: 100%;
+}
+
+.editBtn:hover {
+  background: #1d4ed8;
+}
+.input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.saveBtn {
+  margin-top: 10px;
+  padding: 10px;
+  background: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.cancelBtn {
+  margin-top: 5px;
+  padding: 10px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
 
 .logoutBtn:hover { background: #fee2e2; }

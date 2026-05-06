@@ -1,74 +1,152 @@
+import { useState } from "react";
 import styles from "./profile-modal.module.css";
 
 const ProfileModal = ({ client, reservationCount = 0, onClose }) => {
+  const [editMode, setEditMode] = useState(false);
+
+  const [formData, setFormData] = useState({
+    nombre: client.nombre,
+    email: client.email,
+    telefono: client.telefono,
+    documento: client.documento,
+    numeroDocumento: client.numeroDocumento,
+    direccion: client.direccion,
+    metodoPago: client.metodoPago,
+  });
+
+  const handleChange = (campo, valor) => {
+    setFormData({ ...formData, [campo]: valor });
+  };
+
+  const handleSave = () => {
+    // Aquí luego puedes conectar con backend
+    console.log("Datos guardados:", formData);
+    setEditMode(false);
+  };
+
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
-
-        {/* Header verde */}
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+        {/* HEADER */}
         <div className={styles.modalHeader}>
-          <button className={styles.closeBtn} onClick={onClose} aria-label="Cerrar">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+          <button className={styles.closeBtn} onClick={onClose}>
+            ✕
           </button>
-          <div className={styles.avatarLarge}>{client.initials}</div>
-          <h2 className={styles.clientName}>{client.nombre}</h2>
+          <div className={styles.avatarLarge}>
+            {formData.nombre
+              .split(" ")
+              .map((n) => n[0])
+              .join("")}
+          </div>
+          <h2 className={styles.clientName}>{formData.nombre}</h2>
           <span className={styles.clientTag}>Cliente</span>
         </div>
 
-        {/* Info */}
+        {/* BODY */}
         <div className={styles.modalBody}>
-          <div className={styles.infoItem}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-              <polyline points="22,6 12,13 2,6"/>
-            </svg>
-            <div>
-              <span className={styles.infoLabel}>Correo</span>
-              <span className={styles.infoValue}>{client.email}</span>
-            </div>
-          </div>
+          {!editMode ? (
+            <>
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>Correo</span>
+                <span className={styles.infoValue}>{formData.email}</span>
+              </div>
 
-          <div className={styles.infoItem}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
-            </svg>
-            <div>
-              <span className={styles.infoLabel}>Teléfono</span>
-              <span className={styles.infoValue}>{client.telefono}</span>
-            </div>
-          </div>
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>Teléfono</span>
+                <span className={styles.infoValue}>{formData.telefono}</span>
+              </div>
 
-          <div className={styles.infoItem}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-              <line x1="16" y1="2" x2="16" y2="6"/>
-              <line x1="8" y1="2" x2="8" y2="6"/>
-              <line x1="3" y1="10" x2="21" y2="10"/>
-            </svg>
-            <div>
-              <span className={styles.infoLabel}>Reservas realizadas</span>
-              <span className={styles.infoValue}>{reservationCount}</span>
-            </div>
-          </div>
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>Documento</span>
+                <span className={styles.infoValue}>
+                  {formData.documento} - {formData.numeroDocumento}
+                </span>
+              </div>
 
-          <button className={styles.logoutBtn}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-              <polyline points="16 17 21 12 16 7"/>
-              <line x1="21" y1="12" x2="9" y2="12"/>
-            </svg>
-            Cerrar sesión
-          </button>
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>Dirección</span>
+                <span className={styles.infoValue}>{formData.direccion}</span>
+              </div>
+
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>Método de pago</span>
+                <span className={styles.infoValue}>{formData.metodoPago}</span>
+              </div>
+
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>Reservas</span>
+                <span className={styles.infoValue}>{reservationCount}</span>
+              </div>
+
+              <button
+                className={styles.editBtn}
+                onClick={() => setEditMode(true)}
+              >
+                ✏️ Editar perfil
+              </button>
+
+              <button className={styles.logoutBtn}>🚪 Cerrar sesión</button>
+            </>
+          ) : (
+            <>
+              <input
+                className={styles.input}
+                value={formData.nombre}
+                onChange={(e) => handleChange("nombre", e.target.value)}
+                placeholder="Nombre"
+              />
+
+              <input
+                className={styles.input}
+                value={formData.email}
+                onChange={(e) => handleChange("email", e.target.value)}
+                placeholder="Correo"
+              />
+
+              <input
+                className={styles.input}
+                value={formData.telefono}
+                onChange={(e) => handleChange("telefono", e.target.value)}
+                placeholder="Teléfono"
+              />
+
+              <input
+                className={styles.input}
+                value={formData.numeroDocumento}
+                onChange={(e) =>
+                  handleChange("numeroDocumento", e.target.value)
+                }
+                placeholder="Documento"
+              />
+
+              <input
+                className={styles.input}
+                value={formData.direccion}
+                onChange={(e) => handleChange("direccion", e.target.value)}
+                placeholder="Dirección"
+              />
+
+              <input
+                className={styles.input}
+                value={formData.metodoPago}
+                onChange={(e) => handleChange("metodoPago", e.target.value)}
+                placeholder="Método de pago"
+              />
+
+              <button className={styles.saveBtn} onClick={handleSave}>
+                💾 Guardar
+              </button>
+
+              <button
+                className={styles.cancelBtn}
+                onClick={() => setEditMode(false)}
+              >
+                Cancelar
+              </button>
+            </>
+          )}
         </div>
-
+        
       </div>
     </div>
   );
