@@ -69,7 +69,9 @@ const Login = ({ onLogin, onRegister }) => {
       <div className={styles.container}>
         <div className={styles.loginContent}>
           <div className={styles.loginHeader}>
-            <div className={styles.loginIconBox}><img src="/assets/img/Logo.JPG" alt="" className={styles.logo} /></div>
+            <div className={styles.loginIconBox}>
+              <img src="/assets/img/Logo.JPG" alt="" className={styles.logo} />
+            </div>
             <h1 className={styles.loginTitle}>Bienvenido</h1>
             <p className={styles.loginSubtitle}>
               Ingresa a tu cuenta para continuar

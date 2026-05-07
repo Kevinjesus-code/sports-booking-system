@@ -3,8 +3,9 @@ import Courts from "./courts/courts";
 import Schedules from "./schedules/schedules";
 import ConfirmReserve from "./confirm-reserve/confirm-reserve";
 import Resumen from "./resumen/resumen";
+import Profile from "./profile/profile";
 import ReservationsModal from "../../components/reservations-modal";
-import ProfileModal from "../../components/profile-modal"; // ← NUEVO
+import ProfileModal from "../../components/profile-modal";
 import styles from "./client.module.css";
 import { useState } from "react";
 
@@ -28,7 +29,8 @@ const Client = () => {
   const [customerData, setCustomerData]         = useState(null);
   const [reservations, setReservations]         = useState([]);
   const [showModal, setShowModal]               = useState(false);
-  const [showProfile, setShowProfile]           = useState(false); // ← NUEVO
+  const [showProfile, setShowProfile]           = useState(false);
+  const [isViewingProfile, setIsViewingProfile] = useState(false);
 
   // ── Vuelve al estado inicial ──────────────────────
   const handleHome = () => {
@@ -74,57 +76,63 @@ const Client = () => {
 
   return (
     <>
-      <DSANavbarClient
-        initials={CLIENT_DATA.initials}
-        onHome={handleHome} // ← NUEVO
-        onOpenReservations={() => setShowModal(true)}
-        reservationCount={reservations.length}
-        onOpenProfile={() => setShowProfile(true)} // ← NUEVO
-      />
-      
-      <div className={styles.container}>
-        {isReserved ? (
-          <Resumen
-            court={selectedCourt}
-            schedule={selectedSchedule}
-            date={selectedDate}
-            customerData={customerData}
-            onNewReservation={handleNewReservation}
-            onViewReservations={() => setShowModal(true)}
+      {isViewingProfile ? (
+        <Profile onBack={() => setIsViewingProfile(false)} />
+      ) : (
+        <>
+          <DSANavbarClient
+            initials={CLIENT_DATA.initials}
+            onHome={handleHome}
+            onOpenReservations={() => setShowModal(true)}
+            reservationCount={reservations.length}
+            onOpenProfile={() => setShowProfile(true)}
           />
-        ) : selectedSchedule ? (
-          <ConfirmReserve
-            court={selectedCourt}
-            schedule={selectedSchedule}
-            date={selectedDate}
-            onBack={handleBackToSchedules}
-            onConfirm={handleConfirmReservation}
-          />
-        ) : selectedCourt ? (
-          <Schedules
-            court={selectedCourt}
-            onBack={handleBackToCourts}
-            onSelectSchedule={handleSelectSchedule}
-          />
-        ) : (
-          <Courts onSelectCourt={setSelectedCourt} />
-        )}
-      </div>
+          
+          <div className={styles.container}>
+            {isReserved ? (
+              <Resumen
+                court={selectedCourt}
+                schedule={selectedSchedule}
+                date={selectedDate}
+                customerData={customerData}
+                onNewReservation={handleNewReservation}
+                onViewReservations={() => setShowModal(true)}
+              />
+            ) : selectedSchedule ? (
+              <ConfirmReserve
+                court={selectedCourt}
+                schedule={selectedSchedule}
+                date={selectedDate}
+                onBack={handleBackToSchedules}
+                onConfirm={handleConfirmReservation}
+              />
+            ) : selectedCourt ? (
+              <Schedules
+                court={selectedCourt}
+                onBack={handleBackToCourts}
+                onSelectSchedule={handleSelectSchedule}
+              />
+            ) : (
+              <Courts onSelectCourt={setSelectedCourt} />
+            )}
+          </div>
 
-      {showModal && (
-        <ReservationsModal
-          reservations={reservations}
-          onClose={() => setShowModal(false)}
-        />
-      )}
+          {showModal && (
+            <ReservationsModal
+              reservations={reservations}
+              onClose={() => setShowModal(false)}
+            />
+          )}
 
-      {/* ── NUEVO ── */}
-      {showProfile && (
-        <ProfileModal
-          client={CLIENT_DATA}
-          reservationCount={reservations.length}
-          onClose={() => setShowProfile(false)}
-        />
+          {showProfile && (
+            <ProfileModal
+              client={CLIENT_DATA}
+              reservationCount={reservations.length}
+              onClose={() => setShowProfile(false)}
+              onViewAccount={() => setIsViewingProfile(true)}
+            />
+          )}
+        </>
       )}
     </>
   );
