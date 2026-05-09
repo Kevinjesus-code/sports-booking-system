@@ -1,39 +1,7 @@
-import { useState, useCallback } from 'react';
-import { loginRequest, registerRequest } from '../../infrastructure/api/auth.api';
-export function useAuth() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+import client from './client';
 
-  const login = useCallback(async (email, password) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await loginRequest(email, password);
-      setUser(response.data);
-      return response.data;
-    } catch (err) {
-      setError(err.response?.data?.message ?? err.response?.data ?? 'Error al iniciar sesión');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+export const loginRequest = (email, password) =>
+  client.post('/auth/login', { email, password });
 
-  const handleRegister = useCallback(async (datos) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await registerRequest(datos);
-      setUser(response.data);
-      return response.data;
-    } catch (err) {
-      setError(err.response?.data?.message ?? err.response?.data ?? 'Error al registrarse');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  return { user, loading, error, login, handleRegister };
-}
+export const registerRequest = (datos) =>
+  client.post('/auth/register', datos);
