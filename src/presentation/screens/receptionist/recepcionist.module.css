@@ -107,6 +107,76 @@
 .profileBtn.logout { color: #dc2626; border-color: #fecaca; }
 .profileBtn.logout:hover { background: #fef2f2; }
 
+.profileEditForm {
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-bottom: 0.5px solid #f0f0f0;
+}
+
+.profileEditForm label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.profileEditForm input {
+  width: 100%;
+  height: 38px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0 10px;
+  color: #111827;
+  font-size: 13px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.profileEditForm input:focus {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+}
+
+.profileEditActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.profileSaveBtn,
+.profileCancelBtn {
+  height: 36px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.profileSaveBtn {
+  border: none;
+  background: #16a34a;
+  color: white;
+}
+
+.profileSaveBtn:hover {
+  background: #15803d;
+}
+
+.profileCancelBtn {
+  border: 1px solid #e5e7eb;
+  background: white;
+  color: #374151;
+}
+
+.profileCancelBtn:hover {
+  background: #f9fafb;
+}
+
 /* ── NOTIFICACIONES ── */
 .notifPanel { width: 320px; }
 

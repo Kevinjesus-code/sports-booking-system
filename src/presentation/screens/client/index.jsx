@@ -4,8 +4,8 @@ import Schedules from "./schedules/schedules";
 import ConfirmReserve from "./confirm-reserve/confirm-reserve";
 import Resumen from "./resumen/resumen";
 import Profile from "./profile/profile";
+import Configuration from "./configuration/configuration";
 import ReservationsModal from "../../components/reservations-modal";
-import ProfileModal from "../../components/profile-modal";
 import styles from "./client.module.css";
 import { useState } from "react";
 
@@ -29,8 +29,8 @@ const Client = () => {
   const [customerData, setCustomerData]         = useState(null);
   const [reservations, setReservations]         = useState([]);
   const [showModal, setShowModal]               = useState(false);
-  const [showProfile, setShowProfile]           = useState(false);
   const [isViewingProfile, setIsViewingProfile] = useState(false);
+  const [isViewingSettings, setIsViewingSettings] = useState(false);
 
   // ── Vuelve al estado inicial ──────────────────────
   const handleHome = () => {
@@ -39,6 +39,23 @@ const Client = () => {
     setSelectedDate(null);
     setIsReserved(false);
     setCustomerData(null);
+    setIsViewingProfile(false);
+    setIsViewingSettings(false);
+  };
+
+  const handleOpenProfile = () => {
+    setIsViewingProfile(true);
+    setIsViewingSettings(false);
+  };
+
+  const handleOpenSettings = () => {
+    setIsViewingSettings(true);
+    setIsViewingProfile(false);
+  };
+
+  const handleBackToClient = () => {
+    setIsViewingProfile(false);
+    setIsViewingSettings(false);
   };
 
   const handleSelectSchedule = (schedule, date) => {
@@ -77,15 +94,21 @@ const Client = () => {
   return (
     <>
       {isViewingProfile ? (
-        <Profile onBack={() => setIsViewingProfile(false)} />
+        <Profile onBack={handleBackToClient} startEditing />
+      ) : isViewingSettings ? (
+        <Configuration onBack={handleBackToClient} />
       ) : (
         <>
           <DSANavbarClient
             initials={CLIENT_DATA.initials}
+            userName={CLIENT_DATA.nombre}
+            userRole="Cliente"
             onHome={handleHome}
             onOpenReservations={() => setShowModal(true)}
             reservationCount={reservations.length}
-            onOpenProfile={() => setShowProfile(true)}
+            onOpenProfile={handleOpenProfile}
+            onOpenSettings={handleOpenSettings}
+            onLogout={() => alert("Cerrando sesion...")}
           />
           
           <div className={styles.container}>
@@ -124,14 +147,6 @@ const Client = () => {
             />
           )}
 
-          {showProfile && (
-            <ProfileModal
-              client={CLIENT_DATA}
-              reservationCount={reservations.length}
-              onClose={() => setShowProfile(false)}
-              onViewAccount={() => setIsViewingProfile(true)}
-            />
-          )}
         </>
       )}
     </>

@@ -1,20 +1,27 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ProfileHeader, ProfileDisplay, ProfileForm } from "./components";
 import { useProfileData } from "./hooks/useProfileData";
 import { DSAButton } from "../../../components";
 import styles from "./profile.module.css";
 
-const Profile = ({ onBack }) => {
+const DEFAULT_USER_DATA = {
+  nombre: "Rudy",
+  apellido: "Davila",
+  dni: "12345678A",
+  email: "rudydavisrd2054@gmail.com",
+  telefono: "+34 600 123 456",
+};
+
+const Profile = ({ onBack, startEditing = false }) => {
   const {
     profileData,
-    setProfileData,
     editableData,
     handleEditableDataChange,
     isEditing,
     handleEditToggle,
     handleSaveChanges,
     errors,
-  } = useProfileData();
+  } = useProfileData(DEFAULT_USER_DATA, startEditing);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
@@ -54,18 +61,6 @@ const Profile = ({ onBack }) => {
     );
   };
 
-  useEffect(() => {
-    const userData = {
-      nombre: "Rudy",
-      apellido: "Dávila",
-      dni: "12345678A",
-      email: "rudydavisrd2054@gmail.com",
-      telefono: "+34 600 123 456",
-    };
-
-    setProfileData(userData);
-  }, [setProfileData]);
-
   const handleSave = () => {
     if (handleSaveChanges()) {
       console.log("Cambios guardados:", profileData);
@@ -82,7 +77,7 @@ const Profile = ({ onBack }) => {
         <div className={styles["back-button-wrapper"]}>
           {onBack && (
             <DSAButton variant="outline" color="primary" onClick={onBack}>
-              ← Volver
+              Volver
             </DSAButton>
           )}
         </div>
@@ -100,7 +95,7 @@ const Profile = ({ onBack }) => {
               <span></span>
               <span></span>
             </span>
-            <span>Menú lateral</span>
+            <span>Menu lateral</span>
           </button>
 
           {isMobileMenuOpen && (
@@ -108,7 +103,7 @@ const Profile = ({ onBack }) => {
               type="button"
               className={styles["sidebar-overlay"]}
               onClick={() => setIsMobileMenuOpen(false)}
-              aria-label="Cerrar menú lateral"
+              aria-label="Cerrar menu lateral"
             />
           )}
 

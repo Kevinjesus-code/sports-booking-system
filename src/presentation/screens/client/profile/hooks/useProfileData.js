@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export const useProfileData = (initialData = {}) => {
+export const useProfileData = (initialData = {}, initialEditing = false) => {
   const [profileData, setProfileData] = useState(initialData);
   const [editableData, setEditableData] = useState({
     email: initialData?.email || "",
@@ -8,7 +8,7 @@ export const useProfileData = (initialData = {}) => {
     password: "",
     confirmPassword: "",
   });
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(initialEditing);
   const [errors, setErrors] = useState({});
 
   const validateEmail = (email) => {
