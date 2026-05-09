@@ -26,18 +26,15 @@ const Login = ({ onRegister }) => {
   const { login, loading, error } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const user = await login(email, password);
-      if (user.role === "ADMIN")               navigate("/admin/dashboard");
-      else if (user.role === "CLIENTE")        navigate("/cliente/dashboard");
-      else if (user.role === "RECEPCIONISTA")  navigate("/recepcionista/dashboard");
-    } catch (_) {
-      // el error ya lo maneja useAuth en `error`
-    }
-  };
-
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const user = await login(email, password);
+    onLogin(user.rol);
+  } catch (_) {
+    // el error ya lo maneja useAuth en `error`
+  }
+};
   return (
     <div className={styles.loginContainer}>
       <div className={styles.containerIlustration}>
