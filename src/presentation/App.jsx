@@ -9,24 +9,21 @@ function App() {
   const [currentFlow, setCurrentFlow] = useState("login");
 
   const handleLogin = (rol) => {
-  if (rol === "ADMIN")              setCurrentFlow("admin");
-  else if (rol === "CLIENTE")       setCurrentFlow("client");
-  else if (rol === "RECEPCIONISTA") setCurrentFlow("receptionist");
-  else alert("Rol no reconocido: " + rol);
-};
+    if (rol === "ADMIN")              setCurrentFlow("admin");
+    else if (rol === "CLIENTE")       setCurrentFlow("client");
+    else if (rol === "RECEPCIONISTA") setCurrentFlow("receptionist");
+    else alert("Rol no reconocido: " + rol);
+  };
 
-const handleLogout = () => {
-  setCurrentFlow('login');
-};
-
-// en el return:
-{currentFlow === "client" && <Client onLogout={handleLogout} />}
+  const handleLogout = () => {
+    setCurrentFlow("login");
+  };
 
   return (
     <>
-      {currentFlow === "admin" && <Admin />}
-      {currentFlow === "receptionist" && <Recepcionist />}
-      {currentFlow === "client" && <Client />}
+      {currentFlow === "admin" && <Admin onLogout={handleLogout} />}
+      {currentFlow === "receptionist" && <Recepcionist onLogout={handleLogout} />}
+      {currentFlow === "client" && <Client onLogout={handleLogout} />}  {/* ← aquí estaba el error */}
       {currentFlow === "login" && (
         <Login
           onLogin={handleLogin}
