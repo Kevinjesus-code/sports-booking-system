@@ -3,6 +3,7 @@ import { ProfileHeader, ProfileDisplay, ProfileForm } from "./components";
 import { useProfileData } from "./hooks/useProfileData";
 import { DSAButton } from "../../../components";
 import styles from "./profile.module.css";
+import client from "../../../../infrastructure/api/client"; // ← correcto
 
 const Profile = ({ onBack }) => {
   const {
@@ -51,11 +52,7 @@ const Profile = ({ onBack }) => {
         </>
       ),
     };
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        {paths[icon]}
-      </svg>
-    );
+    return <svg viewBox="0 0 24 24" aria-hidden="true">{paths[icon]}</svg>;
   };
 
   const handleSave = async () => {
@@ -72,6 +69,45 @@ const Profile = ({ onBack }) => {
     resetEditableData();
     setActiveSection(section);
     setIsMobileMenuOpen(false);
+  };
+
+  // ── Cambiar email ──────────────────────────────────────────────────────────
+  const handleCambiarEmail = async (emailActual, emailNuevo, password) => {
+    try {
+      const { data } = await client.put("/perfil/email", {
+        emailActual,
+        emailNuevo,
+        password,
+      });
+
+      // Si el backend devuelve nuevo token, actualízalo
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+
+      return true;
+    } catch (error) {
+      const mensaje = error.response?.data?.error || "Error al cambiar el correo";
+      alert(mensaje);
+      return false;
+    }
+  };
+
+  // ── Cambiar contraseña ─────────────────────────────────────────────────────
+  const handleCambiarPassword = async (passwordActual, passwordNuevo, passwordConfirm) => {
+    try {
+      await client.put("/perfil/password", {
+        passwordActual,
+        passwordNuevo,
+        passwordConfirm,
+      });
+
+      return true;
+    } catch (error) {
+      const mensaje = error.response?.data?.error || "Error al cambiar la contraseña";
+      alert(mensaje);
+      return false;
+    }
   };
 
   return (
@@ -178,7 +214,9 @@ const Profile = ({ onBack }) => {
                     <input placeholder="**** **** **** 1234" />
                   </label>
                 </div>
-                <button className={styles["primary-action"]}>Guardar metodo de pago</button>
+                <button className={styles["primary-action"]}>
+                  Guardar metodo de pago
+                </button>
               </div>
             ) : activeSection === "reservations" ? (
               <div className={styles["payments-panel"]}>
@@ -193,6 +231,8 @@ const Profile = ({ onBack }) => {
                 onSaveChanges={handleSave}
                 onCancel={handleCancel}
                 errors={errors}
+                onCambiarEmail={handleCambiarEmail}
+                onCambiarPassword={handleCambiarPassword}
               />
             )}
           </main>
