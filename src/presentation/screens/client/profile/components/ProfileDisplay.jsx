@@ -1,63 +1,55 @@
-import { DSAText } from "../../../../components";
-import styles from "./profile-display.module.css";
+// RUTA: src/presentation/screens/client/profile/components/ProfileDisplay.jsx
+
+import styles from './profile-display.module.css';
+
+const Field = ({ label, value }) => (
+  <div className={styles['field']}>
+    <span className={styles['field-label']}>{label}</span>
+    <span className={styles['field-value']}>{value || '—'}</span>
+  </div>
+);
 
 const ProfileDisplay = ({ data, onChangeEmail, onChangePassword }) => {
-  const fields = [
-    { label: "Nombre", value: data?.nombre },
-    { label: "Apellido", value: data?.apellido },
-    { label: "DNI", value: data?.dni },
-    { label: "Correo electrónico", value: data?.email },
-    { label: "Teléfono", value: data?.telefono },
-  ];
+  if (!data) return null;
 
   return (
-    <div className={styles["display-container"]}>
-      <div className={styles["status-card"]}>
-        <span>Esta cuenta fue creada el 06/05/26</span>
-        <span className={styles["check-icon"]} aria-hidden="true">
-          <svg viewBox="0 0 24 24">
-            <path d="m7 12 3 3 7-7" />
-          </svg>
-        </span>
-      </div>
-
-      <div className={styles["account-actions"]}>
-        <div className={styles["account-row"]}>
-          <span className={styles["row-icon"]} aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M20 21a8 8 0 0 0-16 0" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-          </span>
-          <span>{data?.email || "-"}</span>
+    <div className={styles['profile-display']}>
+      <section className={styles['section']}>
+        <h2 className={styles['section-title']}>Información personal</h2>
+        <div className={styles['fields-grid']}>
+          <Field label="Nombre"   value={data.nombre} />
+          <Field label="Apellido" value={data.apellido} />
+          <Field label="DNI"      value={data.dni} />
+          <Field label="Teléfono" value={data.telefono} />
         </div>
-        <button type="button" onClick={onChangeEmail}>Cambiar correo</button>
+      </section>
 
-        <div className={styles["account-row"]}>
-          <span className={styles["row-icon"]} aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="m21 2-2 2" />
-              <path d="m15 8 2-2" />
-              <circle cx="7.5" cy="16.5" r="5.5" />
-              <path d="m14 10 7-7" />
-            </svg>
-          </span>
-          <span>********</span>
+      <section className={styles['section']}>
+        <h2 className={styles['section-title']}>Cuenta</h2>
+        <div className={styles['fields-grid']}>
+          <Field label="Correo electrónico" value={data.email} />
+          <Field label="Rol"                value={data.rol} />
+          <Field label="Estado"             value={data.activo ? 'Activo' : 'Inactivo'} />
+          <Field
+            label="Miembro desde"
+            value={data.fechaCreacion
+              ? new Date(data.fechaCreacion).toLocaleDateString('es-PE')
+              : '—'}
+          />
         </div>
-        <button type="button" onClick={onChangePassword}>Cambiar contrasena</button>
-      </div>
+      </section>
 
-      <div className={styles["fields-grid"]}>
-        <DSAText variant="subtitle" align="left">
-          Mis datos
-        </DSAText>
-        {fields.map((field) => (
-          <div key={field.label} className={styles["field-item"]}>
-            <p className={styles["field-label"]}>{field.label}</p>
-            <p className={styles["field-value"]}>{field.value || "-"}</p>
-          </div>
-        ))}
-      </div>
+      <section className={styles['section']}>
+        <h2 className={styles['section-title']}>Seguridad</h2>
+        <div className={styles['actions-row']}>
+          <button className={styles['action-btn']} onClick={onChangeEmail}>
+            Cambiar correo
+          </button>
+          <button className={styles['action-btn']} onClick={onChangePassword}>
+            Cambiar contraseña
+          </button>
+        </div>
+      </section>
     </div>
   );
 };

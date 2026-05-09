@@ -1,163 +1,249 @@
-import { useState } from "react";
-import { DSAButton } from "../../../../components";
-import styles from "./profile-form.module.css";
+// RUTA: src/presentation/screens/client/profile/components/ProfileForm.jsx
 
-const EyeIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
-    <circle cx="12" cy="12" r="3" />
-  </svg>
-);
+import { useState } from 'react';
+import styles from './profile-form.module.css';
 
-const EyeOffIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 3l18 18" />
-    <path d="M10.6 10.6A3 3 0 0 0 12 15a3 3 0 0 0 2.4-1.2" />
-    <path d="M9.9 4.2A10.4 10.4 0 0 1 12 4c6.5 0 10 8 10 8a18.1 18.1 0 0 1-3.3 4.4" />
-    <path d="M6.1 6.1C3.5 7.9 2 12 2 12s3.5 8 10 8a10.7 10.7 0 0 0 5-1.2" />
-  </svg>
-);
-
-const TextField = ({ label, value, onChange, placeholder, type = "text", error }) => (
-  <div className={styles["form-group"]}>
-    <label className={styles["field-label"]}>{label}</label>
+const InputField = ({ label, name, value, onChange, error, type = 'text', disabled }) => (
+  <div className={styles['form-group']}>
+    <label className={styles['form-label']}>{label}</label>
     <input
-      className={styles["text-input"]}
+      className={`${styles['form-input']} ${error ? styles['form-input-error'] : ''}`}
       type={type}
-      placeholder={placeholder}
-      value={value}
-      onChange={(event) => onChange(event.target.value)}
+      value={value || ''}
+      onChange={(e) => onChange(name, e.target.value)}
+      disabled={disabled}
     />
-    {error && <span className={styles["error-message"]}>{error}</span>}
-  </div>
-);
-
-const PasswordField = ({
-  label,
-  placeholder,
-  value,
-  onChange,
-  isVisible,
-  onToggleVisible,
-  error,
-}) => (
-  <div className={styles["form-group"]}>
-    <label className={styles["field-label"]}>{label}</label>
-    <div className={styles["password-wrapper"]}>
-      <input
-        className={styles["password-input"]}
-        type={isVisible ? "text" : "password"}
-        placeholder={placeholder}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-      />
-      <button
-        className={styles["password-toggle"]}
-        type="button"
-        onClick={onToggleVisible}
-        aria-label={isVisible ? "Ocultar contrasena" : "Mostrar contrasena"}
-      >
-        {isVisible ? <EyeOffIcon /> : <EyeIcon />}
-      </button>
-    </div>
-    {error && <span className={styles["error-message"]}>{error}</span>}
+    {error && <span className={styles['form-error']}>{error}</span>}
   </div>
 );
 
 const ProfileForm = ({
-  mode = "profile",
+  mode,
   editableData,
   onEditableDataChange,
   onSaveChanges,
   onCancel,
+  onCambiarEmail,
+  onCambiarPassword,
   errors,
+  saving,
 }) => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [emailForm, setEmailForm] = useState({
+    emailActual: '',
+    emailNuevo:  '',
+    password:    '',
+  });
 
-  const titleByMode = {
-    profile: "Editar perfil",
-    email: "Cambiar correo",
-    password: "Cambiar Contrasena",
-  };
+  const [passForm, setPassForm] = useState({
+    passwordActual:  '',
+    passwordNuevo:   '',
+    passwordConfirm: '',
+  });
 
-  return (
-    <div className={styles["form-container"]}>
-      <h2>{titleByMode[mode] || "Editar perfil"}</h2>
-      <form onSubmit={(e) => e.preventDefault()}>
-        {mode === "profile" && (
-          <div className={styles["form-grid"]}>
-            <TextField
-              label="Nombre"
-              value={editableData.nombre}
-              onChange={(value) => onEditableDataChange("nombre", value)}
-              error={errors.nombre}
-            />
-            <TextField
-              label="Apellido"
-              value={editableData.apellido}
-              onChange={(value) => onEditableDataChange("apellido", value)}
-              error={errors.apellido}
-            />
-            <TextField
-              label="DNI"
-              value={editableData.dni}
-              onChange={(value) => onEditableDataChange("dni", value)}
-            />
-            <TextField
-              label="Telefono"
-              value={editableData.telefono}
-              onChange={(value) => onEditableDataChange("telefono", value)}
-              error={errors.telefono}
-            />
-          </div>
+  // ── Modo: editar datos personales ──────────────────────────────────────────
+  if (mode === 'profile') {
+    return (
+      <div className={styles['profile-form']}>
+        <h2 className={styles['form-title']}>Editar información personal</h2>
+        <p className={styles['form-subtitle']}>El correo se cambia desde "Cambiar correo"</p>
+
+        {errors.general && (
+          <div className={styles['error-banner']}>{errors.general}</div>
         )}
 
-        {mode === "email" && (
-          <TextField
-            label="Correo electronico"
-            type="email"
-            placeholder="correo@ejemplo.com"
-            value={editableData.email}
-            onChange={(value) => onEditableDataChange("email", value)}
-            error={errors.email}
+        <div className={styles['fields-grid']}>
+          <InputField
+            label="Nombre"
+            name="nombre"
+            value={editableData.nombre}
+            onChange={onEditableDataChange}
+            error={errors.nombre}
           />
-        )}
-
-        {mode === "password" && (
-          <>
-            <PasswordField
-              label="Nueva contrasena"
-              placeholder="Minimo 8 caracteres"
-              value={editableData.password}
-              onChange={(value) => onEditableDataChange("password", value)}
-              isVisible={showPassword}
-              onToggleVisible={() => setShowPassword((current) => !current)}
-              error={errors.password}
-            />
-            <PasswordField
-              label="Confirmar contrasena"
-              placeholder="Repite tu contrasena"
-              value={editableData.confirmPassword}
-              onChange={(value) => onEditableDataChange("confirmPassword", value)}
-              isVisible={showConfirmPassword}
-              onToggleVisible={() => setShowConfirmPassword((current) => !current)}
-              error={errors.confirmPassword}
-            />
-          </>
-        )}
-
-        <div className={styles["button-group"]}>
-          <DSAButton variant="solid" color="primary" onClick={onSaveChanges}>
-            Guardar cambios
-          </DSAButton>
-          <DSAButton variant="outline" color="primary" onClick={onCancel}>
-            Cancelar
-          </DSAButton>
+          <InputField
+            label="Apellido"
+            name="apellido"
+            value={editableData.apellido}
+            onChange={onEditableDataChange}
+            error={errors.apellido}
+          />
+          <InputField
+            label="DNI"
+            name="dni"
+            value={editableData.dni}
+            onChange={onEditableDataChange}
+            error={errors.dni}
+          />
+          <InputField
+            label="Teléfono"
+            name="telefono"
+            value={editableData.telefono}
+            onChange={onEditableDataChange}
+          />
+          <InputField
+            label="Correo (no editable aquí)"
+            name="email"
+            value={editableData.email}
+            onChange={() => {}}
+            disabled
+          />
         </div>
-      </form>
-    </div>
-  );
+
+        <div className={styles['form-actions']}>
+          <button
+            className={styles['btn-cancel']}
+            onClick={onCancel}
+            disabled={saving}
+          >
+            Cancelar
+          </button>
+          <button
+            className={styles['btn-save']}
+            onClick={onSaveChanges}
+            disabled={saving}
+          >
+            {saving ? 'Guardando...' : 'Guardar cambios'}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Modo: cambiar email ─────────────────────────────────────────────────────
+  if (mode === 'email') {
+    const handleSubmit = async () => {
+      const ok = await onCambiarEmail(
+        emailForm.emailActual,
+        emailForm.emailNuevo,
+        emailForm.password
+      );
+      if (ok) {
+        alert('Correo actualizado correctamente. Tu sesión ha sido actualizada.');
+        onCancel();
+      }
+    };
+
+    return (
+      <div className={styles['profile-form']}>
+        <h2 className={styles['form-title']}>Cambiar correo electrónico</h2>
+        <p className={styles['form-subtitle']}>
+          Ingresa tu contraseña para confirmar el cambio
+        </p>
+
+        {errors.general && (
+          <div className={styles['error-banner']}>{errors.general}</div>
+        )}
+
+        <div className={styles['fields-grid']}>
+          <InputField
+            label="Correo actual"
+            name="emailActual"
+            type="email"
+            value={emailForm.emailActual}
+            onChange={(_, v) => setEmailForm((p) => ({ ...p, emailActual: v }))}
+          />
+          <InputField
+            label="Correo nuevo"
+            name="emailNuevo"
+            type="email"
+            value={emailForm.emailNuevo}
+            onChange={(_, v) => setEmailForm((p) => ({ ...p, emailNuevo: v }))}
+          />
+          <InputField
+            label="Contraseña"
+            name="password"
+            type="password"
+            value={emailForm.password}
+            onChange={(_, v) => setEmailForm((p) => ({ ...p, password: v }))}
+          />
+        </div>
+
+        <div className={styles['form-actions']}>
+          <button
+            className={styles['btn-cancel']}
+            onClick={onCancel}
+            disabled={saving}
+          >
+            Cancelar
+          </button>
+          <button
+            className={styles['btn-save']}
+            onClick={handleSubmit}
+            disabled={saving}
+          >
+            {saving ? 'Guardando...' : 'Cambiar correo'}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Modo: cambiar contraseña ────────────────────────────────────────────────
+  if (mode === 'password') {
+    const handleSubmit = async () => {
+      const ok = await onCambiarPassword(
+        passForm.passwordActual,
+        passForm.passwordNuevo,
+        passForm.passwordConfirm
+      );
+      if (ok) {
+        alert('Contraseña actualizada correctamente.');
+        onCancel();
+      }
+    };
+
+    return (
+      <div className={styles['profile-form']}>
+        <h2 className={styles['form-title']}>Cambiar contraseña</h2>
+
+        {errors.general && (
+          <div className={styles['error-banner']}>{errors.general}</div>
+        )}
+
+        <div className={styles['fields-grid']}>
+          <InputField
+            label="Contraseña actual"
+            name="passwordActual"
+            type="password"
+            value={passForm.passwordActual}
+            onChange={(_, v) => setPassForm((p) => ({ ...p, passwordActual: v }))}
+          />
+          <InputField
+            label="Contraseña nueva"
+            name="passwordNuevo"
+            type="password"
+            value={passForm.passwordNuevo}
+            onChange={(_, v) => setPassForm((p) => ({ ...p, passwordNuevo: v }))}
+          />
+          <InputField
+            label="Confirmar contraseña nueva"
+            name="passwordConfirm"
+            type="password"
+            value={passForm.passwordConfirm}
+            onChange={(_, v) => setPassForm((p) => ({ ...p, passwordConfirm: v }))}
+          />
+        </div>
+
+        <div className={styles['form-actions']}>
+          <button
+            className={styles['btn-cancel']}
+            onClick={onCancel}
+            disabled={saving}
+          >
+            Cancelar
+          </button>
+          <button
+            className={styles['btn-save']}
+            onClick={handleSubmit}
+            disabled={saving}
+          >
+            {saving ? 'Guardando...' : 'Cambiar contraseña'}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
 };
 
 export default ProfileForm;
