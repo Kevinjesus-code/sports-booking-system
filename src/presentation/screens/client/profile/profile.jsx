@@ -9,7 +9,7 @@ const DEFAULT_USER_DATA = {
   apellido: "Davis",
   dni: "12345678A",
   email: "rudydavisrd2054@gmail.com",
-  telefono: "+34 600 123 456",
+  telefono: "+51 600 123 456",
 };
 
 const Profile = ({ onBack, startEditing = false }) => {
