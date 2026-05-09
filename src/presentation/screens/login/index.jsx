@@ -32,9 +32,10 @@ const handleSubmit = async (e) => {
     const user = await login(email, password);
     console.log("USER:", user);        // ← agrega esto
     console.log("ROL:", user?.rol)
+    console.log("onLogin:", onLogin);
     onLogin(user.rol);
   } catch (_) {
-    // el error ya lo maneja useAuth en `error`
+console.log("ERROR:", err);
   }
 };
   return (
