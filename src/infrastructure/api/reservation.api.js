@@ -1,7 +1,7 @@
 // infrastructure/api/reservation.api.js
 // Todas las llamadas HTTP relacionadas con reservas
 
-import { client } from './client';
+import client from './client';
 
 export const reservationApi = {
   /**
