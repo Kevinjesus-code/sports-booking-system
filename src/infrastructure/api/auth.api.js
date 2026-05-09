@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
-import { loginRequest, registerRequest } from '../../infrastructure/api/authApi';
-
+import { loginRequest, registerRequest } from '../../infrastructure/api/auth.api';
 export function useAuth() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
