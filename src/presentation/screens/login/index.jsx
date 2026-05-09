@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import styles from "./login.module.css";
 import { DSAInput, DSAButton } from "../../components";
 import { useAuth } from "../../hooks/useAuth";
@@ -20,24 +19,21 @@ const LockIcon = (
   </svg>
 );
 
-const Login = ({ onRegister }) => {
+const Login = ({ onRegister, onLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login, loading, error } = useAuth();
-  const navigate = useNavigate();
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const user = await login(email, password);
-    console.log("USER:", user);        // ← agrega esto
-    console.log("ROL:", user?.rol)
-    console.log("onLogin:", onLogin);
-    onLogin(user.rol);
-  } catch (_) {
-console.log("ERROR:", err);
-  }
-};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const user = await login(email, password);
+      onLogin(user.rol);
+    } catch (_) {
+      // el error ya lo maneja useAuth en `error`
+    }
+  };
+
   return (
     <div className={styles.loginContainer}>
       <div className={styles.containerIlustration}>
