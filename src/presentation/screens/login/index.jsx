@@ -30,6 +30,8 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   try {
     const user = await login(email, password);
+    console.log("USER:", user);        // ← agrega esto
+    console.log("ROL:", user?.rol)
     onLogin(user.rol);
   } catch (_) {
     // el error ya lo maneja useAuth en `error`

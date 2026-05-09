@@ -8,18 +8,11 @@ import Register from "./screens/register/register";
 function App() {
   const [currentFlow, setCurrentFlow] = useState("login");
 
-  const handleLogin = (email) => {
-    if (email === "example@recep.com") {
-      setCurrentFlow("receptionist");
-    } else if (email === "example@admin.com") {
-      setCurrentFlow("admin");
-    } else if (email === "example@client.com") {
-      setCurrentFlow("client");
-    } else {
-      alert(
-        "Correo no asignado a ningún flujo (usa example@recep.com o example@admin.com)",
-      );
-    }
+  const handleLogin = (rol) => {
+    if (rol === "ADMIN")              setCurrentFlow("admin");
+    else if (rol === "CLIENTE")       setCurrentFlow("client");
+    else if (rol === "RECEPCIONISTA") setCurrentFlow("receptionist");
+    else alert("Rol no reconocido: " + rol);
   };
 
   return (
