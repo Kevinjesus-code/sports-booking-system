@@ -16,7 +16,7 @@ export const reservationApi = {
    * Retorna los horarios disponibles de una cancha en una fecha
    */
   getAvailableSlots: (courtId, date) =>
-    client.get(`/courts/${courtId}/slots?date=${date}`),
+    client.get(`/canchas/${courtId}/slots?date=${date}`),
 
   /**
    * POST /api/reservations
