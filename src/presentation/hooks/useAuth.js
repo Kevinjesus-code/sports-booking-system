@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
 import { loginRequest, registerRequest } from '../../infrastructure/api/auth.api';
 
-
 export function useAuth() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -11,9 +10,9 @@ export function useAuth() {
     setLoading(true);
     setError(null);
     try {
-      const user = await loginUser({ email, password });
-      setUser(user);
-      return user;
+      const response = await loginRequest({ email, password }); // ← era loginUser
+      setUser(response.data);
+      return response.data;
     } catch (err) {
       setError(err.response?.data?.message ?? err.response?.data ?? 'Error al iniciar sesión');
       throw err;
@@ -26,9 +25,9 @@ export function useAuth() {
     setLoading(true);
     setError(null);
     try {
-      const user = await registerUser(datos);
-      setUser(user);
-      return user;
+      const response = await registerRequest(datos); // ← agregamos .data
+      setUser(response.data);
+      return response.data;
     } catch (err) {
       setError(err.response?.data?.message ?? err.response?.data ?? 'Error al registrarse');
       throw err;
