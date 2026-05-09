@@ -4,32 +4,51 @@
 import client from './client';
 
 export const reservationApi = {
+
   /**
-   * GET /api/reservations?userId=:userId
+   * GET /reservations?userId=:userId
    * Retorna lista de reservas del usuario
    */
-  getByUserId: (userId) =>
-    client.get(`/reservations?userId=${userId}`),
+  getByUserId: async (userId) => {
+    const response = await client.get(
+      `/reservations?userId=${userId}`
+    );
+
+    return response.data;
+  },
 
   /**
-   * GET /api/courts/:courtId/slots?date=:date
-   * Retorna los horarios disponibles de una cancha en una fecha
+   * GET /canchas/:courtId/slots?date=:date
+   * Retorna horarios disponibles
    */
-  getAvailableSlots: (courtId, date) =>
-    client.get(`/canchas/${courtId}/slots?date=${date}`),
+  getAvailableSlots: async (courtId, date) => {
+    const response = await client.get(
+      `/canchas/${courtId}/slots?date=${date}`
+    );
+
+    return response.data;
+  },
 
   /**
-   * POST /api/reservations
-   * Body: { courtId, userId, date, startTime, endTime }
-   * Crea la reserva y retorna el objeto creado con id y precio
+   * POST /reservations
    */
-  create: (data) =>
-    client.post('/reservations', data),
+  create: async (data) => {
+    const response = await client.post(
+      '/reservations',
+      data
+    );
+
+    return response.data;
+  },
 
   /**
-   * PATCH /api/reservations/:id/cancel
-   * Cancela la reserva
+   * PATCH /reservations/:id/cancel
    */
-  cancel: (reservationId) =>
-    client.patch(`/reservations/${reservationId}/cancel`),
+  cancel: async (reservationId) => {
+    const response = await client.patch(
+      `/reservations/${reservationId}/cancel`
+    );
+
+    return response.data;
+  },
 };
