@@ -4,15 +4,7 @@ import { useProfileData } from "./hooks/useProfileData";
 import { DSAButton } from "../../../components";
 import styles from "./profile.module.css";
 
-const DEFAULT_USER_DATA = {
-  nombre: "Rudy",
-  apellido: "Davis",
-  dni: "12345678A",
-  email: "rudydavisrd2054@gmail.com",
-  telefono: "+34 600 123 456",
-};
-
-const Profile = ({ onBack, startEditing = false }) => {
+const Profile = ({ onBack }) => {
   const {
     profileData,
     editableData,
@@ -20,9 +12,15 @@ const Profile = ({ onBack, startEditing = false }) => {
     handleSaveChanges,
     resetEditableData,
     errors,
-  } = useProfileData(DEFAULT_USER_DATA, startEditing);
+    loading,
+    fetchError,
+  } = useProfileData();
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("account");
+
+  if (loading) return <div style={{ padding: "2rem" }}>Cargando perfil...</div>;
+  if (fetchError) return <div style={{ padding: "2rem", color: "red" }}>{fetchError}</div>;
 
   const navItems = [
     { id: "account", label: "Mi cuenta", icon: "user" },
@@ -53,7 +51,6 @@ const Profile = ({ onBack, startEditing = false }) => {
         </>
       ),
     };
-
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
         {paths[icon]}
@@ -61,11 +58,9 @@ const Profile = ({ onBack, startEditing = false }) => {
     );
   };
 
-  const handleSave = () => {
-    if (handleSaveChanges(activeSection)) {
-      console.log("Cambios guardados:", profileData);
-      setActiveSection("account");
-    }
+  const handleSave = async () => {
+    const ok = await handleSaveChanges();
+    if (ok) setActiveSection("account");
   };
 
   const handleCancel = () => {
@@ -123,7 +118,7 @@ const Profile = ({ onBack, startEditing = false }) => {
           >
             <ProfileHeader
               userName={
-                profileData.nombre
+                profileData?.nombre
                   ? `${profileData.nombre} ${profileData.apellido}`
                   : "Usuario"
               }

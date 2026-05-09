@@ -10,7 +10,9 @@ export function useAuth() {
     setLoading(true);
     setError(null);
     try {
-      const response = await loginRequest(email, password); // ← parámetros separados
+      const response = await loginRequest(email, password);
+      localStorage.setItem('token', response.data.token);      // ← agrega esto
+      localStorage.setItem('user', JSON.stringify(response.data)); // ← y esto
       setUser(response.data);
       return response.data;
     } catch (err) {
