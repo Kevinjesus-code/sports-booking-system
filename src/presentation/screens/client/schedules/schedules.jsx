@@ -1,17 +1,19 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./schedules.module.css";
 import { useAvailableSlots } from "../../../../hooks/useReservations";
 
-const Schedules = () => {
-  const navigate  = useNavigate();
-  const { state } = useLocation();
-  const court     = state?.court;
+// Props que recibe desde Client.jsx:
+//   court            → objeto cancha seleccionada
+//   onBack           → vuelve a la lista de canchas
+//   onSelectSchedule → (schedule, date) → avanza a confirm-reserve
+
+const Schedules = ({ court, onBack, onSelectSchedule }) => {
 
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
   );
 
+  // Hook real: llama al backend GET /canchas/{id}/slots?date={date}
   const { slots: rawSlots, loading, error } = useAvailableSlots(
     court?.id,
     selectedDate
@@ -36,70 +38,23 @@ const Schedules = () => {
     }
   };
 
+  // Llama a onSelectSchedule(schedule, date) → Client.jsx lo maneja
   const handleSelectSchedule = (schedule) => {
-    navigate("/client/confirm-reserve", {
-      state: { court, schedule, date: selectedDate },
-    });
+    onSelectSchedule?.(schedule, selectedDate);
   };
-
-  const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate("/client/courts");
-    }
-  };
-
-  // ── Si no hay court (recarga/acceso directo) → mensaje, NO redirect ──
-  if (!court) {
-    return (
-      <div className={styles.container}>
-        <header className={styles.header}>
-          <button onClick={() => navigate("/client/courts")} className={styles.backButton}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <div>
-            <h1 className={styles.title}>Cancha</h1>
-            <p className={styles.subtitle}>Selecciona fecha y horario disponible</p>
-          </div>
-        </header>
-        <div style={{ padding: "2rem", textAlign: "center" }}>
-          <p style={{ marginBottom: "1rem", color: "#666" }}>
-            No se encontró la cancha seleccionada.
-          </p>
-          <button
-            onClick={() => navigate("/client/courts")}
-            style={{
-              background: "#22c55e",
-              color: "white",
-              border: "none",
-              borderRadius: "8px",
-              padding: "10px 24px",
-              cursor: "pointer",
-              fontWeight: 600,
-            }}
-          >
-            Volver a canchas
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <button onClick={handleBack} className={styles.backButton}>
+        {/* Botón retroceder usando onBack prop */}
+        <button onClick={onBack} className={styles.backButton}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </button>
         <div>
-          <h1 className={styles.title}>{court?.titulo || "Cancha"}</h1>
+          <h1 className={styles.title}>{court?.name || court?.titulo || "Cancha"}</h1>
           <p className={styles.subtitle}>Selecciona fecha y horario disponible</p>
         </div>
       </header>
