@@ -10,11 +10,15 @@ export function useAuth() {
     setLoading(true);
     setError(null);
     try {
-      const response = await loginRequest({ email, password }); // ← era loginUser
+      const response = await loginRequest(email, password); // ← parámetros separados
       setUser(response.data);
       return response.data;
     } catch (err) {
-      setError(err.response?.data?.message ?? err.response?.data ?? 'Error al iniciar sesión');
+      setError(
+        err.response?.data?.message ??
+        err.response?.data?.error ??
+        (typeof err.response?.data === 'string' ? err.response?.data : 'Error al iniciar sesión')
+      );
       throw err;
     } finally {
       setLoading(false);
@@ -25,11 +29,15 @@ export function useAuth() {
     setLoading(true);
     setError(null);
     try {
-      const response = await registerRequest(datos); // ← agregamos .data
+      const response = await registerRequest(datos);
       setUser(response.data);
       return response.data;
     } catch (err) {
-      setError(err.response?.data?.message ?? err.response?.data ?? 'Error al registrarse');
+      setError(
+        err.response?.data?.message ??
+        err.response?.data?.error ??
+        (typeof err.response?.data === 'string' ? err.response?.data : 'Error al registrarse')
+      );
       throw err;
     } finally {
       setLoading(false);
