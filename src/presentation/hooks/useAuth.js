@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { loginRequest, registerRequest } from '../../infrastructure/api/auth.api';
+import { loginRequest, registerRequest, logoutRequest } from '../../infrastructure/api/auth.api';
 
 export function useAuth() {
   const [user, setUser] = useState(null);
@@ -46,5 +46,18 @@ export function useAuth() {
     }
   }, []);
 
-  return { user, loading, error, login, handleRegister };
+      const logout = useCallback(async () => {
+        try {
+          await logoutRequest();
+        } catch (_) {
+          // si falla igual limpiamos local
+        } finally {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          setUser(null);
+        }
+      }, []);
+
+      return { user, loading, error, login, handleRegister, logout };
+
 }

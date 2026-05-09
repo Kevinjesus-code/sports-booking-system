@@ -15,6 +15,13 @@ function App() {
   else alert("Rol no reconocido: " + rol);
 };
 
+const handleLogout = () => {
+  setCurrentFlow('login');
+};
+
+// en el return:
+{currentFlow === "client" && <Client onLogout={handleLogout} />}
+
   return (
     <>
       {currentFlow === "admin" && <Admin />}

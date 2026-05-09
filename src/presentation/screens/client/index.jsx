@@ -8,8 +8,8 @@ import Configuration from "./configuration/configuration";
 import ReservationsModal from "../../components/reservations-modal";
 import styles from "./client.module.css";
 import { useState } from "react";
+import { useAuth } from "../../hooks/useAuth";  // ← agrega esto
 
-// Datos del cliente (más adelante vendrían de una API/auth)
 const CLIENT_DATA = {
   nombre: "Juan Pérez",
   email: "juan.perez@email.com",
@@ -21,18 +21,19 @@ const CLIENT_DATA = {
   direccion: "Lima, Perú",
 };
 
-const Client = () => {
-  const [selectedCourt, setSelectedCourt]       = useState(null);
-  const [selectedSchedule, setSelectedSchedule] = useState(null);
-  const [selectedDate, setSelectedDate]         = useState(null);
-  const [isReserved, setIsReserved]             = useState(false);
-  const [customerData, setCustomerData]         = useState(null);
-  const [reservations, setReservations]         = useState([]);
-  const [showModal, setShowModal]               = useState(false);
-  const [isViewingProfile, setIsViewingProfile] = useState(false);
+const Client = ({ onLogout }) => {  // ← agrega onLogout
+  const { logout } = useAuth();     // ← agrega esto
+
+  const [selectedCourt, setSelectedCourt]         = useState(null);
+  const [selectedSchedule, setSelectedSchedule]   = useState(null);
+  const [selectedDate, setSelectedDate]           = useState(null);
+  const [isReserved, setIsReserved]               = useState(false);
+  const [customerData, setCustomerData]           = useState(null);
+  const [reservations, setReservations]           = useState([]);
+  const [showModal, setShowModal]                 = useState(false);
+  const [isViewingProfile, setIsViewingProfile]   = useState(false);
   const [isViewingSettings, setIsViewingSettings] = useState(false);
 
-  // ── Vuelve al estado inicial ──────────────────────
   const handleHome = () => {
     setSelectedCourt(null);
     setSelectedSchedule(null);
@@ -91,6 +92,11 @@ const Client = () => {
     setCustomerData(null);
   };
 
+  const handleLogout = async () => {  // ← agrega esto
+    await logout();
+    onLogout();
+  };
+
   return (
     <>
       {isViewingProfile ? (
@@ -108,9 +114,9 @@ const Client = () => {
             reservationCount={reservations.length}
             onOpenProfile={handleOpenProfile}
             onOpenSettings={handleOpenSettings}
-            onLogout={() => alert("Cerrando sesion...")}
+            onLogout={handleLogout}  // ← cambia esto
           />
-          
+
           <div className={styles.container}>
             {isReserved ? (
               <Resumen
@@ -146,7 +152,6 @@ const Client = () => {
               onClose={() => setShowModal(false)}
             />
           )}
-
         </>
       )}
     </>
