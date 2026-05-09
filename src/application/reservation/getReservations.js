@@ -1,33 +1,59 @@
-// infrastructure/repositories/reservationRepositoryImpl.js
-// Implementación concreta del contrato del dominio
+// application/reservation/getReservations.js
+// Casos de uso relacionados con reservas
 
-import { ReservationRepository } from '../../domain/reservation/reservationRepository';
-import { Reservation, TimeSlot } from '../../domain/reservation/Reservation';
-import { reservationApi } from "../../infrastructure/api/reservation.api";
-export class ReservationRepositoryImpl extends ReservationRepository {
+import { reservationRepository } from '../../infrastructure/repositories/reservationRepositoryImpl';
 
-  async getByUserId(userId) {
-    const raw = await reservationApi.getByUserId(userId);
-    // Convierte cada objeto plano del backend en una entidad del dominio
-    return raw.map(r => new Reservation(r));
+/**
+ * Obtener reservas de un usuario
+ */
+export const getReservations = async (userId) => {
+  return await reservationRepository.getByUserId(userId);
+};
+
+/**
+ * Obtener horarios disponibles
+ */
+export const getAvailableSlots = async (courtId, date) => {
+  return await reservationRepository.getAvailableSlots(courtId, date);
+};
+
+/**
+ * Crear reserva
+ */
+export const createReservation = async ({
+  courtId,
+  userId,
+  date,
+  startTime,
+  endTime,
+}) => {
+
+  // Re-validación antes de reservar
+  const availableSlots =
+    await reservationRepository.getAvailableSlots(courtId, date);
+
+  const slotExists = availableSlots.some(
+    (slot) =>
+      slot.startTime === startTime &&
+      slot.endTime === endTime
+  );
+
+  if (!slotExists) {
+    throw new Error('El horario ya no está disponible');
   }
 
-  async getAvailableSlots(courtId, date) {
-    const raw = await reservationApi.getAvailableSlots(courtId, date);
-    return raw.map(s => new TimeSlot(s));
-  }
+  return await reservationRepository.create({
+    courtId,
+    userId,
+    date,
+    startTime,
+    endTime,
+  });
+};
 
-  async create({ courtId, userId, date, startTime, endTime }) {
-    const raw = await reservationApi.create({ courtId, userId, date, startTime, endTime });
-    return new Reservation(raw);
-  }
-
-  async cancel(reservationId) {
-    const raw = await reservationApi.cancel(reservationId);
-    return new Reservation(raw);
-  }
-}
-
-// Instancia singleton para toda la app
-// (se inyecta en los casos de uso y hooks)
-export const reservationRepository = new ReservationRepositoryImpl();
+/**
+ * Cancelar reserva
+ */
+export const cancelReservation = async (reservationId) => {
+  return await reservationRepository.cancel(reservationId);
+};
