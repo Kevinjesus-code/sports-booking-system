@@ -1,12 +1,11 @@
 // application/reservation/getReservations.js
-// Casos de uso relacionados con reservas
 
 import { reservationRepository } from '../../infrastructure/repositories/reservationRepositoryImpl';
 
 /**
  * Obtener reservas de un usuario
  */
-export const getReservations = async (userId) => {
+export const getReservationsByUser = async (userId) => {
   return await reservationRepository.getByUserId(userId);
 };
 
@@ -28,7 +27,6 @@ export const createReservation = async ({
   endTime,
 }) => {
 
-  // Re-validación antes de reservar
   const availableSlots =
     await reservationRepository.getAvailableSlots(courtId, date);
 
