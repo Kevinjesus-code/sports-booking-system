@@ -3,8 +3,7 @@
 
 import { ReservationRepository } from '../../domain/reservation/reservationRepository';
 import { Reservation, TimeSlot } from '../../domain/reservation/Reservation';
-import { reservationApi } from '../api/reservation.api';
-
+import { reservationApi } from "../../infrastructure/api/reservation.api";
 export class ReservationRepositoryImpl extends ReservationRepository {
 
   async getByUserId(userId) {
