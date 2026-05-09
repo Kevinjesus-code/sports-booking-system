@@ -1,7 +1,7 @@
 import { DSAText } from "../../../../components";
 import styles from "./profile-display.module.css";
 
-const ProfileDisplay = ({ data }) => {
+const ProfileDisplay = ({ data, onChangeEmail, onChangePassword }) => {
   const fields = [
     { label: "Nombre", value: data?.nombre },
     { label: "Apellido", value: data?.apellido },
@@ -31,7 +31,7 @@ const ProfileDisplay = ({ data }) => {
           </span>
           <span>{data?.email || "-"}</span>
         </div>
-        <button type="button">Cambiar correo</button>
+        <button type="button" onClick={onChangeEmail}>Cambiar correo</button>
 
         <div className={styles["account-row"]}>
           <span className={styles["row-icon"]} aria-hidden="true">
@@ -44,7 +44,7 @@ const ProfileDisplay = ({ data }) => {
           </span>
           <span>********</span>
         </div>
-        <button type="button">Cambiar contraseña</button>
+        <button type="button" onClick={onChangePassword}>Cambiar contrasena</button>
       </div>
 
       <div className={styles["fields-grid"]}>

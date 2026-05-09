@@ -94,7 +94,7 @@ const Client = () => {
   return (
     <>
       {isViewingProfile ? (
-        <Profile onBack={handleBackToClient} startEditing />
+        <Profile onBack={handleBackToClient} />
       ) : isViewingSettings ? (
         <Configuration onBack={handleBackToClient} />
       ) : (

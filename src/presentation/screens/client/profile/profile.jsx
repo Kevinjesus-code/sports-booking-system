@@ -6,7 +6,7 @@ import styles from "./profile.module.css";
 
 const DEFAULT_USER_DATA = {
   nombre: "Rudy",
-  apellido: "Davila",
+  apellido: "Davis",
   dni: "12345678A",
   email: "rudydavisrd2054@gmail.com",
   telefono: "+34 600 123 456",
@@ -17,17 +17,17 @@ const Profile = ({ onBack, startEditing = false }) => {
     profileData,
     editableData,
     handleEditableDataChange,
-    isEditing,
-    handleEditToggle,
     handleSaveChanges,
+    resetEditableData,
     errors,
   } = useProfileData(DEFAULT_USER_DATA, startEditing);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("account");
 
   const navItems = [
-    { label: "Mi cuenta", icon: "user", active: true },
-    { label: "Mis reservas", icon: "calendar" },
-    { label: "Pagos", icon: "card" },
+    { id: "account", label: "Mi cuenta", icon: "user" },
+    { id: "reservations", label: "Mis reservas", icon: "calendar" },
+    { id: "payments", label: "Pagos", icon: "card" },
   ];
 
   const renderIcon = (icon) => {
@@ -62,13 +62,21 @@ const Profile = ({ onBack, startEditing = false }) => {
   };
 
   const handleSave = () => {
-    if (handleSaveChanges()) {
+    if (handleSaveChanges(activeSection)) {
       console.log("Cambios guardados:", profileData);
+      setActiveSection("account");
     }
   };
 
   const handleCancel = () => {
-    handleEditToggle();
+    resetEditableData();
+    setActiveSection("account");
+  };
+
+  const openSection = (section) => {
+    resetEditableData();
+    setActiveSection(section);
+    setIsMobileMenuOpen(false);
   };
 
   return (
@@ -119,8 +127,8 @@ const Profile = ({ onBack, startEditing = false }) => {
                   ? `${profileData.nombre} ${profileData.apellido}`
                   : "Usuario"
               }
-              isEditing={isEditing}
-              onEditToggle={handleEditToggle}
+              isEditing={activeSection !== "account"}
+              onEditToggle={() => openSection("profile")}
             />
 
             <nav
@@ -130,12 +138,12 @@ const Profile = ({ onBack, startEditing = false }) => {
             >
               {navItems.map((item) => (
                 <button
-                  key={item.label}
+                  key={item.id}
                   type="button"
                   className={`${styles["menu-item"]} ${
-                    item.active ? styles["menu-item-active"] : ""
+                    activeSection === item.id ? styles["menu-item-active"] : ""
                   }`}
-                  disabled={!item.active}
+                  onClick={() => openSection(item.id)}
                 >
                   <span className={styles["menu-icon"]}>{renderIcon(item.icon)}</span>
                   <span>{item.label}</span>
@@ -147,13 +155,44 @@ const Profile = ({ onBack, startEditing = false }) => {
           <main className={styles["profile-content"]}>
             <div className={styles["content-heading"]}>
               <p>Perfil de usuario</p>
-              <h1>Mi cuenta</h1>
+              <h1>{activeSection === "payments" ? "Pagos" : "Mi cuenta"}</h1>
             </div>
 
-            {!isEditing ? (
-              <ProfileDisplay data={profileData} />
+            {activeSection === "account" ? (
+              <ProfileDisplay
+                data={profileData}
+                onChangeEmail={() => openSection("email")}
+                onChangePassword={() => openSection("password")}
+              />
+            ) : activeSection === "payments" ? (
+              <div className={styles["payments-panel"]}>
+                <h2>Metodos de pago</h2>
+                <p>Configura como quieres pagar tus reservas.</p>
+                <div className={styles["payment-grid"]}>
+                  <label>
+                    Metodo principal
+                    <select defaultValue="Yape">
+                      <option>Yape</option>
+                      <option>Plin</option>
+                      <option>Tarjeta</option>
+                      <option>Efectivo</option>
+                    </select>
+                  </label>
+                  <label>
+                    Tarjeta guardada
+                    <input placeholder="**** **** **** 1234" />
+                  </label>
+                </div>
+                <button className={styles["primary-action"]}>Guardar metodo de pago</button>
+              </div>
+            ) : activeSection === "reservations" ? (
+              <div className={styles["payments-panel"]}>
+                <h2>Mis reservas</h2>
+                <p>Tus reservas apareceran aqui cuando confirmes un horario.</p>
+              </div>
             ) : (
               <ProfileForm
+                mode={activeSection}
                 editableData={editableData}
                 onEditableDataChange={handleEditableDataChange}
                 onSaveChanges={handleSave}

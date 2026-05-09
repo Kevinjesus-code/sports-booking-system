@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DSAInput, DSAButton, DSAFormSection } from "../../../../components";
+import { DSAButton } from "../../../../components";
 import styles from "./profile-form.module.css";
 
 const EyeIcon = () => (
@@ -18,6 +18,20 @@ const EyeOffIcon = () => (
   </svg>
 );
 
+const TextField = ({ label, value, onChange, placeholder, type = "text", error }) => (
+  <div className={styles["form-group"]}>
+    <label className={styles["field-label"]}>{label}</label>
+    <input
+      className={styles["text-input"]}
+      type={type}
+      placeholder={placeholder}
+      value={value}
+      onChange={(event) => onChange(event.target.value)}
+    />
+    {error && <span className={styles["error-message"]}>{error}</span>}
+  </div>
+);
+
 const PasswordField = ({
   label,
   placeholder,
@@ -25,9 +39,10 @@ const PasswordField = ({
   onChange,
   isVisible,
   onToggleVisible,
+  error,
 }) => (
-  <div className={styles["password-field"]}>
-    <label className={styles["password-label"]}>{label}</label>
+  <div className={styles["form-group"]}>
+    <label className={styles["field-label"]}>{label}</label>
     <div className={styles["password-wrapper"]}>
       <input
         className={styles["password-input"]}
@@ -45,10 +60,12 @@ const PasswordField = ({
         {isVisible ? <EyeOffIcon /> : <EyeIcon />}
       </button>
     </div>
+    {error && <span className={styles["error-message"]}>{error}</span>}
   </div>
 );
 
 const ProfileForm = ({
+  mode = "profile",
   editableData,
   onEditableDataChange,
   onSaveChanges,
@@ -58,43 +75,57 @@ const ProfileForm = ({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const titleByMode = {
+    profile: "Editar perfil",
+    email: "Cambiar correo",
+    password: "Cambiar Contrasena",
+  };
+
   return (
     <div className={styles["form-container"]}>
-      <DSAFormSection title="Editar datos">
-        <form onSubmit={(e) => e.preventDefault()}>
-          <div className={styles["form-group"]}>
-            <DSAInput
-              label="Correo electronico"
-              type="email"
-              placeholder="correo@ejemplo.com"
-              value={editableData.email}
-              onChange={(value) => onEditableDataChange("email", value)}
+      <h2>{titleByMode[mode] || "Editar perfil"}</h2>
+      <form onSubmit={(e) => e.preventDefault()}>
+        {mode === "profile" && (
+          <div className={styles["form-grid"]}>
+            <TextField
+              label="Nombre"
+              value={editableData.nombre}
+              onChange={(value) => onEditableDataChange("nombre", value)}
+              error={errors.nombre}
             />
-            {errors.email && (
-              <span className={styles["error-message"]}>{errors.email}</span>
-            )}
-          </div>
-
-          <div className={styles["form-group"]}>
-            <DSAInput
+            <TextField
+              label="Apellido"
+              value={editableData.apellido}
+              onChange={(value) => onEditableDataChange("apellido", value)}
+              error={errors.apellido}
+            />
+            <TextField
+              label="DNI"
+              value={editableData.dni}
+              onChange={(value) => onEditableDataChange("dni", value)}
+            />
+            <TextField
               label="Telefono"
-              type="tel"
-              placeholder="+34 600 000 000"
               value={editableData.telefono}
               onChange={(value) => onEditableDataChange("telefono", value)}
+              error={errors.telefono}
             />
-            {errors.telefono && (
-              <span className={styles["error-message"]}>
-                {errors.telefono}
-              </span>
-            )}
           </div>
+        )}
 
-          <div className={styles["divider"]}></div>
+        {mode === "email" && (
+          <TextField
+            label="Correo electronico"
+            type="email"
+            placeholder="correo@ejemplo.com"
+            value={editableData.email}
+            onChange={(value) => onEditableDataChange("email", value)}
+            error={errors.email}
+          />
+        )}
 
-          <h4 className={styles["password-title"]}>Cambiar contrasena</h4>
-
-          <div className={styles["form-group"]}>
+        {mode === "password" && (
+          <>
             <PasswordField
               label="Nueva contrasena"
               placeholder="Minimo 8 caracteres"
@@ -102,42 +133,29 @@ const ProfileForm = ({
               onChange={(value) => onEditableDataChange("password", value)}
               isVisible={showPassword}
               onToggleVisible={() => setShowPassword((current) => !current)}
+              error={errors.password}
             />
-            {errors.password && (
-              <span className={styles["error-message"]}>{errors.password}</span>
-            )}
-          </div>
-
-          <div className={styles["form-group"]}>
             <PasswordField
               label="Confirmar contrasena"
               placeholder="Repite tu contrasena"
               value={editableData.confirmPassword}
-              onChange={(value) =>
-                onEditableDataChange("confirmPassword", value)
-              }
+              onChange={(value) => onEditableDataChange("confirmPassword", value)}
               isVisible={showConfirmPassword}
-              onToggleVisible={() =>
-                setShowConfirmPassword((current) => !current)
-              }
+              onToggleVisible={() => setShowConfirmPassword((current) => !current)}
+              error={errors.confirmPassword}
             />
-            {errors.confirmPassword && (
-              <span className={styles["error-message"]}>
-                {errors.confirmPassword}
-              </span>
-            )}
-          </div>
+          </>
+        )}
 
-          <div className={styles["button-group"]}>
-            <DSAButton variant="solid" color="primary" onClick={onSaveChanges}>
-              Guardar cambios
-            </DSAButton>
-            <DSAButton variant="outline" color="primary" onClick={onCancel}>
-              Cancelar
-            </DSAButton>
-          </div>
-        </form>
-      </DSAFormSection>
+        <div className={styles["button-group"]}>
+          <DSAButton variant="solid" color="primary" onClick={onSaveChanges}>
+            Guardar cambios
+          </DSAButton>
+          <DSAButton variant="outline" color="primary" onClick={onCancel}>
+            Cancelar
+          </DSAButton>
+        </div>
+      </form>
     </div>
   );
 };

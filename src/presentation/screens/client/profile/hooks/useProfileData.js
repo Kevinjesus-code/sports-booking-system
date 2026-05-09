@@ -1,56 +1,59 @@
 import { useState } from "react";
 
+const buildEditableData = (data = {}) => ({
+  nombre: data.nombre || "",
+  apellido: data.apellido || "",
+  dni: data.dni || "",
+  email: data.email || "",
+  telefono: data.telefono || "",
+  password: "",
+  confirmPassword: "",
+});
+
 export const useProfileData = (initialData = {}, initialEditing = false) => {
   const [profileData, setProfileData] = useState(initialData);
-  const [editableData, setEditableData] = useState({
-    email: initialData?.email || "",
-    telefono: initialData?.telefono || "",
-    password: "",
-    confirmPassword: "",
-  });
+  const [editableData, setEditableData] = useState(buildEditableData(initialData));
   const [isEditing, setIsEditing] = useState(initialEditing);
   const [errors, setErrors] = useState({});
 
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validatePassword = (password) => password.length >= 8;
+  const validatePhone = (phone) => /^[+]?[\d\s\-()]+$/.test(phone);
 
-  const validatePassword = (password) => {
-    return password.length >= 8;
-  };
-
-  const validatePhone = (phone) => {
-    const phoneRegex = /^[+]?[\d\s\-()]+$/;
-    return phoneRegex.test(phone);
-  };
-
-  const validateEditableData = () => {
+  const validateEditableData = (mode = "profile") => {
     const newErrors = {};
 
-    if (!editableData.email) {
+    if (mode === "profile" && !editableData.nombre) {
+      newErrors.nombre = "El nombre es obligatorio";
+    }
+
+    if (mode === "profile" && !editableData.apellido) {
+      newErrors.apellido = "El apellido es obligatorio";
+    }
+
+    if ((mode === "profile" || mode === "email") && !editableData.email) {
       newErrors.email = "El correo es obligatorio";
-    } else if (!validateEmail(editableData.email)) {
-      newErrors.email = "Correo inválido";
+    } else if ((mode === "profile" || mode === "email") && !validateEmail(editableData.email)) {
+      newErrors.email = "Correo invalido";
     }
 
-    if (!editableData.telefono) {
-      newErrors.telefono = "El teléfono es obligatorio";
-    } else if (!validatePhone(editableData.telefono)) {
-      newErrors.telefono = "Teléfono inválido";
+    if (mode === "profile" && !editableData.telefono) {
+      newErrors.telefono = "El telefono es obligatorio";
+    } else if (mode === "profile" && !validatePhone(editableData.telefono)) {
+      newErrors.telefono = "Telefono invalido";
     }
 
-    if (editableData.password || editableData.confirmPassword) {
+    if (mode === "password" || editableData.password || editableData.confirmPassword) {
       if (!editableData.password) {
-        newErrors.password = "La contraseña es obligatoria";
+        newErrors.password = "La contrasena es obligatoria";
       } else if (!validatePassword(editableData.password)) {
-        newErrors.password = "Mínimo 8 caracteres";
+        newErrors.password = "Minimo 8 caracteres";
       }
 
       if (!editableData.confirmPassword) {
-        newErrors.confirmPassword = "Debe confirmar la contraseña";
+        newErrors.confirmPassword = "Debe confirmar la contrasena";
       } else if (editableData.password !== editableData.confirmPassword) {
-        newErrors.confirmPassword = "Las contraseñas no coinciden";
+        newErrors.confirmPassword = "Las contrasenas no coinciden";
       }
     }
 
@@ -58,15 +61,14 @@ export const useProfileData = (initialData = {}, initialEditing = false) => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const resetEditableData = () => {
+    setEditableData(buildEditableData(profileData));
+    setErrors({});
+  };
+
   const handleEditToggle = () => {
     if (isEditing) {
-      setEditableData({
-        email: profileData?.email || "",
-        telefono: profileData?.telefono || "",
-        password: "",
-        confirmPassword: "",
-      });
-      setErrors({});
+      resetEditableData();
     }
     setIsEditing(!isEditing);
   };
@@ -76,6 +78,7 @@ export const useProfileData = (initialData = {}, initialEditing = false) => {
       ...prev,
       [field]: value,
     }));
+
     if (errors[field]) {
       setErrors((prev) => ({
         ...prev,
@@ -84,29 +87,29 @@ export const useProfileData = (initialData = {}, initialEditing = false) => {
     }
   };
 
-  const handleSaveChanges = () => {
-    if (validateEditableData()) {
-      const updatedData = {
-        ...profileData,
-        email: editableData.email,
-        telefono: editableData.telefono,
-      };
-
-      if (editableData.password) {
-        updatedData.password = editableData.password;
-      }
-
-      setProfileData(updatedData);
-      setEditableData({
-        email: updatedData.email,
-        telefono: updatedData.telefono,
-        password: "",
-        confirmPassword: "",
-      });
-      setIsEditing(false);
-      return true;
+  const handleSaveChanges = (mode = "profile") => {
+    if (!validateEditableData(mode)) {
+      return false;
     }
-    return false;
+
+    const updatedData = {
+      ...profileData,
+      nombre: mode === "profile" ? editableData.nombre : profileData.nombre,
+      apellido: mode === "profile" ? editableData.apellido : profileData.apellido,
+      dni: mode === "profile" ? editableData.dni : profileData.dni,
+      email: mode === "profile" || mode === "email" ? editableData.email : profileData.email,
+      telefono: mode === "profile" ? editableData.telefono : profileData.telefono,
+    };
+
+    if (editableData.password) {
+      updatedData.password = editableData.password;
+    }
+
+    setProfileData(updatedData);
+    setEditableData(buildEditableData(updatedData));
+    setIsEditing(false);
+    setErrors({});
+    return true;
   };
 
   return {
@@ -115,8 +118,10 @@ export const useProfileData = (initialData = {}, initialEditing = false) => {
     editableData,
     handleEditableDataChange,
     isEditing,
+    setIsEditing,
     handleEditToggle,
     handleSaveChanges,
+    resetEditableData,
     errors,
   };
 };
