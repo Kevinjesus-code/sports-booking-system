@@ -1,8 +1,28 @@
+// presentation/screens/client/resumen/resumen.jsx
+import { useLocation, useNavigate } from 'react-router-dom';
 import styles from "./resumen.module.css";
 
-const Resumen = ({ court, schedule, date, customerData, onNewReservation,onViewReservations }) => {
-  // Generate a random confirmation number
-  const confNumber = "#RSV-" + Math.floor(10000 + Math.random() * 90000);
+const Resumen = () => {
+  const navigate = useNavigate();
+  const { state } = useLocation();
+  const reservation = state?.reservation;
+
+  // Redirigir si no hay datos de reserva
+  if (!reservation) {
+    navigate('/client/courts');
+    return null;
+  }
+
+  // Manejadores de botones
+  const handleNewReservation = () => {
+    navigate('/client/schedules', { 
+      state: { court: { id: reservation.courtId, name: reservation.courtName } } 
+    });
+  };
+
+  const handleGoHome = () => {
+    navigate('/client/dashboard');
+  };
 
   return (
     <div className={styles.container}>
@@ -28,10 +48,10 @@ const Resumen = ({ court, schedule, date, customerData, onNewReservation,onViewR
         <div className={styles.cardBody}>
           
           <div className={styles.courtRow}>
-            <div className={styles.courtIconBg}>{court?.icono || "⚽"}</div>
+            <div className={styles.courtIconBg}>{reservation.courtIcon || "⚽"}</div>
             <div className={styles.courtInfo}>
               <span className={styles.label}>Cancha</span>
-              <span className={styles.value}>{court?.titulo || "Fútbol 5"}</span>
+              <span className={styles.value}>{reservation.courtName}</span>
             </div>
           </div>
 
@@ -47,7 +67,7 @@ const Resumen = ({ court, schedule, date, customerData, onNewReservation,onViewR
               </div>
               <div className={styles.infoContent}>
                 <span className={styles.label}>Fecha</span>
-                <span className={styles.value}>{date || "2026-04-10"}</span>
+                <span className={styles.value}>{reservation.getFormattedDate()}</span>
               </div>
             </div>
 
@@ -60,7 +80,7 @@ const Resumen = ({ court, schedule, date, customerData, onNewReservation,onViewR
               </div>
               <div className={styles.infoContent}>
                 <span className={styles.label}>Horario</span>
-                <span className={styles.value}>{schedule?.time || "09:00 - 10:00"}</span>
+                <span className={styles.value}>{reservation.startTime} – {reservation.endTime}</span>
               </div>
             </div>
           </div>
@@ -74,27 +94,25 @@ const Resumen = ({ court, schedule, date, customerData, onNewReservation,onViewR
                 </svg>
               </div>
               <div className={styles.infoContent}>
-                <span className={styles.label}>Nombre</span>
-                <span className={styles.value}>{customerData?.nombre || "Juan"}</span>
+                <span className={styles.label}>Estado</span>
+                <span className={`${styles.value} ${styles.badge}`}>{reservation.status}</span>
               </div>
             </div>
 
             <div className={styles.infoItem}>
               <div className={styles.iconContainer}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                </svg>
+                <span style={{ fontWeight: 'bold', fontSize: '14px' }}>S/</span>
               </div>
               <div className={styles.infoContent}>
-                <span className={styles.label}>Teléfono</span>
-                <span className={styles.value}>{customerData?.telefono || "912123123"}</span>
+                <span className={styles.label}>Total Pagado</span>
+                <span className={styles.value}>S/ {reservation.totalPrice?.toFixed(2)}</span>
               </div>
             </div>
           </div>
 
           <div className={styles.confirmationBox}>
             <div className={styles.label}>Número de confirmación</div>
-            <p className={styles.confNumber}>{confNumber}</p>
+            <p className={styles.confNumber}>#{reservation.id}</p>
           </div>
 
         </div>
@@ -115,18 +133,12 @@ const Resumen = ({ court, schedule, date, customerData, onNewReservation,onViewR
             </svg>
             Te enviaremos un recordatorio 24 horas antes
           </li>
-          <li className={styles.stepItem}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-            Puedes cancelar hasta 2 horas antes sin cargo
-          </li>
         </ul>
       </div>
 
       <div className={styles.actionButtons}>
-        <button className={styles.primaryBtn} onClick={onViewReservations}>Ver mis reservas</button>
-        <button className={styles.secondaryBtn} onClick={onNewReservation}>Nueva reserva</button>
+        <button className={styles.primaryBtn} onClick={handleGoHome}>Ir al inicio</button>
+        <button className={styles.secondaryBtn} onClick={handleNewReservation}>Nueva reserva</button>
       </div>
 
     </div>
