@@ -1,33 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./schedules.module.css";
 import { useAvailableSlots } from "../../../../hooks/useReservations";
 
-// ── Adaptación: mockSchedules eliminado, reemplazado por useAvailableSlots ──
-// El componente ya no recibe props; obtiene `court` del estado de navegación
-// y los horarios del hook que llama al backend.
-
 const Schedules = () => {
-  const navigate      = useNavigate();
-  const { state }     = useLocation();
-  const court         = state?.court; // { id, titulo, icono, ... } viene de courts.jsx
+  const navigate  = useNavigate();
+  const { state } = useLocation();
+  const court     = state?.court;
 
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
   );
 
-  // ← hook real: llama getAvailableSlots → ReservationRepositoryImpl → API
-  const { slots: rawSlots, loading, error } = useAvailableSlots(court?.id, selectedDate);
+  // ── Guard: si no viene court (recarga de página) → redirige a courts ──
+  useEffect(() => {
+    if (!court) {
+      navigate("/client/courts", { replace: true });
+    }
+  }, [court, navigate]);
 
-  // Mapea la entidad TimeSlot al formato que espera la UI existente
-  const schedules = rawSlots.map((s) => ({
+  const { slots: rawSlots, loading, error } = useAvailableSlots(
+    court?.id,
+    selectedDate
+  );
+
+  // Mapea TimeSlot → formato UI (protegido con ?? [] por si rawSlots es undefined)
+  const schedules = (rawSlots ?? []).map((s) => ({
     id:        s.id,
     time:      `${s.startTime} - ${s.endTime}`,
     status:    s.available ? "disponible" : "ocupado",
-    // Conservamos start/end para pasarlos al siguiente paso
     startTime: s.startTime,
     endTime:   s.endTime,
-    price:     s.price,
+    price:     s.price ?? 0,
   }));
 
   const getStatusText = (status) => {
@@ -39,18 +43,27 @@ const Schedules = () => {
     }
   };
 
-  // Al seleccionar un horario navega a confirm-reserve pasando el estado
   const handleSelectSchedule = (schedule) => {
     navigate("/client/confirm-reserve", {
       state: { court, schedule, date: selectedDate },
     });
   };
 
-  // ── JSX original preservado íntegramente ──────────────────────────────────
+  // ── Back button robusto: historial si existe, sino va directo a courts ──
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate("/client/courts");
+    }
+  };
+
+  if (!court) return null;
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <button onClick={() => navigate(-1)} className={styles.backButton}>
+        <button onClick={handleBack} className={styles.backButton}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -104,11 +117,21 @@ const Schedules = () => {
           </div>
         </div>
 
-        {/* Estados de carga y error */}
-        {loading && <p className={styles.loadingText}>Cargando horarios...</p>}
-        {error   && <p className={styles.errorText}>{error}</p>}
+        {loading && (
+          <p className={styles.loadingText}>Cargando horarios...</p>
+        )}
+
+        {/* Muestra el error real para poder debuggear */}
+        {error && (
+          <p className={styles.errorText}>
+            ⚠ {error}
+          </p>
+        )}
+
         {!loading && !error && schedules.length === 0 && (
-          <p className={styles.emptyText}>No hay horarios disponibles para esta fecha.</p>
+          <p className={styles.emptyText}>
+            No hay horarios disponibles para esta fecha.
+          </p>
         )}
 
         <div className={styles.grid}>
