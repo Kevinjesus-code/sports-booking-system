@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./schedules.module.css";
 import { useAvailableSlots } from "../../../../hooks/useReservations";
@@ -12,19 +12,12 @@ const Schedules = () => {
     new Date().toISOString().split("T")[0]
   );
 
-  // ── Guard: si no viene court (recarga de página) → redirige a courts ──
-  useEffect(() => {
-    if (!court) {
-      navigate("/client/courts", { replace: true });
-    }
-  }, [court, navigate]);
-
   const { slots: rawSlots, loading, error } = useAvailableSlots(
     court?.id,
     selectedDate
   );
 
-  // Mapea TimeSlot → formato UI (protegido con ?? [] por si rawSlots es undefined)
+  // Mapea TimeSlot → formato UI
   const schedules = (rawSlots ?? []).map((s) => ({
     id:        s.id,
     time:      `${s.startTime} - ${s.endTime}`,
@@ -49,7 +42,6 @@ const Schedules = () => {
     });
   };
 
-  // ── Back button robusto: historial si existe, sino va directo a courts ──
   const handleBack = () => {
     if (window.history.length > 1) {
       navigate(-1);
@@ -58,7 +50,44 @@ const Schedules = () => {
     }
   };
 
-  if (!court) return null;
+  // ── Si no hay court (recarga/acceso directo) → mensaje, NO redirect ──
+  if (!court) {
+    return (
+      <div className={styles.container}>
+        <header className={styles.header}>
+          <button onClick={() => navigate("/client/courts")} className={styles.backButton}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <div>
+            <h1 className={styles.title}>Cancha</h1>
+            <p className={styles.subtitle}>Selecciona fecha y horario disponible</p>
+          </div>
+        </header>
+        <div style={{ padding: "2rem", textAlign: "center" }}>
+          <p style={{ marginBottom: "1rem", color: "#666" }}>
+            No se encontró la cancha seleccionada.
+          </p>
+          <button
+            onClick={() => navigate("/client/courts")}
+            style={{
+              background: "#22c55e",
+              color: "white",
+              border: "none",
+              borderRadius: "8px",
+              padding: "10px 24px",
+              cursor: "pointer",
+              fontWeight: 600,
+            }}
+          >
+            Volver a canchas
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -117,16 +146,9 @@ const Schedules = () => {
           </div>
         </div>
 
-        {loading && (
-          <p className={styles.loadingText}>Cargando horarios...</p>
-        )}
+        {loading && <p className={styles.loadingText}>Cargando horarios...</p>}
 
-        {/* Muestra el error real para poder debuggear */}
-        {error && (
-          <p className={styles.errorText}>
-            ⚠ {error}
-          </p>
-        )}
+        {error && <p className={styles.errorText}>⚠ {error}</p>}
 
         {!loading && !error && schedules.length === 0 && (
           <p className={styles.emptyText}>
