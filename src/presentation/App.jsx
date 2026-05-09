@@ -9,11 +9,11 @@ function App() {
   const [currentFlow, setCurrentFlow] = useState("login");
 
   const handleLogin = (rol) => {
-    if (rol === "ADMIN")              setCurrentFlow("admin");
-    else if (rol === "CLIENTE")       setCurrentFlow("client");
-    else if (rol === "RECEPCIONISTA") setCurrentFlow("receptionist");
-    else alert("Rol no reconocido: " + rol);
-  };
+  if (rol === "ADMIN")              setCurrentFlow("admin");
+  else if (rol === "CLIENTE")       setCurrentFlow("client");
+  else if (rol === "RECEPCIONISTA") setCurrentFlow("receptionist");
+  else alert("Rol no reconocido: " + rol);
+};
 
   return (
     <>
