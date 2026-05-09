@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useCreateReservation } from '../../../../hooks/useReservations';
-import { useAuth } from '../../../../hooks/useAuth';
 import styles from "./confirm-reserve.module.css";
 
 const PAYMENT_LOGOS = {
