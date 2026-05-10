@@ -1,6 +1,5 @@
 // presentation/screens/client/confirm-reserve/confirm-reserve.jsx
 import { useState } from "react";
-import { useAuth } from "../../../../hooks/useAuth";
 import { useCreateReservation } from "../../../../hooks/useReservations";
 import styles from "./confirm-reserve.module.css";
 
@@ -27,26 +26,29 @@ const PAYMENT_METHODS = [
   { id: "plin",     label: "Plin"     },
 ];
 
-// Props que recibe desde Client.jsx:
+// Props desde Client.jsx:
 //   court      → objeto cancha
 //   schedule   → { id, time, startTime, endTime, price, status }
 //   date       → string "YYYY-MM-DD"
 //   onBack     → vuelve a schedules
-//   onConfirm  → (data) notifica a Client que la reserva fue creada
+//   onConfirm  → (data) notifica reserva creada a Client.jsx
 
 export default function ConfirmReserve({ court, schedule, date, onBack, onConfirm }) {
-  const { user } = useAuth();
+
+  // ✅ Lee el usuario desde localStorage — donde useAuth lo guarda al hacer login
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+
   const { create, loading, error: apiError } = useCreateReservation();
 
-  const [nombre,       setNombre]       = useState(user?.name  || user?.nombre || "");
-  const [telefono,     setTelefono]     = useState(user?.phone || user?.telefono || "");
-  const [observaciones,setObservaciones]= useState("");
-  const [payment,      setPayment]      = useState(null);
+  const [nombre,        setNombre]        = useState(user?.nombre || user?.name  || "");
+  const [telefono,      setTelefono]      = useState(user?.telefono || user?.phone || "");
+  const [observaciones, setObservaciones] = useState("");
+  const [payment,       setPayment]       = useState(null);
   const [paymentDetails, setPaymentDetails] = useState({
     cardNumber: "", cardExpiry: "", cardCvv: "", yapeOp: "", plinOp: "",
   });
 
-  // Guardia: si no hay datos, vuelve atrás
+  // Guardia: si no hay datos vuelve atrás
   if (!court || !schedule) {
     onBack?.();
     return null;
@@ -65,20 +67,20 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
     }
 
     const reservationData = {
-      courtId:         court.id,
-      userId:          user?.id,
+      courtId:       court.id,
+      userId:        user?.id,
       date,
-      startTime:       schedule.startTime,
-      endTime:         schedule.endTime,
-      customerName:    nombre,
-      customerPhone:   telefono,
-      paymentMethod:   payment,
-      notes:           observaciones,
+      startTime:     schedule.startTime,
+      endTime:       schedule.endTime,
+      customerName:  nombre,
+      customerPhone: telefono,
+      paymentMethod: payment,
+      notes:         observaciones,
     };
 
     try {
       const newReservation = await create(reservationData);
-      // Notifica a Client.jsx con los datos para Resumen
+      // Pasa datos al Client.jsx para que muestre el Resumen
       onConfirm?.({
         ...reservationData,
         id:       newReservation?.id,
@@ -94,7 +96,6 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        {/* onBack en vez de navigate(-1) */}
         <button onClick={onBack} className={styles.backButton}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="2">
@@ -109,7 +110,7 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
 
       <div className={styles.mainGrid}>
 
-        {/* COLUMNA IZQUIERDA */}
+        {/* ── COLUMNA IZQUIERDA ── */}
         <div className={styles.leftCol}>
           <section className={styles.summaryCard}>
             <div className={styles.summaryTitle}>Resumen de tu reserva</div>
@@ -149,7 +150,9 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
               {PAYMENT_METHODS.map((method) => (
                 <button
                   key={method.id}
-                  className={`${styles.paymentOption} ${payment === method.id ? styles.paymentSelected : ""}`}
+                  className={`${styles.paymentOption} ${
+                    payment === method.id ? styles.paymentSelected : ""
+                  }`}
                   onClick={() => setPayment(method.id)}
                 >
                   <PaymentLogo id={method.id} />
@@ -163,8 +166,7 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
                 <div className={styles.formGroup}>
                   <label className={styles.label}>Número de tarjeta</label>
                   <input
-                    className={styles.input}
-                    type="text"
+                    className={styles.input} type="text"
                     placeholder="xxxx xxxx xxxx xxxx"
                     onChange={(e) =>
                       setPaymentDetails({ ...paymentDetails, cardNumber: e.target.value })
@@ -181,8 +183,7 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
                   <p>Yapea al <strong>987 654 321</strong></p>
                 </div>
                 <input
-                  className={styles.input}
-                  placeholder="Número de operación"
+                  className={styles.input} placeholder="Número de operación"
                   onChange={(e) =>
                     setPaymentDetails({ ...paymentDetails, yapeOp: e.target.value })
                   }
@@ -197,8 +198,7 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
                   <p>Plínea al <strong>987 654 321</strong></p>
                 </div>
                 <input
-                  className={styles.input}
-                  placeholder="Número de operación"
+                  className={styles.input} placeholder="Número de operación"
                   onChange={(e) =>
                     setPaymentDetails({ ...paymentDetails, plinOp: e.target.value })
                   }
@@ -220,7 +220,7 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
           </section>
         </div>
 
-        {/* COLUMNA DERECHA */}
+        {/* ── COLUMNA DERECHA ── */}
         <div className={styles.rightCol}>
           <section className={styles.formContainer}>
             <h2 className={styles.formTitle}>Datos de contacto</h2>
