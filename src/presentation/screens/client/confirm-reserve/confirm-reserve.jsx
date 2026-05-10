@@ -52,11 +52,12 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
     if (!payment) { alert("Selecciona un método de pago"); return; }
     try {
       // ReservaRequest.java: { canchaId, horarioId, fecha }
-      const reservation = await create({
-        canchaId:  court.id,
-        horarioId: schedule.id,
-        fecha:     date,
-      });
+     const reservation = await create({
+      canchaId:   court.id,
+      fecha:      date,
+      horaInicio: schedule.startTime,
+      horaFin:    schedule.endTime,
+    });
       // Pasa la entidad Reservation completa al padre → Client → Resumen
       onConfirm?.(reservation);
     } catch {
