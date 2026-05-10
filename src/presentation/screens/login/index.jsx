@@ -1,69 +1,43 @@
 import { useState } from "react";
 import styles from "./login.module.css";
 import { DSAInput, DSAButton } from "../../components";
+import { useAuth } from "../../hooks/useAuth";
 
-const Login = ({ onLogin, onRegister }) => {
+const EnvelopeIcon = (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect width="20" height="16" x="2" y="4" rx="2" />
+    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+  </svg>
+);
+
+const LockIcon = (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+  </svg>
+);
+
+const Login = ({ onRegister, onLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { login, loading, error } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (email) {
-      onLogin(email);
+    try {
+      const user = await login(email, password);
+      onLogin(user.rol);
+    } catch (_) {
+      // el error ya lo maneja useAuth en `error`
     }
   };
-
-  const EnvelopeIcon = (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <rect x="2" y="4" width="20" height="16" rx="2" />
-      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-    </svg>
-  );
-
-  const LockIcon = (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <rect x="3" y="11" width="18" height="11" rx="2" />
-      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-    </svg>
-  );
-
-  const LoginIcon = (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="#22c55e"
-      strokeWidth="2"
-    >
-      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-      <polyline points="10 17 15 12 10 7" />
-      <line x1="15" y1="12" x2="3" y2="12" />
-    </svg>
-  );
 
   return (
     <div className={styles.loginContainer}>
       <div className={styles.containerIlustration}>
-        <img
-          src="/assets/svg/Ilustration.svg"
-          alt="Ilustration"
-          className={styles.ilustration}
-        />
+        <img src="/assets/svg/Ilustration.svg" alt="Ilustration" className={styles.ilustration} />
       </div>
 
       <div className={styles.container}>
@@ -73,9 +47,7 @@ const Login = ({ onLogin, onRegister }) => {
               <img src="/assets/img/Logo.JPG" alt="" className={styles.logo} />
             </div>
             <h1 className={styles.loginTitle}>Bienvenido</h1>
-            <p className={styles.loginSubtitle}>
-              Ingresa a tu cuenta para continuar
-            </p>
+            <p className={styles.loginSubtitle}>Ingresa a tu cuenta para continuar</p>
           </div>
 
           <div className={styles.loginCard}>
@@ -97,20 +69,23 @@ const Login = ({ onLogin, onRegister }) => {
                 icon={LockIcon}
               />
 
+              {error && (
+                <p style={{ color: "#ef4444", fontSize: "0.85rem", marginTop: "4px" }}>
+                  {error}
+                </p>
+              )}
+
               <div className={styles.loginOptions}>
                 <label className={styles.loginCheckbox}>
                   <input type="checkbox" />
                   <span>Recordarme</span>
                 </label>
-
-                <a href="#" className={styles.loginForgot}>
-                  ¿Olvidaste tu contraseña?
-                </a>
+                <a href="#" className={styles.loginForgot}>¿Olvidaste tu contraseña?</a>
               </div>
 
               <div className={styles.loginButtonWrapper}>
-                <DSAButton variant="solid" color="primary">
-                  Iniciar sesión
+                <DSAButton variant="solid" color="primary" disabled={loading}>
+                  {loading ? "Iniciando sesión..." : "Iniciar sesión"}
                 </DSAButton>
               </div>
 
@@ -123,9 +98,7 @@ const Login = ({ onLogin, onRegister }) => {
             </form>
           </div>
 
-          <div className={styles.loginFooter}>
-            Sistema de Reservas de Canchas Deportivas
-          </div>
+          <div className={styles.loginFooter}>Sistema de Reservas de Canchas Deportivas</div>
         </div>
       </div>
     </div>

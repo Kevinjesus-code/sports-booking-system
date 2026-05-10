@@ -1,127 +1,112 @@
-import { useState } from "react";
+// RUTA: src/presentation/screens/client/profile/hooks/useProfileData.js
 
-const buildEditableData = (data = {}) => ({
-  nombre: data.nombre || "",
-  apellido: data.apellido || "",
-  dni: data.dni || "",
-  email: data.email || "",
-  telefono: data.telefono || "",
-  password: "",
-  confirmPassword: "",
-});
+import { useState, useEffect } from 'react';
+import {
+  getPerfil,
+  updatePerfil,
+  cambiarEmail,
+  cambiarPassword,
+} from '../../../../../application/perfil/perfilUseCases';
 
-export const useProfileData = (initialData = {}, initialEditing = false) => {
-  const [profileData, setProfileData] = useState(initialData);
-  const [editableData, setEditableData] = useState(buildEditableData(initialData));
-  const [isEditing, setIsEditing] = useState(initialEditing);
-  const [errors, setErrors] = useState({});
+export function useProfileData() {
+  const [profileData,  setProfileData]  = useState(null);
+  const [editableData, setEditableData] = useState({});
+  const [errors,       setErrors]       = useState({});
+  const [loading,      setLoading]      = useState(true);
+  const [saving,       setSaving]       = useState(false);
+  const [fetchError,   setFetchError]   = useState(null);
 
-  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const validatePassword = (password) => password.length >= 8;
-  const validatePhone = (phone) => /^[+]?[\d\s\-()]+$/.test(phone);
+  useEffect(() => {
+    getPerfil()
+      .then((data) => {
+        setProfileData(data);
+        setEditableData(data);
+      })
+      .catch(() => setFetchError('No se pudo cargar el perfil'))
+      .finally(() => setLoading(false));
+  }, []);
 
-  const validateEditableData = (mode = "profile") => {
+  const handleEditableDataChange = (field, value) => {
+    setEditableData((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: '' }));
+  };
+
+  const handleSaveChanges = async () => {
     const newErrors = {};
-
-    if (mode === "profile" && !editableData.nombre) {
-      newErrors.nombre = "El nombre es obligatorio";
+    if (!editableData.nombre?.trim())   newErrors.nombre   = 'El nombre es requerido';
+    if (!editableData.apellido?.trim()) newErrors.apellido = 'El apellido es requerido';
+    if (!editableData.dni?.trim())      newErrors.dni      = 'El DNI es requerido';
+    if (Object.keys(newErrors).length) {
+      setErrors(newErrors);
+      return false;
     }
-
-    if (mode === "profile" && !editableData.apellido) {
-      newErrors.apellido = "El apellido es obligatorio";
+    setSaving(true);
+    try {
+      const updated = await updatePerfil(editableData);
+      setProfileData(updated);
+      setEditableData(updated);
+      return true;
+    } catch (err) {
+      setErrors({ general: err.response?.data?.message ?? 'Error al guardar' });
+      return false;
+    } finally {
+      setSaving(false);
     }
+  };
 
-    if ((mode === "profile" || mode === "email") && !editableData.email) {
-      newErrors.email = "El correo es obligatorio";
-    } else if ((mode === "profile" || mode === "email") && !validateEmail(editableData.email)) {
-      newErrors.email = "Correo invalido";
+  const handleCambiarEmail = async (emailActual, emailNuevo, password) => {
+    setSaving(true);
+    setErrors({});
+    try {
+      const data = await cambiarEmail({ emailActual, emailNuevo, password });
+      setProfileData((prev) => ({ ...prev, email: data.email }));
+      return true;
+    } catch (err) {
+      setErrors({ general: err.response?.data?.message ?? 'Error al cambiar el correo' });
+      return false;
+    } finally {
+      setSaving(false);
     }
+  };
 
-    if (mode === "profile" && !editableData.telefono) {
-      newErrors.telefono = "El telefono es obligatorio";
-    } else if (mode === "profile" && !validatePhone(editableData.telefono)) {
-      newErrors.telefono = "Telefono invalido";
+  const handleCambiarPassword = async (passwordActual, passwordNuevo, passwordConfirm) => {
+    setErrors({});
+    if (passwordNuevo !== passwordConfirm) {
+      setErrors({ general: 'Las contraseñas nuevas no coinciden' });
+      return false;
     }
-
-    if (mode === "password" || editableData.password || editableData.confirmPassword) {
-      if (!editableData.password) {
-        newErrors.password = "La contrasena es obligatoria";
-      } else if (!validatePassword(editableData.password)) {
-        newErrors.password = "Minimo 8 caracteres";
-      }
-
-      if (!editableData.confirmPassword) {
-        newErrors.confirmPassword = "Debe confirmar la contrasena";
-      } else if (editableData.password !== editableData.confirmPassword) {
-        newErrors.confirmPassword = "Las contrasenas no coinciden";
-      }
+    if (passwordNuevo.length < 8) {
+      setErrors({ general: 'La contraseña debe tener al menos 8 caracteres' });
+      return false;
     }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setSaving(true);
+    try {
+      await cambiarPassword({ passwordActual, passwordNuevo, passwordConfirm });
+      return true;
+    } catch (err) {
+      setErrors({ general: err.response?.data?.message ?? 'Error al cambiar la contraseña' });
+      return false;
+    } finally {
+      setSaving(false);
+    }
   };
 
   const resetEditableData = () => {
-    setEditableData(buildEditableData(profileData));
+    setEditableData(profileData ?? {});
     setErrors({});
-  };
-
-  const handleEditToggle = () => {
-    if (isEditing) {
-      resetEditableData();
-    }
-    setIsEditing(!isEditing);
-  };
-
-  const handleEditableDataChange = (field, value) => {
-    setEditableData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-
-    if (errors[field]) {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: "",
-      }));
-    }
-  };
-
-  const handleSaveChanges = (mode = "profile") => {
-    if (!validateEditableData(mode)) {
-      return false;
-    }
-
-    const updatedData = {
-      ...profileData,
-      nombre: mode === "profile" ? editableData.nombre : profileData.nombre,
-      apellido: mode === "profile" ? editableData.apellido : profileData.apellido,
-      dni: mode === "profile" ? editableData.dni : profileData.dni,
-      email: mode === "profile" || mode === "email" ? editableData.email : profileData.email,
-      telefono: mode === "profile" ? editableData.telefono : profileData.telefono,
-    };
-
-    if (editableData.password) {
-      updatedData.password = editableData.password;
-    }
-
-    setProfileData(updatedData);
-    setEditableData(buildEditableData(updatedData));
-    setIsEditing(false);
-    setErrors({});
-    return true;
   };
 
   return {
     profileData,
-    setProfileData,
     editableData,
     handleEditableDataChange,
-    isEditing,
-    setIsEditing,
-    handleEditToggle,
     handleSaveChanges,
+    handleCambiarEmail,
+    handleCambiarPassword,
     resetEditableData,
     errors,
+    loading,
+    saving,
+    fetchError,
   };
-};
+}
