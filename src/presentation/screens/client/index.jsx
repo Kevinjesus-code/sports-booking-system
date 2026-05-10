@@ -8,7 +8,7 @@ import Configuration from "./configuration/configuration";
 import ReservationsModal from "../../components/reservations-modal";
 import styles from "./client.module.css";
 import { useState } from "react";
-import { useAuth } from "../../hooks/useAuth";  // ← agrega esto
+import { useAuth } from "../../hooks/useAuth";
 
 const CLIENT_DATA = {
   nombre: "Juan Pérez",
@@ -21,18 +21,18 @@ const CLIENT_DATA = {
   direccion: "Lima, Perú",
 };
 
-const Client = ({ onLogout }) => {  // ← agrega onLogout
-  const { logout } = useAuth();     // ← agrega esto
+const Client = ({ onLogout }) => {
+  const { logout } = useAuth();
 
-  const [selectedCourt, setSelectedCourt]         = useState(null);
-  const [selectedSchedule, setSelectedSchedule]   = useState(null);
-  const [selectedDate, setSelectedDate]           = useState(null);
-  const [isReserved, setIsReserved]               = useState(false);
-  const [customerData, setCustomerData]           = useState(null);
-  const [reservations, setReservations]           = useState([]);
-  const [showModal, setShowModal]                 = useState(false);
-  const [isViewingProfile, setIsViewingProfile]   = useState(false);
-  const [isViewingSettings, setIsViewingSettings] = useState(false);
+  const [selectedCourt,       setSelectedCourt]       = useState(null);
+  const [selectedSchedule,    setSelectedSchedule]    = useState(null);
+  const [selectedDate,        setSelectedDate]        = useState(null);
+  const [isReserved,          setIsReserved]          = useState(false);
+  const [customerData,        setCustomerData]        = useState(null);
+  const [reservations,        setReservations]        = useState([]);
+  const [showModal,           setShowModal]           = useState(false);
+  const [isViewingProfile,    setIsViewingProfile]    = useState(false);
+  const [isViewingSettings,   setIsViewingSettings]   = useState(false);
 
   const handleHome = () => {
     setSelectedCourt(null);
@@ -44,43 +44,35 @@ const Client = ({ onLogout }) => {  // ← agrega onLogout
     setIsViewingSettings(false);
   };
 
-  const handleOpenProfile = () => {
-    setIsViewingProfile(true);
-    setIsViewingSettings(false);
-  };
+  const handleOpenProfile  = () => { setIsViewingProfile(true);  setIsViewingSettings(false); };
+  const handleOpenSettings = () => { setIsViewingSettings(true); setIsViewingProfile(false);  };
+  const handleBackToClient = () => { setIsViewingProfile(false); setIsViewingSettings(false); };
 
-  const handleOpenSettings = () => {
-    setIsViewingSettings(true);
-    setIsViewingProfile(false);
-  };
-
-  const handleBackToClient = () => {
-    setIsViewingProfile(false);
-    setIsViewingSettings(false);
-  };
-
-  const handleSelectSchedule = (schedule, date) => {
-    setSelectedSchedule(schedule);
-    setSelectedDate(date);
-  };
-
+  const handleSelectSchedule  = (schedule, date) => { setSelectedSchedule(schedule); setSelectedDate(date); };
   const handleBackToSchedules = () => setSelectedSchedule(null);
+  const handleBackToCourts    = () => { setSelectedCourt(null); setSelectedSchedule(null); setSelectedDate(null); };
 
-  const handleBackToCourts = () => {
-    setSelectedCourt(null);
-    setSelectedSchedule(null);
-    setSelectedDate(null);
-  };
-
-  const handleConfirmReservation = (data) => {
-    setCustomerData(data);
+  // ✅ FIX: enriquece la respuesta del API con los datos locales que Resumen necesita
+  const handleConfirmReservation = (reservationFromApi) => {
+    const fullReservation = {
+      ...reservationFromApi,
+      courtName:   selectedCourt?.titulo || selectedCourt?.nombre || selectedCourt?.name,
+      courtIcon:   selectedCourt?.icono ?? "⚽",
+      startTime:   selectedSchedule?.startTime,
+      endTime:     selectedSchedule?.endTime,
+      date:        selectedDate,
+      totalAmount: reservationFromApi?.totalAmount
+                   ?? reservationFromApi?.montoTotal
+                   ?? selectedSchedule?.price
+                   ?? 0,
+    };
+    setCustomerData(fullReservation);
     setIsReserved(true);
     setReservations(prev => [...prev, {
-      id: Date.now(),
-      court: selectedCourt,
+      id:       reservationFromApi?.id || Date.now(),
+      court:    selectedCourt,
       schedule: selectedSchedule,
-      date: selectedDate,
-      customer: data,
+      date:     selectedDate,
     }]);
   };
 
@@ -92,7 +84,7 @@ const Client = ({ onLogout }) => {  // ← agrega onLogout
     setCustomerData(null);
   };
 
-  const handleLogout = async () => {  // ← agrega esto
+  const handleLogout = async () => {
     await logout();
     onLogout();
   };
@@ -114,16 +106,14 @@ const Client = ({ onLogout }) => {  // ← agrega onLogout
             reservationCount={reservations.length}
             onOpenProfile={handleOpenProfile}
             onOpenSettings={handleOpenSettings}
-            onLogout={handleLogout}  // ← cambia esto
+            onLogout={handleLogout}
           />
 
           <div className={styles.container}>
             {isReserved ? (
+              // ✅ FIX: prop correcta es "reservation", no court/schedule/customerData
               <Resumen
-                court={selectedCourt}
-                schedule={selectedSchedule}
-                date={selectedDate}
-                customerData={customerData}
+                reservation={customerData}
                 onNewReservation={handleNewReservation}
                 onViewReservations={() => setShowModal(true)}
               />
