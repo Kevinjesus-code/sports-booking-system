@@ -1,8 +1,4 @@
 // presentation/screens/client/confirm-reserve/confirm-reserve.jsx
-//
-// Sin cambios de lógica respecto a la versión anterior —
-// el precio ahora llega correctamente en schedule.price
-// porque schedules.jsx lo inyecta desde court.precio.
 
 import { useState } from "react";
 import { useCreateReservation } from "../../../../hooks/useReservations";
@@ -30,6 +26,9 @@ const PAYMENT_METHODS = [
   { id: "plin",     label: "Plin"     },
 ];
 
+// "08:00" → "08:00:00" para que Spring deserialice LocalTime correctamente
+const toLocalTime = (t) => t?.length === 5 ? t + ":00" : t ?? "";
+
 export default function ConfirmReserve({ court, schedule, date, onBack, onConfirm }) {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const { create, loading, error: apiError } = useCreateReservation();
@@ -45,20 +44,17 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
     weekday: "long", year: "numeric", month: "long", day: "numeric",
   });
 
-  // schedule.price viene de court.precio inyectado en schedules.jsx
   const price = schedule.price ?? 0;
 
   const handleConfirm = async () => {
     if (!payment) { alert("Selecciona un método de pago"); return; }
     try {
-      // ReservaRequest.java: { canchaId, horarioId, fecha }
-     const reservation = await create({
-      canchaId:   court.id,
-      fecha:      date,
-      horaInicio: schedule.startTime,
-      horaFin:    schedule.endTime,
-    });
-      // Pasa la entidad Reservation completa al padre → Client → Resumen
+      const reservation = await create({
+        canchaId:   court.id,
+        fecha:      date,
+        horaInicio: toLocalTime(schedule.startTime),  // "08:00" → "08:00:00"
+        horaFin:    toLocalTime(schedule.endTime),     // "09:00" → "09:00:00"
+      });
       onConfirm?.(reservation);
     } catch {
       // apiError lo captura el hook
