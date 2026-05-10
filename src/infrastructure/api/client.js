@@ -20,3 +20,5 @@ const handleConfirmReservation = (reservationFromApi) => {
     date:     selectedDate,
   }]);
 };
+
+export default client;
