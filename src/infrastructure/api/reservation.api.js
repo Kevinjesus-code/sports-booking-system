@@ -1,45 +1,31 @@
 // infrastructure/api/reservation.api.js
-// Todas las llamadas HTTP relacionadas con reservas
-
-import client from './client';
+import client from './client';   // ← default import, SIN llaves
 
 export const reservationApi = {
 
-  /**
-   * GET /api/reservas/historial/{userId}
-   * Retorna lista de reservas del usuario autenticado
-   */
+  // GET /api/reservas/historial/{userId}
   getByUserId: async (userId) => {
-    const response = await client.get(`/api/reservas/historial/${userId}`);
-    return response.data;
+    const res = await client.get(`/api/reservas/historial/${userId}`);
+    return res.data;
   },
 
-  /**
-   * GET /canchas/{courtId}/slots?date={date}
-   * Retorna horarios disponibles de una cancha (público)
-   */
+  // GET /canchas/{courtId}/slots?date={date}
   getAvailableSlots: async (courtId, date) => {
-    const response = await client.get(
-      `/canchas/${courtId}/slots?date=${date}`
-    );
-    return response.data;
+    const res = await client.get(`/canchas/${courtId}/slots`, {
+      params: { date },
+    });
+    return res.data;
   },
 
-  /**
-   * POST /api/reservas
-   * Crea una nueva reserva para el usuario autenticado
-   */
+  // POST /api/reservas
   create: async (data) => {
-    const response = await client.post('/api/reservas', data);
-    return response.data;
+    const res = await client.post('/api/reservas', data);
+    return res.data;
   },
 
-  /**
-   * DELETE /api/reservas/{id}
-   * Cancela una reserva existente del usuario autenticado
-   */
+  // DELETE /api/reservas/{id}
   cancel: async (reservationId) => {
-    const response = await client.delete(`/api/reservas/${reservationId}`);
-    return response.data;
+    const res = await client.delete(`/api/reservas/${reservationId}`);
+    return res.data;
   },
 };
