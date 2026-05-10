@@ -1,32 +1,38 @@
+// presentation/screens/client/schedules/schedules.jsx
+//
+// FIX precio S/0.00:
+// Horario.java NO tiene campo precio — el precio pertenece a Cancha.
+// → price se toma de court.precio ?? court.precioPorHora ?? 0
+//   y se inyecta en cada slot al mapear la respuesta del backend.
+
 import { useState } from "react";
 import styles from "./schedules.module.css";
 import { useAvailableSlots } from "../../../../hooks/useReservations";
 
-// Props que recibe desde Client.jsx:
-//   court            → objeto cancha seleccionada
-//   onBack           → vuelve a la lista de canchas
-//   onSelectSchedule → (schedule, date) → avanza a confirm-reserve
-
 const Schedules = ({ court, onBack, onSelectSchedule }) => {
-
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
   );
 
-  // Hook real: llama al backend GET /canchas/{id}/slots?date={date}
-  const { slots: rawSlots, loading, error } = useAvailableSlots(
-    court?.id,
-    selectedDate
-  );
+  const { slots: rawSlots, loading, error } = useAvailableSlots(court?.id, selectedDate);
 
-  // Mapea TimeSlot → formato UI
-  const schedules = (rawSlots ?? []).map((s) => ({
+  // El precio vive en Cancha, no en Horario → lo tomamos del prop court
+  // Soporta los nombres más comunes del campo en el backend Java
+  const courtPrice =
+    court?.precio          ??
+    court?.precioPorHora   ??
+    court?.precio_por_hora ??
+    court?.price           ??
+    0;
+
+  // Mapea TimeSlot al shape que usa la UI, inyectando el precio de la cancha
+  const schedules = rawSlots.map((s) => ({
     id:        s.id,
     time:      `${s.startTime} - ${s.endTime}`,
     status:    s.available ? "disponible" : "ocupado",
     startTime: s.startTime,
     endTime:   s.endTime,
-    price:     s.price ?? 0,
+    price:     s.price > 0 ? s.price : courtPrice,
   }));
 
   const getStatusText = (status) => {
@@ -38,15 +44,14 @@ const Schedules = ({ court, onBack, onSelectSchedule }) => {
     }
   };
 
-  // Llama a onSelectSchedule(schedule, date) → Client.jsx lo maneja
-  const handleSelectSchedule = (schedule) => {
+  const handleSelect = (schedule) => {
+    if (schedule.status !== "disponible") return;
     onSelectSchedule?.(schedule, selectedDate);
   };
 
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        {/* Botón retroceder usando onBack prop */}
         <button onClick={onBack} className={styles.backButton}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -54,7 +59,7 @@ const Schedules = ({ court, onBack, onSelectSchedule }) => {
           </svg>
         </button>
         <div>
-          <h1 className={styles.title}>{court?.name || court?.titulo || "Cancha"}</h1>
+          <h1 className={styles.title}>{court?.titulo || court?.nombre || "Cancha"}</h1>
           <p className={styles.subtitle}>Selecciona fecha y horario disponible</p>
         </div>
       </header>
@@ -102,13 +107,9 @@ const Schedules = ({ court, onBack, onSelectSchedule }) => {
         </div>
 
         {loading && <p className={styles.loadingText}>Cargando horarios...</p>}
-
-        {error && <p className={styles.errorText}>⚠ {error}</p>}
-
+        {error   && <p className={styles.errorText}>{error}</p>}
         {!loading && !error && schedules.length === 0 && (
-          <p className={styles.emptyText}>
-            No hay horarios disponibles para esta fecha.
-          </p>
+          <p className={styles.emptyText}>No hay horarios disponibles para esta fecha.</p>
         )}
 
         <div className={styles.grid}>
@@ -116,13 +117,12 @@ const Schedules = ({ court, onBack, onSelectSchedule }) => {
             <div
               key={schedule.id}
               className={`${styles.card} ${styles[schedule.status]}`}
-              onClick={() => {
-                if (schedule.status === "disponible") {
-                  handleSelectSchedule(schedule);
-                }
-              }}
+              onClick={() => handleSelect(schedule)}
             >
               <div className={styles.time}>{schedule.time}</div>
+              {schedule.status === "disponible" && courtPrice > 0 && (
+                <div className={styles.price}>S/ {courtPrice.toFixed(2)}</div>
+              )}
               <span className={`${styles.badge} ${styles["badge-" + schedule.status]}`}>
                 {getStatusText(schedule.status)}
               </span>
