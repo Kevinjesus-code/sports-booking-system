@@ -25,15 +25,17 @@ const PAYMENT_METHODS = [
   { id: "plin",     label: "Plin"     },
 ];
 
-// Props desde Client.jsx:
-//   court      → objeto cancha { id, name/titulo, icono }
-//   schedule   → { id, time, startTime, endTime, price, status }
-//   date       → "YYYY-MM-DD"
-//   onBack     → vuelve a schedules
-//   onConfirm  → (data) notifica reserva creada
+// Props desde Client.jsx (componente padre que maneja la navegación):
+//   court    → { id, titulo/name, icono }
+//   schedule → { id, time, startTime, endTime, price }   ← id es horarioId
+//   date     → "YYYY-MM-DD"
+//   onBack   → vuelve a schedules
+//   onConfirm→ (reservation: Reservation) notifica reserva creada al padre
 
 export default function ConfirmReserve({ court, schedule, date, onBack, onConfirm }) {
+  // Lee el usuario desde localStorage (guardado por useAuth.login)
   const user = JSON.parse(localStorage.getItem("user") || "{}");
+
   const { create, loading, error: apiError } = useCreateReservation();
 
   const [nombre,        setNombre]        = useState(user?.nombre || user?.name || "");
@@ -41,6 +43,7 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
   const [observaciones, setObservaciones] = useState("");
   const [payment,       setPayment]       = useState(null);
 
+  // Guard: si el padre no pasó los datos mínimos, vuelve atrás
   if (!court || !schedule) { onBack?.(); return null; }
 
   const formattedDate = new Date(date + "T00:00:00").toLocaleDateString("es-PE", {
@@ -52,18 +55,23 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
   const handleConfirm = async () => {
     if (!payment) { alert("Selecciona un método de pago"); return; }
 
-    // ✅ Solo los 3 campos que ReservaRequest.java espera
+    // Body que espera ReservaRequest.java (el userId viene del JWT en el backend)
+    // schedule.id es el horarioId del slot seleccionado en schedules.jsx
     const body = {
       canchaId:  court.id,
       horarioId: schedule.id,
-      fecha:     date,          // "YYYY-MM-DD" → LocalDate en el backend
+      fecha:     date,       // "YYYY-MM-DD" → LocalDate en Java
     };
 
     try {
-      const newReservation = await create(body);
-      onConfirm?.({ ...body, id: newReservation?.id, court, schedule, date });
-    } catch (err) {
-      console.error("Error al crear reserva:", err);
+      // create() llama al caso de uso → repositorio → POST /api/reservas
+      // Retorna una entidad Reservation con todos los campos de la BD
+      const reservation = await create(body);
+
+      // Pasa la entidad completa al padre para que la muestre en Resumen
+      onConfirm?.(reservation);
+    } catch {
+      // apiError ya lo captura el hook — se muestra abajo
     }
   };
 
@@ -74,7 +82,7 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
       display: "flex",
       flexDirection: "column",
     }}>
-      {/* Header */}
+      {/* ── Header ──────────────────────────────────────────── */}
       <header style={{
         display: "flex", alignItems: "center", gap: "12px",
         padding: "16px 20px",
@@ -102,19 +110,14 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
         </div>
       </header>
 
-      {/* Contenido centrado */}
+      {/* ── Contenido ───────────────────────────────────────── */}
       <div style={{
-        flex: 1,
-        maxWidth: "480px",
-        width: "100%",
-        margin: "0 auto",
-        padding: "16px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "16px",
+        flex: 1, maxWidth: "480px", width: "100%",
+        margin: "0 auto", padding: "16px",
+        display: "flex", flexDirection: "column", gap: "16px",
       }}>
 
-        {/* Resumen */}
+        {/* Resumen de la reserva */}
         <div style={{
           background: "#fff", borderRadius: "12px",
           padding: "16px", border: "1px solid #e2e8f0",
@@ -152,8 +155,8 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
             Datos de contacto
           </p>
           {[
-            { label: "Nombre completo", value: nombre, setter: setNombre, type: "text" },
-            { label: "Teléfono",        value: telefono, setter: setTelefono, type: "tel" },
+            { label: "Nombre completo", value: nombre,   setter: setNombre,   type: "text" },
+            { label: "Teléfono",        value: telefono, setter: setTelefono, type: "tel"  },
           ].map(({ label, value, setter, type }) => (
             <div key={label} style={{ marginBottom: "12px" }}>
               <label style={{ fontSize: "13px", color: "#374151", fontWeight: 500 }}>
@@ -206,7 +209,8 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
                   alignItems: "center", justifyContent: "center",
                   gap: "6px", padding: "12px 8px",
                   border: payment === method.id ? "2px solid #16a34a" : "1px solid #e2e8f0",
-                  borderRadius: "10px", background: payment === method.id ? "#f0fdf4" : "#fff",
+                  borderRadius: "10px",
+                  background: payment === method.id ? "#f0fdf4" : "#fff",
                   cursor: "pointer", transition: "all 0.15s",
                 }}
               >
@@ -250,7 +254,7 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
           )}
         </div>
 
-        {/* Error */}
+        {/* Error del API */}
         {apiError && (
           <p style={{
             color: "#dc2626", background: "#fef2f2",
@@ -264,7 +268,8 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
         {/* Botones */}
         <div style={{ display: "flex", gap: "12px", paddingBottom: "24px" }}>
           <button
-            onClick={onBack} disabled={loading}
+            onClick={onBack}
+            disabled={loading}
             style={{
               flex: 1, padding: "14px",
               border: "1px solid #d1d5db", borderRadius: "10px",
@@ -275,7 +280,8 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
             Cancelar
           </button>
           <button
-            onClick={handleConfirm} disabled={loading}
+            onClick={handleConfirm}
+            disabled={loading}
             style={{
               flex: 2, padding: "14px",
               border: "none", borderRadius: "10px",

@@ -1,28 +1,25 @@
 // application/reservation/createReservation.js
-// Caso de uso de escritura — incluye validaciones de negocio
 
 /**
  * Caso de uso: crear una reserva
+ * El backend recibe { canchaId, horarioId, fecha } y valida disponibilidad.
+ * El frontend solo valida campos requeridos y fecha no pasada.
+ *
  * @param {ReservationRepository} repository
  * @returns {Function} (data) => Promise<Reservation>
  */
-export const createReservation = (repository) => async ({ courtId, userId, date, startTime, endTime, slotId }) => {
-  // ── Validaciones de negocio ───────────────────────────────
-  if (!courtId)   throw new Error('Debes seleccionar una cancha');
-  if (!userId)    throw new Error('Usuario no autenticado');
-  if (!date)      throw new Error('Debes seleccionar una fecha');
-  if (!startTime) throw new Error('Debes seleccionar un horario');
+export const createReservation = (repository) =>
+  async ({ canchaId, horarioId, fecha, userId }) => {
 
-  const today = new Date().toISOString().split('T')[0];
-  if (date < today) throw new Error('No puedes reservar en una fecha pasada');
+    // ── Validaciones de negocio ──────────────────────────────
+    if (!canchaId)  throw new Error('Debes seleccionar una cancha');
+    if (!horarioId) throw new Error('Debes seleccionar un horario');
+    if (!fecha)     throw new Error('Debes seleccionar una fecha');
 
-  // Verifica que el slot sigue disponible antes de crear
-  const slots = await repository.getAvailableSlots(courtId, date);
-  const slot = slots.find(s => s.startTime === startTime);
+    const today = new Date().toISOString().split('T')[0];
+    if (fecha < today) throw new Error('No puedes reservar en una fecha pasada');
 
-  if (!slot)           throw new Error('El horario seleccionado no existe');
-  if (!slot.available) throw new Error('El horario ya no está disponible. Por favor elige otro.');
-
-  // ── Creación ──────────────────────────────────────────────
-  return repository.create({ courtId, userId, date, startTime, endTime: slot.endTime });
-};
+    // ── Creación ─────────────────────────────────────────────
+    // El repositorio mapea estos campos al body que espera el backend Java
+    return repository.create({ canchaId, horarioId, fecha, userId });
+  };
