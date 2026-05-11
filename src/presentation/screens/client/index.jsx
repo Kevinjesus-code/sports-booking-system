@@ -4,7 +4,6 @@ import Schedules from "./schedules/schedules";
 import ConfirmReserve from "./confirm-reserve/confirm-reserve";
 import Resumen from "./resumen/resumen";
 import Profile from "./profile/profile";
-import Configuration from "../admin/configuration/configuration";
 import ReservationsModal from "../../components/reservations-modal";
 import styles from "./client.module.css";
 import { useState } from "react";
@@ -24,15 +23,14 @@ const CLIENT_DATA = {
 const Client = ({ onLogout }) => {
   const { logout } = useAuth();
 
-  const [selectedCourt,       setSelectedCourt]       = useState(null);
-  const [selectedSchedule,    setSelectedSchedule]    = useState(null);
-  const [selectedDate,        setSelectedDate]        = useState(null);
-  const [isReserved,          setIsReserved]          = useState(false);
-  const [customerData,        setCustomerData]        = useState(null);
-  const [reservations,        setReservations]        = useState([]);
-  const [showModal,           setShowModal]           = useState(false);
-  const [isViewingProfile,    setIsViewingProfile]    = useState(false);
-  const [isViewingSettings,   setIsViewingSettings]   = useState(false);
+  const [selectedCourt,     setSelectedCourt]     = useState(null);
+  const [selectedSchedule,  setSelectedSchedule]  = useState(null);
+  const [selectedDate,      setSelectedDate]      = useState(null);
+  const [isReserved,        setIsReserved]        = useState(false);
+  const [customerData,      setCustomerData]      = useState(null);
+  const [reservations,      setReservations]      = useState([]);
+  const [showModal,         setShowModal]         = useState(false);
+  const [isViewingProfile,  setIsViewingProfile]  = useState(false);
 
   const handleHome = () => {
     setSelectedCourt(null);
@@ -41,18 +39,15 @@ const Client = ({ onLogout }) => {
     setIsReserved(false);
     setCustomerData(null);
     setIsViewingProfile(false);
-    setIsViewingSettings(false);
   };
 
-  const handleOpenProfile  = () => { setIsViewingProfile(true);  setIsViewingSettings(false); };
-  const handleOpenSettings = () => { setIsViewingSettings(true); setIsViewingProfile(false);  };
-  const handleBackToClient = () => { setIsViewingProfile(false); setIsViewingSettings(false); };
+  const handleOpenProfile  = () => setIsViewingProfile(true);
+  const handleBackToClient = () => setIsViewingProfile(false);
 
   const handleSelectSchedule  = (schedule, date) => { setSelectedSchedule(schedule); setSelectedDate(date); };
   const handleBackToSchedules = () => setSelectedSchedule(null);
   const handleBackToCourts    = () => { setSelectedCourt(null); setSelectedSchedule(null); setSelectedDate(null); };
 
-  // ✅ FIX: enriquece la respuesta del API con los datos locales que Resumen necesita
   const handleConfirmReservation = (reservationFromApi) => {
     const fullReservation = {
       ...reservationFromApi,
@@ -93,8 +88,6 @@ const Client = ({ onLogout }) => {
     <>
       {isViewingProfile ? (
         <Profile onBack={handleBackToClient} />
-      ) : isViewingSettings ? (
-        <Configuration onBack={handleBackToClient} />
       ) : (
         <>
           <DSANavbarClient
@@ -105,13 +98,11 @@ const Client = ({ onLogout }) => {
             onOpenReservations={() => setShowModal(true)}
             reservationCount={reservations.length}
             onOpenProfile={handleOpenProfile}
-            onOpenSettings={handleOpenSettings}
             onLogout={handleLogout}
           />
 
           <div className={styles.container}>
             {isReserved ? (
-              // ✅ FIX: prop correcta es "reservation", no court/schedule/customerData
               <Resumen
                 reservation={customerData}
                 onNewReservation={handleNewReservation}
