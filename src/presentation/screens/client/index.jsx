@@ -4,7 +4,7 @@ import Schedules from "./schedules/schedules";
 import ConfirmReserve from "./confirm-reserve/confirm-reserve";
 import Resumen from "./resumen/resumen";
 import Profile from "./profile/profile";
-import Configuration from "./configuration/configuration";
+import Configuration from "../admin/configuration/configuration";
 import ReservationsModal from "../../components/reservations-modal";
 import styles from "./client.module.css";
 import { useState } from "react";
