@@ -152,175 +152,23 @@
   height: 36px;
   background: white;
   color: #34c36b;
-  border-radius: 10px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
   font-size: 14px;
-  flex-shrink: 0;
-}
-
-.profileWrapper {
-  position: relative;
-}
-
-.profileButton {
-  min-width: 190px;
-  height: 42px;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.12);
-  color: white;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 3px 8px 3px 4px;
   cursor: pointer;
+  border: none;
+  flex-shrink: 0;
   transition:
-    background 0.2s,
-    box-shadow 0.2s,
+    opacity 0.2s,
     transform 0.15s;
 }
 
-.profileButton:hover,
-.profileButtonActive {
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 22px rgba(21, 128, 61, 0.18);
-}
-
-.profileText {
-  min-width: 0;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  line-height: 1.1;
-}
-
-.profileName {
-  max-width: 118px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.profileRole {
-  font-size: 10px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.78);
-}
-
-.chevron {
-  width: 12px;
-  height: 12px;
-  color: rgba(255, 255, 255, 0.78);
-  transition: transform 0.2s;
-}
-
-.chevronOpen {
-  transform: rotate(180deg);
-}
-
-.profileDropdown {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 12px);
-  width: 226px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.18);
-  overflow: hidden;
-  z-index: 150;
-  border: 1px solid #eef2f7;
-}
-
-.dropdownHeader {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 15px 16px 14px;
-}
-
-.dropdownAvatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  background: #16a34a;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 800;
-  flex-shrink: 0;
-}
-
-.dropdownName,
-.dropdownRole {
-  margin: 0;
-}
-
-.dropdownName {
-  color: #111827;
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 1.2;
-}
-
-.dropdownRole {
-  margin-top: 2px;
-  color: #6b7280;
-  font-size: 11px;
-}
-
-.dropdownBody {
-  padding: 8px 0;
-  border-top: 1px solid #f1f5f9;
-}
-
-.dropdownFooter {
-  padding: 8px 0;
-  border-top: 1px solid #f1f5f9;
-}
-
-.dropdownItem {
-  width: 100%;
-  border: none;
-  background: transparent;
-  color: #374151;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 17px;
-  font-size: 12px;
-  text-align: left;
-  cursor: pointer;
-  transition:
-    background 0.18s,
-    color 0.18s;
-}
-
-.dropdownItem svg {
-  width: 15px;
-  height: 15px;
-  flex-shrink: 0;
-}
-
-.dropdownItem:hover {
-  background: #f8fafc;
-  color: #16a34a;
-}
-
-.dropdownItemDanger {
-  color: #dc2626;
-}
-
-.dropdownItemDanger:hover {
-  color: #b91c1c;
-  background: #fef2f2;
+.avatar:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
 }
 
 /* ─── Badge ─── */
@@ -350,21 +198,6 @@
 
   .brand {
     font-size: 16px;
-  }
-
-  .profileButton {
-    min-width: 42px;
-    width: 42px;
-    padding: 3px;
-  }
-
-  .profileText,
-  .chevron {
-    display: none;
-  }
-
-  .profileDropdown {
-    right: -8px;
   }
 }
 

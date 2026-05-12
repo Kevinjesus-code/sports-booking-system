@@ -32,9 +32,6 @@ const TopBar = ({
   userName      = "Kevin More Sandoval",
   userRole      = "Administrador",
   onMenuClick,
-  onOpenProfile,
-  onOpenSettings,
-  onLogout,
   unreadCount   = 3,
   notifications = [
     { id: 1, text: "Nueva reserva registrada",  sub: "Cancha 3 · Hoy 10:00",      unread: true  },
@@ -61,12 +58,6 @@ const TopBar = ({
 
   const toggleMenu = (menu) =>
     setActiveMenu((prev) => (prev === menu ? null : menu));
-
-  const runProfileAction = (event, callback) => {
-    event.stopPropagation();
-    callback?.();
-    setActiveMenu(null);
-  };
 
   return (
     <div className={styles["topbar"]}>
@@ -150,7 +141,10 @@ const TopBar = ({
               </div>
 
               <div className={styles["profile-dropdown-body"]}>
-                <button className={styles["profile-item"]} onClick={(event) => runProfileAction(event, onOpenProfile)}>
+                <button className={styles["profile-item"]} onClick={() => {
+                  // navigate("/perfil");
+                  setActiveMenu(null);
+                }}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"
                     strokeLinecap="round" strokeLinejoin="round" width="15" height="15">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -159,7 +153,10 @@ const TopBar = ({
                   Mi perfil
                 </button>
 
-                <button className={styles["profile-item"]} onClick={(event) => runProfileAction(event, onOpenSettings)}>
+                <button className={styles["profile-item"]} onClick={() => {
+                  // navigate("/configuracion");
+                  setActiveMenu(null);
+                }}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"
                     strokeLinecap="round" strokeLinejoin="round" width="15" height="15">
                     <circle cx="12" cy="12" r="3"/>
@@ -170,7 +167,10 @@ const TopBar = ({
               </div>
 
               <div className={styles["profile-dropdown-footer"]}>
-                <button className={`${styles["profile-item"]} ${styles["profile-item--danger"]}`} onClick={(event) => runProfileAction(event, onLogout)}>
+                <button className={`${styles["profile-item"]} ${styles["profile-item--danger"]}`} onClick={() => {
+                  console.log("Cerrar sesión");
+                  setActiveMenu(null);
+                }}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"
                     strokeLinecap="round" strokeLinejoin="round" width="15" height="15">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>

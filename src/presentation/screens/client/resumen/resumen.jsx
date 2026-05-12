@@ -1,52 +1,21 @@
-// presentation/screens/client/resumen/resumen.jsx
-//
-// FIX: "Cannot update a component (Client) while rendering (Resumen)"
-// → Guard usa useEffect — el setState del padre ocurre DESPUÉS del render.
-
-import { useEffect } from "react";
 import styles from "./resumen.module.css";
 
-const Resumen = ({ reservation, onNewReservation, onViewReservations }) => {
-
-  // ✅ Correcto: useEffect garantiza que el callback del padre
-  //    se ejecute después del render, nunca durante él.
-  useEffect(() => {
-    if (!reservation) {
-      onViewReservations?.();
-    }
-  }, []);
-
-  if (!reservation) return null;
-
-  // Helpers con fallback (funciona con entidad Reservation o con objeto plano)
-  const formattedDate =
-    typeof reservation.getFormattedDate === "function"
-      ? reservation.getFormattedDate()
-      : new Date((reservation.date ?? reservation.fecha) + "T00:00:00")
-          .toLocaleDateString("es-PE", {
-            weekday: "long", year: "numeric", month: "long", day: "numeric",
-          });
-
-  const statusColor =
-    typeof reservation.getStatusColor === "function"
-      ? reservation.getStatusColor()
-      : "#97C459";
-
-  const formattedStatus =
-    typeof reservation.getFormattedStatus === "function"
-      ? reservation.getFormattedStatus()
-      : reservation.status ?? reservation.estado ?? "—";
-
-  // monto_total de la BD → totalAmount en la entidad
-  const total = reservation.totalAmount ?? reservation.totalPrice ?? 0;
+const Resumen = ({ court, schedule, date, customerData, onNewReservation,onViewReservations }) => {
+  // Generate a random confirmation number
+  const confNumber = "#RSV-" + Math.floor(10000 + Math.random() * 90000);
 
   return (
     <div className={styles.container}>
-
       <div className={styles.successHeader}>
         <div className={styles.checkCircle}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </div>
@@ -57,16 +26,12 @@ const Resumen = ({ reservation, onNewReservation, onViewReservations }) => {
       <div className={styles.card}>
         <div className={styles.cardHeader}>Detalles de la reserva</div>
         <div className={styles.cardBody}>
-
+          
           <div className={styles.courtRow}>
-            <div className={styles.courtIconBg}>
-              {reservation.courtIcon ?? reservation.icono ?? "⚽"}
-            </div>
+            <div className={styles.courtIconBg}>{court?.icono || "⚽"}</div>
             <div className={styles.courtInfo}>
               <span className={styles.label}>Cancha</span>
-              <span className={styles.value}>
-                {reservation.courtName ?? reservation.canchaName ?? "—"}
-              </span>
+              <span className={styles.value}>{court?.titulo || "Fútbol 5"}</span>
             </div>
           </div>
 
@@ -82,7 +47,7 @@ const Resumen = ({ reservation, onNewReservation, onViewReservations }) => {
               </div>
               <div className={styles.infoContent}>
                 <span className={styles.label}>Fecha</span>
-                <span className={styles.value}>{formattedDate}</span>
+                <span className={styles.value}>{date || "2026-04-10"}</span>
               </div>
             </div>
 
@@ -95,11 +60,7 @@ const Resumen = ({ reservation, onNewReservation, onViewReservations }) => {
               </div>
               <div className={styles.infoContent}>
                 <span className={styles.label}>Horario</span>
-                <span className={styles.value}>
-                  {reservation.startTime ?? reservation.horaInicio ?? "—"}
-                  {" – "}
-                  {reservation.endTime   ?? reservation.horaFin    ?? "—"}
-                </span>
+                <span className={styles.value}>{schedule?.time || "09:00 - 10:00"}</span>
               </div>
             </div>
           </div>
@@ -108,38 +69,32 @@ const Resumen = ({ reservation, onNewReservation, onViewReservations }) => {
             <div className={styles.infoItem}>
               <div className={styles.iconContainer}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M9 11l3 3L22 4" />
-                  <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
                 </svg>
               </div>
               <div className={styles.infoContent}>
-                <span className={styles.label}>Estado</span>
-                <span className={styles.value} style={{
-                  color: statusColor, fontWeight: 600,
-                  padding: "2px 8px", borderRadius: "12px",
-                  background: statusColor + "20", display: "inline-block",
-                }}>
-                  {formattedStatus}
-                </span>
+                <span className={styles.label}>Nombre</span>
+                <span className={styles.value}>{customerData?.nombre || "Juan"}</span>
               </div>
             </div>
 
             <div className={styles.infoItem}>
               <div className={styles.iconContainer}>
-                <span style={{ fontWeight: "bold", fontSize: "14px", color: "#374151" }}>S/</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
               </div>
               <div className={styles.infoContent}>
-                <span className={styles.label}>Monto total</span>
-                <span className={styles.value} style={{ color: "#16a34a", fontWeight: 700 }}>
-                  S/ {total.toFixed(2)}
-                </span>
+                <span className={styles.label}>Teléfono</span>
+                <span className={styles.value}>{customerData?.telefono || "912123123"}</span>
               </div>
             </div>
           </div>
 
           <div className={styles.confirmationBox}>
             <div className={styles.label}>Número de confirmación</div>
-            <p className={styles.confNumber}>#{reservation.id}</p>
+            <p className={styles.confNumber}>{confNumber}</p>
           </div>
 
         </div>
@@ -148,24 +103,29 @@ const Resumen = ({ reservation, onNewReservation, onViewReservations }) => {
       <div className={styles.nextSteps}>
         <h3 className={styles.nextStepsTitle}>¿Qué sigue?</h3>
         <ul className={styles.stepsList}>
-          {[
-            "Recibirás un SMS de confirmación en breve",
-            "Te enviaremos un recordatorio 24 horas antes",
-            "Puedes cancelar hasta 2 horas antes sin cargo",
-          ].map((step) => (
-            <li key={step} className={styles.stepItem}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-              {step}
-            </li>
-          ))}
+          <li className={styles.stepItem}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            Recibirás un SMS de confirmación en breve
+          </li>
+          <li className={styles.stepItem}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            Te enviaremos un recordatorio 24 horas antes
+          </li>
+          <li className={styles.stepItem}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            Puedes cancelar hasta 2 horas antes sin cargo
+          </li>
         </ul>
       </div>
 
       <div className={styles.actionButtons}>
-        <button className={styles.primaryBtn}   onClick={onViewReservations}>Ver mis reservas</button>
+        <button className={styles.primaryBtn} onClick={onViewReservations}>Ver mis reservas</button>
         <button className={styles.secondaryBtn} onClick={onNewReservation}>Nueva reserva</button>
       </div>
 
