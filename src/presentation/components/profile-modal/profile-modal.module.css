@@ -117,13 +117,43 @@
   font-weight: 500;
 }
 
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.accountBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px;
+  border-radius: 10px;
+  border: 1px solid #dbeafe;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.accountBtn:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
+
 .logoutBtn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   width: 100%;
-  margin-top: 8px;
   padding: 11px;
   border-radius: 10px;
   border: 1px solid #fee2e2;
@@ -132,7 +162,39 @@
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
+}
+
+.logoutBtn:hover {
+  background: #fee2e2;
+  border-color: #fecaca;
+}
+.input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.saveBtn {
+  margin-top: 10px;
+  padding: 10px;
+  background: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.cancelBtn {
+  margin-top: 5px;
+  padding: 10px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
 .logoutBtn:hover { background: #fee2e2; }

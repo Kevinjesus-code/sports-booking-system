@@ -82,6 +82,9 @@ const Recepcionist = () => {
   const [showNotifs, setShowNotifs]         = useState(false);
   const [notifs, setNotifs]                 = useState(INITIAL_NOTIFS);
   const unreadCount                         = notifs.filter(n => n.unread).length;
+  const [userData, setUserData]             = useState(USER);
+  const [profileForm, setProfileForm]       = useState(USER);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
 
   const markAllRead = () =>
     setNotifs(prev => prev.map(n => ({ ...n, unread: false })));
@@ -91,14 +94,36 @@ const Recepcionist = () => {
     setShowNotifs(false);
   };
 
-  const toggleProfile = () => {
-    setShowNotifs(false);          // cierra notifs si estaba abierto
-    setShowProfile(prev => !prev);
-  };
-
   const toggleNotifs = () => {
     setShowProfile(false);         // cierra perfil si estaba abierto
     setShowNotifs(prev => !prev);
+  };
+
+  const openProfile = () => {
+    setProfileForm(userData);
+    setIsEditingProfile(false);
+    setShowNotifs(false);
+    setShowProfile(true);
+  };
+
+  const openSettings = () => {
+    setShowProfile(false);
+    setShowNotifs(false);
+    setSeccionActiva("configuracion");
+  };
+
+  const updateProfileForm = (field, value) => {
+    setProfileForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const saveProfile = () => {
+    setUserData(profileForm);
+    setIsEditingProfile(false);
+  };
+
+  const cancelProfileEdit = () => {
+    setProfileForm(userData);
+    setIsEditingProfile(false);
   };
 
   const renderContenido = () => {
@@ -131,11 +156,13 @@ const Recepcionist = () => {
       <main className={styles["containerContent"]} onClick={closeAll}>
         <DSATopBar
           onMenuClick={() => setSidebarOpen(true)}
-          initials={USER.initials}
-          userName={USER.name}      
-          userRole={USER.role}      
+          initials={userData.initials}
+          userName={userData.name}      
+          userRole={userData.role}      
           unreadCount={unreadCount}
-          onOpenProfile={(e) => { e.stopPropagation(); toggleProfile(); }}
+          onOpenProfile={openProfile}
+          onOpenSettings={openSettings}
+          onLogout={() => alert("Cerrando sesion...")}
           onOpenNotifs={(e)  => { e.stopPropagation(); toggleNotifs(); }}
         />
 
@@ -198,15 +225,46 @@ const Recepcionist = () => {
 
               <div className={styles["profileHero"]}>
                 <div className={styles["profileAvatarWrap"]}>
-                  <div className={styles["profileAvatar"]}>{USER.initials}</div>
+                  <div className={styles["profileAvatar"]}>{userData.initials}</div>
                   <div className={styles["profileStatusDot"]} />
                 </div>
                 <div style={{textAlign:"center"}}>
-                  <div className={styles["profileName"]}>{USER.name}</div>
-                  <div className={styles["profileEmail"]}>{USER.email}</div>
+                  <div className={styles["profileName"]}>{userData.name}</div>
+                  <div className={styles["profileEmail"]}>{userData.email}</div>
                   <div className={styles["profileBadge"]}>En línea</div>
                 </div>
               </div>
+
+              {isEditingProfile && (
+                <div className={styles["profileEditForm"]}>
+                  <label>
+                    Nombre completo
+                    <input
+                      value={profileForm.name}
+                      onChange={(e) => updateProfileForm("name", e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Correo
+                    <input
+                      type="email"
+                      value={profileForm.email}
+                      onChange={(e) => updateProfileForm("email", e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Telefono
+                    <input
+                      value={profileForm.phone}
+                      onChange={(e) => updateProfileForm("phone", e.target.value)}
+                    />
+                  </label>
+                  <div className={styles["profileEditActions"]}>
+                    <button className={styles["profileSaveBtn"]} onClick={saveProfile}>Guardar</button>
+                    <button className={styles["profileCancelBtn"]} onClick={cancelProfileEdit}>Cancelar</button>
+                  </div>
+                </div>
+              )}
 
               <div className={styles["profileInfoList"]}>
                 <div className={styles["profileInfoRow"]}>
@@ -215,7 +273,7 @@ const Recepcionist = () => {
                   </div>
                   <div>
                     <div className={styles["profileInfoLabel"]}>Nombre completo</div>
-                    <div className={styles["profileInfoValue"]}>{USER.name}</div>
+                    <div className={styles["profileInfoValue"]}>{userData.name}</div>
                   </div>
                 </div>
                 <div className={styles["profileInfoRow"]}>
@@ -224,7 +282,7 @@ const Recepcionist = () => {
                   </div>
                   <div>
                     <div className={styles["profileInfoLabel"]}>Teléfono</div>
-                    <div className={styles["profileInfoValue"]}>{USER.phone}</div>
+                    <div className={styles["profileInfoValue"]}>{userData.phone}</div>
                   </div>
                 </div>
                 <div className={styles["profileInfoRow"]}>
@@ -233,17 +291,17 @@ const Recepcionist = () => {
                   </div>
                   <div>
                     <div className={styles["profileInfoLabel"]}>Rol</div>
-                    <div className={styles["profileInfoValue"]}>{USER.role}</div>
+                    <div className={styles["profileInfoValue"]}>{userData.role}</div>
                   </div>
                 </div>
               </div>
 
               <div className={styles["profileActions"]}>
-                <button className={styles["profileBtn"]}>
+                <button className={styles["profileBtn"]} onClick={() => setIsEditingProfile(true)}>
                   <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                   Editar perfil
                 </button>
-                <button className={styles["profileBtn"]}>
+                <button className={styles["profileBtn"]} onClick={openSettings}>
                   <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                   Configuración
                 </button>

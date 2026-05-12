@@ -1,5 +1,8 @@
-import styles from "./confirm-reserve.module.css";
+// presentation/screens/client/confirm-reserve/confirm-reserve.jsx
+
 import { useState } from "react";
+import { useCreateReservation } from "../../../../hooks/useReservations";
+import styles from "./confirm-reserve.module.css";
 
 const PAYMENT_LOGOS = {
   efectivo: "/assets/MetodoPago/efectivo.png",
@@ -12,12 +15,7 @@ const PaymentLogo = ({ id }) => (
   <img
     src={PAYMENT_LOGOS[id]}
     alt={id}
-    style={{
-      width: "48px",
-      height: "48px",
-      objectFit: "contain",
-      borderRadius: "10px",
-    }}
+    style={{ width: "40px", height: "40px", objectFit: "contain", borderRadius: "8px" }}
   />
 );
 
@@ -28,244 +26,200 @@ const PAYMENT_METHODS = [
   { id: "plin",     label: "Plin"     },
 ];
 
-const ConfirmReserve = ({ court, schedule, date, onBack, onConfirm }) => {
-  const [nombre,        setNombre]        = useState("");
-  const [telefono,      setTelefono]      = useState("");
+// "08:00" → "08:00:00" para que Spring deserialice LocalTime correctamente
+const toLocalTime = (t) => t?.length === 5 ? t + ":00" : t ?? "";
+
+export default function ConfirmReserve({ court, schedule, date, onBack, onConfirm }) {
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const { create, loading, error: apiError } = useCreateReservation();
+
+  const [nombre,        setNombre]        = useState(user?.nombre || user?.name || "");
+  const [telefono,      setTelefono]      = useState(user?.telefono || user?.phone || "");
   const [observaciones, setObservaciones] = useState("");
   const [payment,       setPayment]       = useState(null);
-  const [cardNumber,    setCardNumber]    = useState("");
-  const [cardExpiry,    setCardExpiry]    = useState("");
-  const [cardCvv,       setCardCvv]       = useState("");
-  const [yapePhone,     setYapePhone]     = useState("");
-  const [plinPhone,     setPlinPhone]     = useState("");
 
-  const handleConfirm = () => {
+  if (!court || !schedule) { onBack?.(); return null; }
+
+  const formattedDate = new Date(date + "T00:00:00").toLocaleDateString("es-PE", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
+  });
+
+  const price = schedule.price ?? 0;
+
+  const handleConfirm = async () => {
     if (!payment) { alert("Selecciona un método de pago"); return; }
-    if (onConfirm) {
-      onConfirm({
-        nombre:   nombre   || "Juan",
-        telefono: telefono || "912123123",
-        observaciones,
-        payment,
-        paymentDetails: { cardNumber, cardExpiry, cardCvv, yapePhone, plinPhone },
+    try {
+      const reservation = await create({
+        canchaId:   court.id,
+        fecha:      date,
+        horaInicio: toLocalTime(schedule.startTime),  // "08:00" → "08:00:00"
+        horaFin:    toLocalTime(schedule.endTime),     // "09:00" → "09:00:00"
       });
+      onConfirm?.(reservation);
+    } catch {
+      // apiError lo captura el hook
     }
   };
 
   return (
-    <div className={styles.container}>
+    <div style={{ minHeight: "100vh", background: "#f8fafc", display: "flex", flexDirection: "column" }}>
 
-      <header className={styles.header}>
-        <button onClick={onBack} className={styles.backButton}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      {/* Header */}
+      <header style={{
+        display: "flex", alignItems: "center", gap: "12px",
+        padding: "16px 20px", background: "#fff",
+        borderBottom: "1px solid #e2e8f0",
+        position: "sticky", top: 0, zIndex: 10,
+      }}>
+        <button onClick={onBack} style={{
+          background: "#f1f5f9", border: "none", borderRadius: "50%",
+          width: "36px", height: "36px", cursor: "pointer",
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2">
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </button>
-        <div className={styles.headerText}>
-          <h1 className={styles.title}>Confirmar reserva</h1>
-          <p className={styles.subtitle}>Completa tus datos para reservar</p>
+        <div>
+          <h1 style={{ margin: 0, fontSize: "16px", fontWeight: 700, color: "#111827" }}>
+            Confirmar reserva
+          </h1>
+          <p style={{ margin: 0, fontSize: "12px", color: "#6b7280" }}>
+            Verifica los detalles y completa tu pago
+          </p>
         </div>
       </header>
 
-      {/* ── Columna izquierda ── */}
-      <div className={styles.leftCol}>
+      <div style={{
+        flex: 1, maxWidth: "480px", width: "100%",
+        margin: "0 auto", padding: "16px",
+        display: "flex", flexDirection: "column", gap: "16px",
+      }}>
 
-        <section className={styles.summaryCard}>
-          <div className={styles.summaryTitle}>Resumen de tu reserva</div>
-          <div className={styles.summaryCourt}>
-            <div className={styles.courtIcon}>{court?.icono || "⚽"}</div>
-            {court?.titulo || "Cancha seleccionada"}
+        {/* Resumen */}
+        <div style={{ background: "#fff", borderRadius: "12px", padding: "16px", border: "1px solid #e2e8f0" }}>
+          <p style={{ margin: "0 0 12px", fontWeight: 700, color: "#111827" }}>
+            Resumen de tu reserva
+          </p>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
+            <span style={{ fontSize: "24px" }}>{court.icono || "⚽"}</span>
+            <span style={{ fontWeight: 600, color: "#1f2937" }}>
+              {court.name || court.titulo || court.nombre}
+            </span>
           </div>
-          <div className={styles.summaryDetails}>
-            <div className={styles.detailItem}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                <line x1="16" y1="2" x2="16" y2="6" />
-                <line x1="8" y1="2" x2="8" y2="6" />
-                <line x1="3" y1="10" x2="21" y2="10" />
-              </svg>
-              {date || "2026-04-10"}
-            </div>
-            <div className={styles.detailItem}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-              {schedule?.time || "00:00 - 00:00"}
-            </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px", color: "#6b7280", fontSize: "14px" }}>
+            <span>📅 {formattedDate}</span>
+            <span>🕐 {schedule.startTime} – {schedule.endTime}</span>
           </div>
-        </section>
+          <div style={{
+            display: "flex", justifyContent: "space-between", alignItems: "center",
+            marginTop: "12px", paddingTop: "12px", borderTop: "1px solid #e2e8f0",
+          }}>
+            <span style={{ color: "#374151", fontWeight: 600 }}>Total a pagar:</span>
+            <span style={{ color: price > 0 ? "#16a34a" : "#9ca3af", fontWeight: 700, fontSize: "18px" }}>
+              {price > 0 ? `S/ ${price.toFixed(2)}` : "Consultar en recepción"}
+            </span>
+          </div>
+        </div>
 
-        <section className={styles.paymentContainer}>
-          <h2 className={styles.formTitle}>Método de pago</h2>
-          <div className={styles.paymentGrid}>
-            {PAYMENT_METHODS.map(method => (
-              <button
-                key={method.id}
-                type="button"
-                className={`${styles.paymentOption} ${payment === method.id ? styles.paymentSelected : ""}`}
-                onClick={() => setPayment(method.id)}
-              >
+        {/* Datos de contacto */}
+        <div style={{ background: "#fff", borderRadius: "12px", padding: "16px", border: "1px solid #e2e8f0" }}>
+          <p style={{ margin: "0 0 12px", fontWeight: 700, color: "#111827" }}>Datos de contacto</p>
+          {[
+            { label: "Nombre completo", value: nombre,   setter: setNombre,   type: "text" },
+            { label: "Teléfono",        value: telefono, setter: setTelefono, type: "tel"  },
+          ].map(({ label, value, setter, type }) => (
+            <div key={label} style={{ marginBottom: "12px" }}>
+              <label style={{ fontSize: "13px", color: "#374151", fontWeight: 500 }}>{label}</label>
+              <input type={type} value={value} onChange={(e) => setter(e.target.value)}
+                style={{
+                  width: "100%", padding: "10px 12px", marginTop: "4px",
+                  border: "1px solid #d1d5db", borderRadius: "8px",
+                  fontSize: "14px", outline: "none", boxSizing: "border-box",
+                }}
+              />
+            </div>
+          ))}
+          <div>
+            <label style={{ fontSize: "13px", color: "#374151", fontWeight: 500 }}>
+              Observaciones (opcional)
+            </label>
+            <textarea value={observaciones} onChange={(e) => setObservaciones(e.target.value)} rows={3}
+              style={{
+                width: "100%", padding: "10px 12px", marginTop: "4px",
+                border: "1px solid #d1d5db", borderRadius: "8px",
+                fontSize: "14px", resize: "none", outline: "none", boxSizing: "border-box",
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Método de pago */}
+        <div style={{ background: "#fff", borderRadius: "12px", padding: "16px", border: "1px solid #e2e8f0" }}>
+          <p style={{ margin: "0 0 12px", fontWeight: 700, color: "#111827" }}>Método de pago</p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+            {PAYMENT_METHODS.map((method) => (
+              <button key={method.id} onClick={() => setPayment(method.id)} style={{
+                display: "flex", flexDirection: "column",
+                alignItems: "center", justifyContent: "center",
+                gap: "6px", padding: "12px 8px",
+                border: payment === method.id ? "2px solid #16a34a" : "1px solid #e2e8f0",
+                borderRadius: "10px",
+                background: payment === method.id ? "#f0fdf4" : "#fff",
+                cursor: "pointer", transition: "all 0.15s",
+              }}>
                 <PaymentLogo id={method.id} />
-                <span className={styles.paymentLabel}>{method.label}</span>
-                {payment === method.id && (
-                  <span className={styles.paymentCheck}>
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                  </span>
-                )}
+                <span style={{ fontSize: "12px", fontWeight: 500, color: "#374151" }}>
+                  {method.label}
+                </span>
               </button>
             ))}
           </div>
 
-          {payment === "tarjeta" && (
-            <div className={styles.paymentFields}>
-              <div className={styles.paymentInfo}>
-                <span className={styles.paymentInfoIcon}>💳</span>
-                <div>
-                  <p className={styles.paymentInfoTitle}>Pago con tarjeta</p>
-                  <p className={styles.paymentInfoText}>Ingresa los datos de tu tarjeta débito o crédito.</p>
-                </div>
-              </div>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Número de tarjeta</label>
-                <input className={styles.input} type="text" placeholder="1234 5678 9012 3456"
-                  maxLength={19} value={cardNumber}
-                  onChange={e => setCardNumber(e.target.value.replace(/\D/g,"").replace(/(.{4})/g,"$1 ").trim())} />
-              </div>
-              <div className={styles.cardRow}>
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>Vencimiento</label>
-                  <input className={styles.input} type="text" placeholder="MM/AA" maxLength={5}
-                    value={cardExpiry}
-                    onChange={e => {
-                      let v = e.target.value.replace(/\D/g,"");
-                      if (v.length >= 3) v = v.slice(0,2) + "/" + v.slice(2,4);
-                      setCardExpiry(v);
-                    }} />
-                </div>
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>CVV</label>
-                  <input className={styles.input} type="password" placeholder="•••" maxLength={4}
-                    value={cardCvv}
-                    onChange={e => setCardCvv(e.target.value.replace(/\D/g,""))} />
-                </div>
-              </div>
+          {payment === "yape" && (
+            <div style={{ marginTop: "12px", padding: "10px 14px", background: "#FAF5FF", border: "1px solid #7C3AED", borderRadius: "8px", fontSize: "14px" }}>
+              Yapea al <strong>987 654 321</strong>
             </div>
           )}
-
-            {payment === "yape" && (
-              <div className={styles.paymentFields}>
-                <div className={styles.paymentInfo} style={{borderColor: "#7C3AED", background: "#FAF5FF"}}>
-                  <img src={PAYMENT_LOGOS.yape} alt="Yape" style={{width: "32px", height: "32px", objectFit: "contain"}} />
-                  <div>
-                    <p className={styles.paymentInfoTitle}>Yapea al <strong>987 654 321</strong></p>
-                    <p className={styles.paymentInfoText}>Luego ingresa el número de operación.</p>
-                  </div>
-                </div>
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>N° de operación Yape</label>
-                  <input className={styles.input} type="text" placeholder="Ej: 123456789"
-                    value={yapePhone} onChange={e => setYapePhone(e.target.value)} />
-                </div>
-              </div>
-            )}
-          
           {payment === "plin" && (
-            <div className={styles.paymentFields}>
-              <div className={styles.paymentInfo} style={{borderColor: "#0284C7", background: "#F0F9FF"}}>
-                <img src={PAYMENT_LOGOS.plin} alt="Plin" style={{width: "32px", height: "32px", objectFit: "contain"}} />
-                <div>
-                  <p className={styles.paymentInfoTitle}>Plin al <strong>987 654 321</strong></p>
-                  <p className={styles.paymentInfoText}>Luego ingresa el número de operación.</p>
-                </div>
-              </div>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>N° de operación Plin</label>
-                <input className={styles.input} type="text" placeholder="Ej: 123456789"
-                  value={plinPhone} onChange={e => setPlinPhone(e.target.value)} />
-              </div>
+            <div style={{ marginTop: "12px", padding: "10px 14px", background: "#F0F9FF", border: "1px solid #00A8E0", borderRadius: "8px", fontSize: "14px" }}>
+              Plínea al <strong>987 654 321</strong>
             </div>
           )}
-
-          
-        {payment === "efectivo" && (
-          <div className={styles.paymentFields}>
-            <div className={styles.paymentInfo} style={{borderColor: "#16A34A", background: "#F0FDF4"}}>
-              <img src={PAYMENT_LOGOS.efectivo} alt="Efectivo" style={{width: "32px", height: "32px", objectFit: "contain"}} />
-              <div>
-                <p className={styles.paymentInfoTitle}>Pago en efectivo</p>
-                <p className={styles.paymentInfoText}>Paga directamente en recepción al llegar.</p>
-              </div>
+          {payment === "efectivo" && (
+            <div style={{ marginTop: "12px", padding: "10px 14px", background: "#F0FDF4", border: "1px solid #16A34A", borderRadius: "8px", fontSize: "14px" }}>
+              <strong>Pago en recepción</strong>
+              <p style={{ margin: "4px 0 0", color: "#6b7280" }}>Paga al llegar al establecimiento.</p>
             </div>
-          </div>
+          )}
+        </div>
+
+        {apiError && (
+          <p style={{ color: "#dc2626", background: "#fef2f2", padding: "10px 14px", borderRadius: "8px", fontSize: "14px", margin: 0 }}>
+            ⚠ {apiError}
+          </p>
         )}
 
-        </section>
-      </div>
-
-      {/* ── Columna derecha ── */}
-      <div className={styles.rightCol}>
-
-        <section className={styles.formContainer}>
-          <h2 className={styles.formTitle}>Datos de contacto</h2>
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-              Nombre completo
-            </label>
-            <input type="text" className={styles.input} placeholder="Juan Pérez"
-              value={nombre} onChange={e => setNombre(e.target.value)} />
-          </div>
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-              </svg>
-              Teléfono
-            </label>
-            <input type="tel" className={styles.input} placeholder="+51 900 000 000"
-              value={telefono} onChange={e => setTelefono(e.target.value)} />
-          </div>
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-                <line x1="16" y1="13" x2="8" y2="13" />
-                <line x1="16" y1="17" x2="8" y2="17" />
-              </svg>
-              Observaciones (opcional)
-            </label>
-            <textarea className={styles.textarea}
-              placeholder="Agrega cualquier comentario adicional..."
-              value={observaciones} onChange={e => setObservaciones(e.target.value)} />
-          </div>
-        </section>
-
-        <div className={styles.actions}>
-          <button className={styles.cancelBtn} onClick={onBack}>Cancelar</button>
-          <button className={styles.confirmBtn} onClick={handleConfirm}>Confirmar reserva</button>
+        {/* Botones */}
+        <div style={{ display: "flex", gap: "12px", paddingBottom: "24px" }}>
+          <button onClick={onBack} disabled={loading} style={{
+            flex: 1, padding: "14px", border: "1px solid #d1d5db",
+            borderRadius: "10px", background: "#fff", color: "#374151",
+            fontWeight: 600, fontSize: "14px", cursor: "pointer",
+          }}>
+            Cancelar
+          </button>
+          <button onClick={handleConfirm} disabled={loading} style={{
+            flex: 2, padding: "14px", border: "none", borderRadius: "10px",
+            background: loading ? "#86efac" : "#16a34a",
+            color: "#fff", fontWeight: 700, fontSize: "14px",
+            cursor: loading ? "not-allowed" : "pointer",
+          }}>
+            {loading ? "Procesando..." : "Confirmar reserva"}
+          </button>
         </div>
 
-        <div className={styles.note}>
-          Nota: Recibirás una confirmación por SMS con los detalles de tu reserva.
-        </div>
       </div>
-
     </div>
   );
-};
-
-export default ConfirmReserve;
+}
