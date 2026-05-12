@@ -8,3 +8,9 @@ export const registerRequest = (datos) =>
 
 export const logoutRequest = () =>
   client.post('/auth/logout');
+
+export const forgotPasswordRequest = (email) =>
+  client.post('/auth/recuperar-password', { email });
+
+export const resetPasswordRequest = (token, newPassword) =>
+  client.post('/auth/reset-password', { token, nuevaPassword: newPassword });

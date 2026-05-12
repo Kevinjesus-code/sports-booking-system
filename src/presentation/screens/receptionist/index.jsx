@@ -6,14 +6,7 @@ import Customers from "./customers/customers";
 import Reservations from "./reservations/reservations";
 import Configuration from "./configuration/configuration";
 
-// Datos de ejemplo — luego los reemplazas con tu contexto/API
-const USER = {
-  name: "Kevin More Sandoval",
-  role: "Recepcionista",
-  initials: "KM",
-  email: "kevin@kancha.com",
-  phone: "+51 987 654 321",
-};
+import { useAuth } from "../../hooks/useAuth";
 
 const INITIAL_NOTIFS = [
   { id:1, title:"Nueva reserva confirmada", desc:"Juan Pérez · Fútbol 5 · 14:00 – 15:00", time:"Hace 5 minutos",  unread:true,  iconClass:"ni-green", icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> },
