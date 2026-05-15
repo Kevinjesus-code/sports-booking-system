@@ -1,9 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./navbar-vertical.module.css";
 // import logo from "../../../assets/Logo.png";
 
 const NavbarVertical = ({ contenido = [], onChange, isOpen }) => {
   const [activeItem, setActiveItem] = useState("dashboard");
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formattedTime = currentTime.toLocaleTimeString("es-PE", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
   const handleClick = (item) => {
     setActiveItem(item.id);
@@ -31,6 +42,19 @@ const NavbarVertical = ({ contenido = [], onChange, isOpen }) => {
           </li>
         ))}
       </ul>
+
+      <div className={styles["clock-card"]} aria-label="Hora actual">
+        <span className={styles["clock-icon"]}>
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 7v5l3 2" />
+          </svg>
+        </span>
+        <div>
+          <span className={styles["clock-label"]}>Hora actual</span>
+          <span className={styles["clock-time"]}>{formattedTime}</span>
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,8 +1,9 @@
 .containerRecepcionist {
   display: flex;
-  min-height: 100vh;
+  height: 100dvh;
   width: 100%;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .containerContent {
@@ -10,6 +11,18 @@
   min-width: 0;
   padding: 16px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+  position: relative;
+}
+
+.renderContent {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .sidebar-overlay {
@@ -226,6 +239,7 @@
 
 .notifFooter { padding: 10px 18px; text-align: center; border-top: 0.5px solid #f0f0f0; }
 .viewAllBtn { font-size: 12px; color: #22c55e; background: none; border: none; cursor: pointer; }
+
 
 @media (max-width: 599px) {
   .containerRecepcionist {

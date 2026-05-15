@@ -1,14 +1,15 @@
 // presentation/screens/client/confirm-reserve/confirm-reserve.jsx
 
 import { useState } from "react";
-import { useCreateReservation } from "../../../../hooks/useReservations";
-import styles from "./confirm-reserve.module.css";
+import { useCreateReservation } from "../../../hooks/useReservations";
+// import styles from "./confirm-reserve.module.css";
 
 const PAYMENT_LOGOS = {
   efectivo: "/assets/MetodoPago/efectivo.png",
-  tarjeta:  "/assets/MetodoPago/visa.png",
-  yape:     "/assets/MetodoPago/yape.webp",
-  plin:     "/assets/MetodoPago/plin.png",
+  tarjeta: "/assets/MetodoPago/visa.png",
+  yape: "/assets/MetodoPago/yape.webp",
+  plin: "/assets/MetodoPago/plin.png",
+  transferencia: "/assets/MetodoPago/efectivo.png",
 };
 
 const PaymentLogo = ({ id }) => (
@@ -21,9 +22,10 @@ const PaymentLogo = ({ id }) => (
 
 const PAYMENT_METHODS = [
   { id: "efectivo", label: "Efectivo" },
-  { id: "tarjeta",  label: "Tarjeta"  },
-  { id: "yape",     label: "Yape"     },
-  { id: "plin",     label: "Plin"     },
+  { id: "tarjeta", label: "Tarjeta" },
+  { id: "yape", label: "Yape" },
+  { id: "plin", label: "Plin" },
+  { id: "transferencia", label: "Transferencia" },
 ];
 
 // "08:00" → "08:00:00" para que Spring deserialice LocalTime correctamente
@@ -48,14 +50,45 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
 
   const handleConfirm = async () => {
     if (!payment) { alert("Selecciona un método de pago"); return; }
+    const horaInicio = toLocalTime(schedule.startTime);
+    const horaFin = toLocalTime(schedule.endTime);
+    const courtName = court.name || court.titulo || court.nombre || "Cancha";
     try {
       const reservation = await create({
-        canchaId:   court.id,
-        fecha:      date,
-        horaInicio: toLocalTime(schedule.startTime),  // "08:00" → "08:00:00"
-        horaFin:    toLocalTime(schedule.endTime),     // "09:00" → "09:00:00"
+        canchaId: court.id,
+        fecha: date,
+        horaInicio,
+        horaFin,
+        metodoPago: payment,
       });
-      onConfirm?.(reservation);
+      onConfirm?.({
+        ...reservation,
+        canchaId:    court.id,
+        courtId:     court.id,
+        cancha:      reservation?.cancha || courtName,
+        courtName:   reservation?.courtName || courtName,
+        court:       court,
+        schedule:    schedule,
+        fecha:       date,
+        date:        date,
+        horaInicio,
+        horaFin,
+        startTime:   schedule.startTime,
+        endTime:     schedule.endTime,
+        hora:        schedule.time || `${schedule.startTime} - ${schedule.endTime}`,
+        precio:      reservation?.precio ?? reservation?.totalPrice ?? price,
+        price:       reservation?.price ?? reservation?.precio ?? price,
+        totalPrice:  reservation?.totalPrice ?? reservation?.precio ?? price,
+        totalAmount: reservation?.totalAmount ?? reservation?.montoTotal ?? reservation?.precio ?? price,
+        clienteId:   user?.id,
+        cliente:     nombre,
+        telefono:    telefono,
+        customer:    { nombre, telefono },
+        observaciones,
+        metodoPago:  payment,
+        estado:      reservation?.estado ?? reservation?.status ?? "pendiente",
+        status:      reservation?.status ?? reservation?.estado ?? "pendiente",
+      });
     } catch {
       // apiError lo captura el hook
     }

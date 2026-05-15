@@ -2,13 +2,20 @@ import styles from "./admin.module.css";
 import { DSANavbarVertical, DSATopBar } from "../../components";
 import { useState } from "react";
 import Dashboard from "./dashboard/dashboard";
-import Courts from "./courts/courts";
+// import Courts from "./courts/courts";
 import Reports from "./reports/reports";
 import Schedules from "./schedules/schedules";
 import Users from "./users/users";
 import Configuration from "./configuration/configuration";
+import { useAuth } from "../../hooks/useAuth";
 
-const Admin = () => {
+const Admin = ({ onLogout }) => {
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+    if (onLogout) onLogout();
+  };
   const NAV_ITEMS = [
     {
       id: "dashboard",
@@ -143,6 +150,7 @@ const Admin = () => {
             userRole="Administrador"
             onMenuClick={() => setSidebarOpen(true)}
             unreadCount={3}
+            onLogout={handleLogout}
           />
           <div>{renderContenido()}</div>
         </main>

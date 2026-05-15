@@ -1,0 +1,203 @@
+# Mejora del Flujo de Recepcionista: Reservas, Canchas y SQL
+
+## Contexto
+
+El recepcionista actualmente tiene una vista básica con datos mock. Se necesita:
+1. **Modal para crear reservas** — el recepcionista registra reservas en nombre de un cliente
+2. **Mejorar modal de crear cancha** — extraerlo como componente reutilizable con campos completos
+3. **Mejorar la tabla de reservas** — agregar acciones (editar, verificar, ver detalle)
+4. **Script SQL** para la tabla `cancha`
+
+### Datos de la tabla de reservas (backend)
+
+Según la imagen proporcionada, la tabla `reserva` tiene:
+| Campo | Descripción |
+|-------|-------------|
+| `id` | PK |
+| `created_at` | Timestamp de creación |
+| `estado` | Estado (pendiente, confirmada, cancelada) |
+| `fecha` | Fecha de la reserva |
+| `hora_fin` | Hora de fin |
+| `hora_inicio` | Hora de inicio |
+| `hora_llegada` | Hora de llegada del cliente |
+| `monto_pagado` | Monto pagado |
+| `monto_total` | Monto total |
+| `cancha_id` | FK a cancha |
+| `cliente_id` | FK a cliente |
+
+### Flujo del cliente (referencia)
+
+El cliente sigue: **Seleccionar cancha → Elegir fecha/horario → Confirmar (datos + pago) → Resumen**
+
+Para crear una reserva, el backend recibe:
+```json
+{ "canchaId": 1, "fecha": "2026-05-12", "horaInicio": "08:00:00", "horaFin": "09:00:00" }
+```
+
+---
+
+## Proposed Changes
+
+### 1. Componente `create-reservation-modal` (NUEVO)
+
+#### [NEW] [index.jsx](file:///c:/frontendDeveloper/Marcos-de-desarrollo-web/sports-booking-system/src/presentation/components/create-reservation-modal/index.jsx)
+
+Modal completo de creación de reserva para el recepcionista con los siguientes campos organizados en secciones:
+
+**Sección: Datos del Cliente**
+- `clienteId` — Select con búsqueda del cliente existente (dropdown)
+- Opción de "Cliente walk-in" (sin registro)
+
+**Sección: Cancha y Horario**
+- `canchaId` — Select para elegir cancha disponible
+- `fecha` — Input date (mínimo hoy)
+- `horaInicio` — Input time
+- `horaFin` — Input time
+
+**Sección: Pago**
+- `montoTotal` — Input numérico (auto-calculado del precio de la cancha)
+- `montoPagado` — Input numérico
+- Método de pago — Select (Efectivo, Tarjeta, Yape, Plin)
+
+**Funcionalidad:**
+- Validación de campos requeridos
+- Envío a `POST /api/reservas` con el payload correcto
+- Feedback visual de loading/error/éxito
+- Diseño premium con glassmorphism, animaciones de entrada y badge de estado
+
+#### [NEW] [create-reservation-modal.module.css](file:///c:/frontendDeveloper/Marcos-de-desarrollo-web/sports-booking-system/src/presentation/components/create-reservation-modal/create-reservation-modal.module.css)
+
+Estilos premium: overlay con blur, panel con bordes suaves, secciones con cards internas, inputs con transición de focus, botones con gradiente.
+
+---
+
+### 2. Componente `create-court-modal` (NUEVO — extraído de courts.jsx)
+
+#### [NEW] [index.jsx](file:///c:/frontendDeveloper/Marcos-de-desarrollo-web/sports-booking-system/src/presentation/components/create-court-modal/index.jsx)
+
+Extraer el modal inline de `courts.jsx` en un componente reutilizable con campos completos basados en lo que muestra la vista del cliente:
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `nombre` | text | Nombre de la cancha (ej: "Cancha A") |
+| `tipo` | select | Tipo de deporte (Fútbol 5, Fútbol 7, Fútbol 11, Voley) |
+| `estado` | select | Disponible / Ocupada / Mantenimiento |
+| `precioPorHora` | number | Precio por hora (S/) |
+| `direccion` | text | Dirección completa |
+| `superficie` | text | Tipo de superficie (Grass sintético, natural, etc.) |
+| `capacidad` | text | Capacidad de jugadores |
+| `iluminacion` | text | Tipo de iluminación |
+| `techado` | select | Techada / Al aire libre |
+| `tamaño` | text | Dimensiones |
+| `vestuarios` | text | Vestuarios/Baños |
+| `imagen` | text/file | URL de imagen |
+
+#### [NEW] [create-court-modal.module.css](file:///c:/frontendDeveloper/Marcos-de-desarrollo-web/sports-booking-system/src/presentation/components/create-court-modal/create-court-modal.module.css)
+
+Estilos consistentes con el design system existente.
+
+---
+
+### 3. Mejora de la pantalla de Reservas del recepcionista
+
+#### [MODIFY] [reservations.jsx](file:///c:/frontendDeveloper/Marcos-de-desarrollo-web/sports-booking-system/src/presentation/screens/receptionist/reservations/reservations.jsx)
+
+- Agregar botón **"+ Nueva Reserva"** que abre el `CreateReservationModal`
+- Agregar filtros por fecha y estado
+- Mejorar la tabla para mostrar más columnas (fecha, monto, estado con colores)
+- Agregar acciones por fila: **Editar** (solo si `estado === 'pendiente'`), **Verificar llegada**, **Ver detalle**
+
+#### [MODIFY] [reservations.module.css](file:///c:/frontendDeveloper/Marcos-de-desarrollo-web/sports-booking-system/src/presentation/screens/receptionist/reservations/reservations.module.css)
+
+Agregar estilos para header con botón, filtros y acciones.
+
+---
+
+### 4. Mejora de la tabla de reservas (componente reutilizable)
+
+#### [MODIFY] [index.jsx](file:///c:/frontendDeveloper/Marcos-de-desarrollo-web/sports-booking-system/src/presentation/components/reservations-table/index.jsx)
+
+- Agregar columnas: Fecha, Teléfono, Monto, Acciones
+- Agregar prop `onEdit`, `onVerify`, `onViewDetail` para callbacks de acciones
+- Mejorar los estados con más colores: pendiente (amarillo), confirmada (verde), cancelada (rojo)
+- Prop `showActions` para controlar si se muestran las acciones
+
+#### [MODIFY] [reservation-table.module.css](file:///c:/frontendDeveloper/Marcos-de-desarrollo-web/sports-booking-system/src/presentation/components/reservations-table/reservation-table.module.css)
+
+Agregar estilos para botones de acción y estados adicionales.
+
+---
+
+### 5. Actualización de la pantalla de Courts del recepcionista
+
+#### [MODIFY] [courts.jsx](file:///c:/frontendDeveloper/Marcos-de-desarrollo-web/sports-booking-system/src/presentation/screens/receptionist/courts/courts.jsx)
+
+- Reemplazar el modal inline por el nuevo componente `CreateCourtModal`
+- Los datos del formulario y la lógica de creación se mantienen en este componente
+
+---
+
+### 6. Registro del componente en el barrel file
+
+#### [MODIFY] [index.js](file:///c:/frontendDeveloper/Marcos-de-desarrollo-web/sports-booking-system/src/presentation/components/index.js)
+
+Agregar exports para `DSACreateReservationModal` y `DSACreateCourtModal`.
+
+---
+
+### 7. Script SQL para la tabla `cancha`
+
+#### [NEW] [create_table_cancha.sql](file:///c:/frontendDeveloper/Marcos-de-desarrollo-web/sports-booking-system/sql/create_table_cancha.sql)
+
+```sql
+CREATE TABLE cancha (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    nombre          VARCHAR(100)   NOT NULL,
+    tipo            VARCHAR(50)    NOT NULL,      -- 'Fútbol 5', 'Fútbol 7', etc.
+    estado          VARCHAR(30)    NOT NULL DEFAULT 'Disponible',
+    precio_por_hora DECIMAL(10,2)  NOT NULL DEFAULT 0.00,
+    direccion       VARCHAR(255),
+    superficie      VARCHAR(100),
+    capacidad       VARCHAR(50),
+    iluminacion     VARCHAR(100),
+    techado         VARCHAR(50),
+    tamanio         VARCHAR(50),
+    vestuarios      VARCHAR(100),
+    imagen_url      VARCHAR(500),
+    created_at      TIMESTAMP      DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP      DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+```
+
+> [!IMPORTANT]
+> Este script asume **MySQL/MariaDB** como motor de base de datos (Spring Boot + JPA). Si usas PostgreSQL, los tipos cambian ligeramente (`SERIAL` en lugar de `AUTO_INCREMENT`, etc.).
+
+---
+
+## Open Questions
+
+> [!IMPORTANT]
+> **¿Motor de base de datos?** El script SQL se genera para MySQL. ¿Utilizas MySQL o PostgreSQL en tu backend Spring Boot?
+
+> [!IMPORTANT]
+> **¿API de canchas?** El archivo `court.api.js` está vacío. ¿Ya tienes endpoints en el backend para CRUD de canchas? Si es así, ¿cuáles son las rutas? (ej: `GET /api/canchas`, `POST /api/canchas`). Por ahora, el modal de crear cancha trabajará con estado local.
+
+> [!IMPORTANT]
+> **¿API de clientes?** Para el select de clientes en el modal de crear reserva, ¿existe un endpoint para listar clientes? (ej: `GET /api/clientes`). Si no, el modal permitirá ingresar el `clienteId` manualmente.
+
+---
+
+## Verification Plan
+
+### Automated Tests
+- Verificar que el proyecto compila sin errores: `npm run dev`
+- Navegar al panel de recepcionista en el browser
+- Probar apertura/cierre de modal de crear reserva
+- Probar apertura/cierre de modal de crear cancha
+- Verificar que los filtros de reservas funcionan
+- Verificar responsividad en diferentes tamaños de pantalla
+
+### Manual Verification
+- Captura de pantalla del modal de crear reserva
+- Captura de pantalla del modal de crear cancha mejorado
+- Captura de pantalla de la tabla de reservas con acciones

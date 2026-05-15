@@ -1,9 +1,50 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ProfileHeader, ProfileDisplay, ProfileForm } from "./components";
 import { useProfileData } from "./hooks/useProfileData";
 import { DSAButton } from "../../../components";
+import { useMyReservations, useCancelReservation } from "../../../hooks/useReservations";
 import styles from "./profile.module.css";
-import client from "../../../../infrastructure/api/client"; // ← correcto
+import client from "../../../../infrastructure/api/client";
+
+const getReservationKey = (reservation) =>
+  String(
+    reservation.codigo ??
+      reservation.id ??
+      `${reservation.courtId ?? reservation.canchaId}-${reservation.fecha ?? reservation.date}-${reservation.startTime ?? reservation.horaInicio}`
+  );
+
+const formatDate = (value) => {
+  if (!value) return "Sin fecha";
+  return new Date(`${String(value).slice(0, 10)}T00:00:00`).toLocaleDateString("es-PE", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+};
+
+const getReservationTime = (reservation) =>
+  reservation.hora ??
+  `${reservation.startTime ?? reservation.horaInicio ?? "--:--"} - ${reservation.endTime ?? reservation.horaFin ?? "--:--"}`;
+
+const getReservationAmount = (reservation) =>
+  reservation.totalPrice ??
+  reservation.totalAmount ??
+  reservation.precio ??
+  reservation.price ??
+  0;
+
+const etiquetaEstado = (estado) => {
+  const e = String(estado ?? "pendiente").toLowerCase();
+  const map = {
+    pendiente: "Pendiente",
+    confirmada: "Confirmada",
+    en_curso: "En curso",
+    finalizada: "Finalizada",
+    cancelada: "Cancelada",
+    no_asistio: "No asistió",
+  };
+  return map[e] ?? e;
+};
 
 const Profile = ({ onBack }) => {
   const {
@@ -17,8 +58,24 @@ const Profile = ({ onBack }) => {
     fetchError,
   } = useProfileData();
 
+  const {
+    reservations: reservationHistory,
+    loading: reservationsLoading,
+    error: reservationsError,
+    refetch: refetchReservations,
+  } = useMyReservations();
+  const { cancel: cancelReservation, loading: cancelLoading } = useCancelReservation();
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("account");
+
+  const sortedReservations = useMemo(() => {
+    return [...(reservationHistory ?? [])].sort((a, b) => {
+      const dateA = `${a.fecha ?? a.date ?? ""} ${a.startTime ?? a.horaInicio ?? ""}`;
+      const dateB = `${b.fecha ?? b.date ?? ""} ${b.startTime ?? b.horaInicio ?? ""}`;
+      return dateB.localeCompare(dateA);
+    });
+  }, [reservationHistory]);
 
   if (loading) return <div style={{ padding: "2rem" }}>Cargando perfil...</div>;
   if (fetchError) return <div style={{ padding: "2rem", color: "red" }}>{fetchError}</div>;
@@ -71,7 +128,6 @@ const Profile = ({ onBack }) => {
     setIsMobileMenuOpen(false);
   };
 
-  // ── Cambiar email ──────────────────────────────────────────────────────────
   const handleCambiarEmail = async (emailActual, emailNuevo, password) => {
     try {
       const { data } = await client.put("/perfil/email", {
@@ -80,7 +136,6 @@ const Profile = ({ onBack }) => {
         password,
       });
 
-      // Si el backend devuelve nuevo token, actualízalo
       if (data.token) {
         localStorage.setItem("token", data.token);
       }
@@ -93,7 +148,6 @@ const Profile = ({ onBack }) => {
     }
   };
 
-  // ── Cambiar contraseña ─────────────────────────────────────────────────────
   const handleCambiarPassword = async (passwordActual, passwordNuevo, passwordConfirm) => {
     try {
       await client.put("/perfil/password", {
@@ -107,6 +161,21 @@ const Profile = ({ onBack }) => {
       const mensaje = error.response?.data?.error || "Error al cambiar la contraseña";
       alert(mensaje);
       return false;
+    }
+  };
+
+  const handleCancelarReserva = async (reservation) => {
+    if (!reservation?.id) return;
+    if (!reservation.puedeCancelar) {
+      alert("Esta reserva ya no puede cancelarse (mínimo 2 horas antes del inicio).");
+      return;
+    }
+    if (!window.confirm("¿Seguro que deseas cancelar esta reserva?")) return;
+    try {
+      await cancelReservation(reservation.id);
+      await refetchReservations();
+    } catch (err) {
+      alert(err.response?.data?.error ?? err.message ?? "No se pudo cancelar la reserva");
     }
   };
 
@@ -186,7 +255,13 @@ const Profile = ({ onBack }) => {
           <main className={styles["profile-content"]}>
             <div className={styles["content-heading"]}>
               <p>Perfil de usuario</p>
-              <h1>{activeSection === "payments" ? "Pagos" : "Mi cuenta"}</h1>
+              <h1>
+                {activeSection === "payments"
+                  ? "Pagos"
+                  : activeSection === "reservations"
+                    ? "Mis reservas"
+                    : "Mi cuenta"}
+              </h1>
             </div>
 
             {activeSection === "account" ? (
@@ -207,6 +282,7 @@ const Profile = ({ onBack }) => {
                       <option>Plin</option>
                       <option>Tarjeta</option>
                       <option>Efectivo</option>
+                      <option>Transferencia</option>
                     </select>
                   </label>
                   <label>
@@ -214,14 +290,89 @@ const Profile = ({ onBack }) => {
                     <input placeholder="**** **** **** 1234" />
                   </label>
                 </div>
-                <button className={styles["primary-action"]}>
+                <button type="button" className={styles["primary-action"]}>
                   Guardar metodo de pago
                 </button>
               </div>
             ) : activeSection === "reservations" ? (
-              <div className={styles["payments-panel"]}>
+              <div className={styles["reservations-panel"]}>
                 <h2>Mis reservas</h2>
-                <p>Tus reservas apareceran aqui cuando confirmes un horario.</p>
+                <p>Historial según tu cuenta autenticada (servidor).</p>
+
+                {reservationsLoading && (
+                  <div className={styles["history-message"]}>Cargando reservas...</div>
+                )}
+
+                {reservationsError && (
+                  <div className={styles["history-error"]}>{reservationsError}</div>
+                )}
+
+                {!reservationsLoading && sortedReservations.length === 0 && (
+                  <div className={styles["history-empty"]}>
+                    Aun no tienes reservas registradas.
+                  </div>
+                )}
+
+                {!reservationsLoading && sortedReservations.length > 0 && (
+                  <div className={styles["reservation-list"]}>
+                    {sortedReservations.map((reservation) => {
+                      const amount = getReservationAmount(reservation);
+                      const status = String(reservation.estado ?? reservation.status ?? "pendiente").toLowerCase();
+
+                      return (
+                        <article
+                          key={getReservationKey(reservation)}
+                          className={styles["reservation-card"]}
+                        >
+                          <div className={styles["reservation-main"]}>
+                            <h3>
+                              {reservation.cancha ??
+                                reservation.courtName ??
+                                reservation.court?.nombre ??
+                                "Cancha"}
+                            </h3>
+                            <span
+                              className={`${styles["reservation-status"]} ${styles[`status-${status}`] ?? ""}`}
+                            >
+                              {etiquetaEstado(status)}
+                            </span>
+                          </div>
+                          <div className={styles["reservation-meta"]}>
+                            <span>{formatDate(reservation.fecha ?? reservation.date)}</span>
+                            <span>{getReservationTime(reservation)}</span>
+                            <span>{amount > 0 ? `S/ ${Number(amount).toFixed(2)}` : "Sin monto"}</span>
+                          </div>
+                          <div className={styles["reservation-extra"]}>
+                            <span>
+                              <strong>Código:</strong> {reservation.codigo ?? "—"}
+                            </span>
+                            <span>
+                              <strong>Pago:</strong> {reservation.metodoPago || "—"}
+                            </span>
+                          </div>
+                          {status !== "cancelada" && status !== "finalizada" && (
+                            <div className={styles["reservation-actions"]}>
+                              <button
+                                type="button"
+                                className={
+                                  reservation.puedeCancelar
+                                    ? styles["cancel-btn"]
+                                    : styles["cancel-btn-disabled"]
+                                }
+                                disabled={!reservation.puedeCancelar || cancelLoading}
+                                onClick={() => handleCancelarReserva(reservation)}
+                              >
+                                {reservation.puedeCancelar
+                                  ? "Cancelar reserva"
+                                  : "Cancelación no disponible (< 2 h)"}
+                              </button>
+                            </div>
+                          )}
+                        </article>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             ) : (
               <ProfileForm

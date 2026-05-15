@@ -1,0 +1,169 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 16px;
+  max-width: 1280px;
+  margin-inline: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.searchSection {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.searchForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.searchInputWrapper {
+  width: 100%;
+}
+
+.searchInputWrapper > div {
+  margin-bottom: 0; /* Override internal DSAInput margin if any */
+}
+
+.searchBtn {
+  height: 48px; /* Match DSAInput height */
+  width: 100%;
+}
+
+.errorMsg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.resultCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.resultHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.resultTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.badge-confirmada { background: #dcfce7; color: #16a34a; }
+.badge-pendiente  { background: #fef9c3; color: #a16207; }
+.badge-en_curso   { background: #f3e8ff; color: #7c3aed; }
+.badge-finalizada { background: #dbeafe; color: #2563eb; }
+.badge-no_asistio { background: #f3f4f6; color: #6b7280; }
+
+.resultBody {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.resultGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.resultItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.resultLabel {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.resultValue {
+  font-size: 15px;
+  color: #111827;
+  font-weight: 600;
+}
+
+.resultActions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.warningMsg {
+  padding: 12px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  color: #92400e;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.infoMsg {
+  padding: 12px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 10px;
+  color: #0369a1;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.tableSection {
+  margin-top: 16px;
+}
+
+@media (max-width: 599px) {
+  .searchForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .searchBtn {
+    width: 100%;
+  }
+}

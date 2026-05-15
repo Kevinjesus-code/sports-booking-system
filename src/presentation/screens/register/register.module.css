@@ -80,7 +80,9 @@
   border: 1px solid #e5e7eb;
   border-radius: 10px;
   padding: 11px 14px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .input-wrapper:focus-within {
@@ -105,6 +107,33 @@
 
 .input-wrapper input::placeholder {
   color: #9ca3af;
+}
+
+/* ── Age validation error ── */
+.age-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 8px 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 500;
+  animation: shakeIn 0.3s ease;
+}
+
+.age-error svg {
+  flex-shrink: 0;
+  color: #dc2626;
+}
+
+@keyframes shakeIn {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
 }
 
 .terms-row {
@@ -152,6 +181,11 @@
 
 .register-btn:hover {
   background-color: #16a34a;
+}
+
+.register-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .login-link {

@@ -1,36 +1,13 @@
 import styles from "./dashboard.module.css";
 import { useState } from "react";
 import { DSACourtCard } from "../../../components";
+import { useCourts } from "../../../hooks/useCourts";
 
 const Dashboard = () => {
   const USERNAME = "Usuario";
+  const { courts, loading, error } = useCourts();
 
-  const COURT_TYPES = [
-    {
-      id: 1,
-      name: "Fútbol 5",
-      description: "Canchas de fútbol 5 personas",
-      icon: <span>⚽</span>,
-    },
-    {
-      id: 2,
-      name: "Fútbol 7",
-      description: "Canchas de fútbol 7 personas",
-      icon: <span>⚽</span>,
-    },
-    {
-      id: 3,
-      name: "Fútbol 11",
-      description: "Canchas de fútbol 11 personas",
-      icon: <span>⚽</span>,
-    },
-    {
-      id: 4,
-      name: "Vóley",
-      description: "Canchas de vóley",
-      icon: <span>🏐</span>,
-    },
-  ];
+
 
   const BENEFITS = [
     {
@@ -103,8 +80,11 @@ const Dashboard = () => {
 
       {/* Tipos de canchas */}
       <h2 className={styles.sectionLabel}>Tipos de canchas</h2>
+      {loading && <p>Cargando canchas...</p>}
+      {error && <p>Error: {error}</p>}
+      {!loading && !error && courts.length === 0 && <p>No hay canchas disponibles.</p>}
       <div className={styles.gridTypes}>
-        {COURT_TYPES.map((court) => (
+        {courts.slice(0, 4).map((court) => (
           <DSACourtCard key={court.id} court={court} />
         ))}
       </div>

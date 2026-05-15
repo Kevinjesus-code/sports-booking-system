@@ -77,7 +77,7 @@ const TopBar = ({
       </button>
 
       {/* Search */}
-      <div className={`${styles["search-container"]} ${searchFocused ? styles["search-container--focused"] : ""}`}>
+      {/* <div className={`${styles["search-container"]} ${searchFocused ? styles["search-container--focused"] : ""}`}>
         <span className={styles["search-icon"]}><SearchIcon /></span>
         <input
           type="text"
@@ -86,7 +86,7 @@ const TopBar = ({
           onFocus={() => setSearchFocused(true)}
           onBlur={() => setSearchFocused(false)}
         />
-      </div>
+      </div> */}
 
       {/* Right */}
       <div className={styles["topbar-right"]}>

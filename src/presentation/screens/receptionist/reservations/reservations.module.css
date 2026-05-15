@@ -1,5 +1,277 @@
-.containerReservations{
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+/* ─────────────────────────────────────────
+   RESERVATIONS SCREEN v3
+───────────────────────────────────────── */
+.screen { display: flex; flex-direction: column; gap: 24px; padding: 24px 16px; max-width: 1280px; margin-inline: auto; width: 100%; box-sizing: border-box; }
+
+/* ── Header ── */
+.header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.headerAction { width: 180px; }
+
+/* ── Toolbar ── */
+.toolbar { display: flex; flex-direction: column; gap: 12px; }
+.filters { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.filterItem { min-width: 180px; }
+.filterItem > div { margin-bottom: 0; }
+
+.dateInput {
+  width: 100%; height: 48px; border-radius: 12px; border: 1px solid #e5e7eb;
+  padding: 0 16px; font-size: 14px; color: #374151; background: #ffffff;
+  outline: none; font-family: inherit; transition: border-color 0.18s, box-shadow 0.18s; box-sizing: border-box;
 }
+.dateInput:focus { border-color: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.12); }
+
+.clearFilters {
+  padding: 12px 18px; border-radius: 12px; border: 1px solid #e5e7eb; background: #ffffff;
+  font-size: 13px; font-weight: 500; color: #6b7280; cursor: pointer; white-space: nowrap;
+  font-family: inherit; transition: background 0.15s, color 0.15s; height: 48px;
+}
+.clearFilters:hover { background: #f3f4f6; color: #111827; }
+
+/* ── Form Grid (modal) ── */
+.formGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+
+/* ── Step content ── */
+.stepContent { display: flex; flex-direction: column; gap: 16px; }
+
+.stepIcon { display: flex; justify-content: center; padding: 8px 0; }
+
+.stepIndicator {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding-top: 16px; border-top: 1px solid #f3f4f6; margin-top: 8px;
+}
+.stepDot {
+  width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; background: #f3f4f6; color: #9ca3af;
+  transition: all 0.2s ease;
+}
+.stepDotActive { background: #22c55e; color: #fff; }
+
+/* ── Client found card ── */
+.clientCard {
+  display: flex; align-items: center; gap: 16px; padding: 20px;
+  background: #f0fdf4; border: 1px solid #a7f3d0; border-radius: 14px;
+}
+.clientCardAvatar {
+  width: 48px; height: 48px; border-radius: 50%; background: #22c55e; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 16px; flex-shrink: 0;
+}
+.clientCardName { font-weight: 600; font-size: 15px; color: #111827; }
+.clientCardMeta { font-size: 13px; color: #6b7280; margin-top: 2px; }
+
+/* ── Not found card ── */
+.notFoundCard {
+  display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px;
+  background: #fef9c3; border: 1px solid #fde68a; border-radius: 14px; text-align: center;
+}
+.notFoundIcon { color: #a16207; }
+.notFoundTitle { font-weight: 600; font-size: 14px; color: #92400e; margin: 0; }
+.notFoundSub { font-size: 13px; color: #a16207; margin: 4px 0 0; }
+
+/* ── Error msg ── */
+.errorMsg {
+  display: flex; align-items: center; gap: 8px; padding: 10px 14px;
+  background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px;
+  color: #dc2626; font-size: 13px; font-weight: 500;
+}
+
+/* ══════════════════════════════════════════
+   DETAIL MODAL — Redesigned
+   ══════════════════════════════════════════ */
+
+.detailContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Status Banner ── */
+.statusBanner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid;
+}
+
+.statusBannerIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.statusBannerText {
+  flex: 1;
+  min-width: 0;
+}
+
+.statusBannerTitle {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.statusBannerSub {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 1px;
+}
+
+.banner-confirmada {
+  background: #f0fdf4;
+  border-color: #a7f3d0;
+}
+.banner-confirmada .statusBannerIcon {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.banner-pendiente {
+  background: #fefce8;
+  border-color: #fde68a;
+}
+.banner-pendiente .statusBannerIcon {
+  background: #fef9c3;
+  color: #a16207;
+}
+
+.banner-cancelada {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+.banner-cancelada .statusBannerIcon {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* ── Detail Section ── */
+.detailSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detailSectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6b7280;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.detailSectionHeader svg {
+  flex-shrink: 0;
+}
+
+/* ── Detail cards grid ── */
+.detailCards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.detailCard {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 14px;
+  background: #f9fafb;
+  border-radius: 10px;
+  border: 1px solid #f0f0f0;
+}
+
+.detailCardLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #9ca3af;
+}
+
+.detailCardValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.3;
+}
+
+/* ── Price highlight ── */
+.priceHighlight {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  background: #f0fdf4;
+  border: 1px solid #a7f3d0;
+  border-radius: 12px;
+}
+
+.priceLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.priceAmount {
+  font-size: 20px;
+  font-weight: 700;
+  color: #16a34a;
+  letter-spacing: -0.02em;
+}
+
+/* ── Observations card ── */
+.obsCard {
+  padding: 12px 14px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #92400e;
+  line-height: 1.5;
+}
+
+/* ── Legacy detail support ── */
+.detailGrid { display: flex; flex-direction: column; gap: 12px; }
+.detailRow { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f3f4f6; gap: 12px; }
+.detailRow:last-child { border-bottom: none; }
+.detailLabel { font-size: 13px; color: #6b7280; font-weight: 500; }
+.detailValue { font-size: 13px; color: #111827; font-weight: 600; text-align: right; }
+
+.detailBadge { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; text-transform: capitalize; }
+.detail-confirmada { background: #dcfce7; color: #16a34a; }
+.detail-pendiente  { background: #fef9c3; color: #a16207; }
+.detail-cancelada  { background: #fee2e2; color: #dc2626; }
+
+/* ── Info note ── */
+.infoNote {
+  display: flex; align-items: flex-start; gap: 8px; padding: 12px 14px;
+  background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 12px;
+  color: #0369a1; font-size: 12px; font-weight: 500; line-height: 1.5;
+}
+.infoNote svg { flex-shrink: 0; margin-top: 1px; }
+
+/* ── Responsive ── */
+@media (max-width: 599px) {
+  .screen { padding: 16px 12px; gap: 16px; }
+  .header { flex-direction: column; }
+  .headerAction { width: 100%; }
+  .formGrid { grid-template-columns: 1fr; }
+  .filters { flex-direction: column; }
+  .filterItem { min-width: 0; width: 100%; }
+  .detailCards { grid-template-columns: 1fr; }
+}
+@media (min-width: 1024px) { .screen { padding: 32px 32px; } }

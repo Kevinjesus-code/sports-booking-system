@@ -39,6 +39,7 @@ const Resumen = ({ reservation, onNewReservation, onViewReservations }) => {
 
   // monto_total de la BD → totalAmount en la entidad
   const total = reservation.totalAmount ?? reservation.totalPrice ?? 0;
+  const reservationCode = reservation.codigo ?? reservation.code ?? `RSV-${String(reservation.id).slice(-6).padStart(6, "0")}`;
 
   return (
     <div className={styles.container}>
@@ -138,8 +139,8 @@ const Resumen = ({ reservation, onNewReservation, onViewReservations }) => {
           </div>
 
           <div className={styles.confirmationBox}>
-            <div className={styles.label}>Número de confirmación</div>
-            <p className={styles.confNumber}>#{reservation.id}</p>
+            <div className={styles.label}>Código de reserva</div>
+            <p className={styles.confNumber}>{reservationCode}</p>
           </div>
 
         </div>

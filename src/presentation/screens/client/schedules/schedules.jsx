@@ -1,46 +1,71 @@
 // presentation/screens/client/schedules/schedules.jsx
 //
-// FIX precio S/0.00:
-// Horario.java NO tiene campo precio — el precio pertenece a Cancha.
-// → price se toma de court.precio ?? court.precioPorHora ?? 0
-//   y se inyecta en cada slot al mapear la respuesta del backend.
+// Horarios dinámicos desde GET /api/canchas/{id}/disponibilidad (disponible/ocupado en servidor).
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import styles from "./schedules.module.css";
-import { useAvailableSlots } from "../../../../hooks/useReservations";
+import { useCourtAvailability } from "../../../hooks/useReservations";
+
+const getToday = () => {
+  const now = new Date();
+  const offset = now.getTimezoneOffset() * 60000;
+  return new Date(now.getTime() - offset).toISOString().split("T")[0];
+};
+
+const normalizeTime = (time) => (time ? String(time).slice(0, 5) : "");
+
+const normalizeScheduleSlot = (slot) => {
+  const startTime = normalizeTime(slot.startTime ?? slot.horaInicio);
+  const endTime = normalizeTime(slot.endTime ?? slot.horaFin);
+  return {
+    ...slot,
+    id: slot.id ?? `${startTime}-${endTime}`,
+    startTime,
+    endTime,
+  };
+};
 
 const Schedules = ({ court, onBack, onSelectSchedule }) => {
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
+  const today = getToday();
+  const [selectedDate, setSelectedDate] = useState(today);
 
-  const { slots: rawSlots, loading, error } = useAvailableSlots(court?.id, selectedDate);
+  const {
+    slots: availabilitySlots,
+    loading,
+    error,
+  } = useCourtAvailability(court?.id ?? court?.canchaId, selectedDate);
 
-  // El precio vive en Cancha, no en Horario → lo tomamos del prop court
-  // Soporta los nombres más comunes del campo en el backend Java
   const courtPrice =
-    court?.precio          ??
-    court?.precioPorHora   ??
+    court?.precio ??
+    court?.precioPorHora ??
     court?.precio_por_hora ??
-    court?.price           ??
+    court?.price ??
     0;
 
-  // Mapea TimeSlot al shape que usa la UI, inyectando el precio de la cancha
-  const schedules = rawSlots.map((s) => ({
-    id:        s.id,
-    time:      `${s.startTime} - ${s.endTime}`,
-    status:    s.available ? "disponible" : "ocupado",
-    startTime: s.startTime,
-    endTime:   s.endTime,
-    price:     s.price > 0 ? s.price : courtPrice,
-  }));
+  const schedules = useMemo(() => {
+    return availabilitySlots
+      .map(normalizeScheduleSlot)
+      .filter((slot) => slot.startTime && slot.endTime)
+      .sort((a, b) => a.startTime.localeCompare(b.startTime))
+      .map((slot) => {
+        const libre = slot.disponible !== false && slot.available !== false;
+        return {
+          ...slot,
+          time: `${slot.startTime} - ${slot.endTime}`,
+          status: libre ? "disponible" : "ocupado",
+          price: courtPrice,
+        };
+      });
+  }, [availabilitySlots, courtPrice]);
 
   const getStatusText = (status) => {
     switch (status) {
-      case "disponible": return "Disponible";
-      case "ocupado":    return "Ocupado";
-      case "reservado":  return "Reservado";
-      default:           return "";
+      case "disponible":
+        return "Disponible";
+      case "ocupado":
+        return "Ocupado";
+      default:
+        return "";
     }
   };
 
@@ -52,7 +77,7 @@ const Schedules = ({ court, onBack, onSelectSchedule }) => {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <button onClick={onBack} className={styles.backButton}>
+        <button type="button" onClick={onBack} className={styles.backButton}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -80,7 +105,7 @@ const Schedules = ({ court, onBack, onSelectSchedule }) => {
             type="date"
             className={styles.dateInput}
             value={selectedDate}
-            min={new Date().toISOString().split("T")[0]}
+            min={today}
             onChange={(e) => setSelectedDate(e.target.value)}
           />
         </div>
@@ -106,29 +131,36 @@ const Schedules = ({ court, onBack, onSelectSchedule }) => {
           </div>
         </div>
 
-        {loading && <p className={styles.loadingText}>Cargando horarios...</p>}
-        {error   && <p className={styles.errorText}>{error}</p>}
+        {loading && <p className={styles.loadingText}>Consultando horarios...</p>}
+        {error && <p className={styles.errorText}>{error}</p>}
         {!loading && !error && schedules.length === 0 && (
           <p className={styles.emptyText}>No hay horarios disponibles para esta fecha.</p>
         )}
-
-        <div className={styles.grid}>
-          {schedules.map((schedule) => (
-            <div
-              key={schedule.id}
-              className={`${styles.card} ${styles[schedule.status]}`}
-              onClick={() => handleSelect(schedule)}
-            >
-              <div className={styles.time}>{schedule.time}</div>
-              {schedule.status === "disponible" && courtPrice > 0 && (
-                <div className={styles.price}>S/ {courtPrice.toFixed(2)}</div>
-              )}
-              <span className={`${styles.badge} ${styles["badge-" + schedule.status]}`}>
-                {getStatusText(schedule.status)}
-              </span>
-            </div>
-          ))}
-        </div>
+        {!loading && !error && schedules.length > 0 && (
+          <div className={styles.grid} aria-busy={loading}>
+            {schedules.map((schedule) => (
+              <div
+                key={schedule.id}
+                className={`${styles.card} ${styles[schedule.status]}`}
+                onClick={() => handleSelect(schedule)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") handleSelect(schedule);
+                }}
+                role="button"
+                aria-disabled={schedule.status !== "disponible"}
+                tabIndex={schedule.status === "disponible" ? 0 : -1}
+              >
+                <div className={styles.time}>{schedule.time}</div>
+                {schedule.status === "disponible" && courtPrice > 0 && (
+                  <div className={styles.price}>S/ {Number(courtPrice).toFixed(2)}</div>
+                )}
+                <span className={`${styles.badge} ${styles["badge-" + schedule.status]}`}>
+                  {getStatusText(schedule.status)}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

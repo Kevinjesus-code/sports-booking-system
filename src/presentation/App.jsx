@@ -6,7 +6,20 @@ import Login from "./screens/login";
 import Register from "./screens/register/register";
 
 function App() {
-  const [currentFlow, setCurrentFlow] = useState("login");
+  const [currentFlow, setCurrentFlow] = useState(() => {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        if (user.rol === "ADMIN") return "admin";
+        if (user.rol === "CLIENTE") return "client";
+        if (user.rol === "RECEPCIONISTA") return "receptionist";
+      } catch (_) {
+        // Ignorar error de parseo
+      }
+    }
+    return "login";
+  });
 
   const handleLogin = (rol) => {
     if (rol === "ADMIN")              setCurrentFlow("admin");

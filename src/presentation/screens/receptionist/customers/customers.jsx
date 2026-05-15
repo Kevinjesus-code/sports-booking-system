@@ -1,53 +1,65 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import styles from "./customers.module.css";
 import ClientTable from "../../../components/clients-table";
-
-// ─── Datos mock — reemplaza con useEffect + fetch cuando tengas API ───
-const CLIENTES_MOCK = [
-  { id: 1,  nombre: "Juan Pérez",      telefono: "+51 987 654 321", email: "juan@gmail.com",    reservas: 8  },
-  { id: 2,  nombre: "María González",  telefono: "+51 912 345 678", email: "maria@gmail.com",   reservas: 3  },
-  { id: 3,  nombre: "Luis Torres",     telefono: "+51 945 123 456", email: "luis@gmail.com",    reservas: 12 },
-  { id: 4,  nombre: "Carlos Ramos",    telefono: "+51 967 891 234", email: "carlos@gmail.com",  reservas: 1  },
-  { id: 5,  nombre: "Ana Flores",      telefono: "+51 934 567 890", email: "ana@gmail.com",     reservas: 5  },
-  { id: 6,  nombre: "Pedro Castillo",  telefono: "+51 901 234 567", email: "pedro@gmail.com",   reservas: 0  },
-  { id: 7,  nombre: "Rosa Huanca",     telefono: "+51 978 345 612", email: "rosa@gmail.com",    reservas: 7  },
-  { id: 8,  nombre: "Diego Mamani",    telefono: "+51 956 781 234", email: "diego@gmail.com",   reservas: 2  },
-  { id: 9,  nombre: "Lucía Vargas",    telefono: "+51 923 456 789", email: "lucia@gmail.com",   reservas: 9  },
-  { id: 10, nombre: "Marcos Quispe",   telefono: "+51 911 222 333", email: "marcos@gmail.com",  reservas: 4  },
-];
-
-const SearchIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-    width="16" height="16">
-    <circle cx="11" cy="11" r="8"/>
-    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-  </svg>
-);
-
-const ClearIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-    width="14" height="14">
-    <line x1="18" y1="6" x2="6" y2="18"/>
-    <line x1="6" y1="6" x2="18" y2="18"/>
-  </svg>
-);
+import { DSAText, DSAEmptyState, DSAButton, DSASearchBar, DSAToast, DSAClientModal, DSALoadingSpinner } from "../../../components";
+import { clienteApi } from "../../../../infrastructure/api/cliente.api";
 
 const Customers = () => {
+  const [clientes, setClientes] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
+  const [showClientModal, setShowClientModal] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
+
+  // ── Cargar clientes desde API ────────────────────
+  const fetchClientes = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await clienteApi.getAll();
+      setClientes((data ?? []).map(c => ({
+        id:       c.id,
+        nombre:   `${c.nombre} ${c.apellido ?? ''}`.trim(),
+        dni:      c.dni ?? '',
+        email:    c.email ?? '',
+        telefono: c.telefono ?? '',
+        activo:   c.activo,
+        reservas: 0, // TODO: Agregar endpoint para contar reservas
+      })));
+    } catch (err) {
+      setToast({ visible: true, message: err.response?.data?.error ?? "Error al cargar clientes", type: "error" });
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchClientes(); }, [fetchClientes]);
 
   // ── Filtro: busca por nombre, email o teléfono ──────────
   const clientesFiltrados = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return CLIENTES_MOCK;
-    return CLIENTES_MOCK.filter(
+    if (!q) return clientes;
+    return clientes.filter(
       (c) =>
         c.nombre.toLowerCase().includes(q)   ||
         c.email.toLowerCase().includes(q)    ||
-        c.telefono.includes(q)
+        c.telefono.includes(q)               ||
+        c.dni?.includes(q)
     );
-  }, [query]);
+  }, [query, clientes]);
+
+  const handleClientCreated = async (newClient) => {
+    // Refetch from API to get the real data
+    await fetchClientes();
+    setToast({ visible: true, message: "Cliente registrado exitosamente", type: "success" });
+  };
+
+  if (loading) {
+    return (
+      <div className={styles["customers-screen"]} style={{ display: 'flex', justifyContent: 'center', paddingTop: '60px' }}>
+        <DSALoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <div className={styles["customers-screen"]}>
@@ -55,73 +67,72 @@ const Customers = () => {
       {/* ── Encabezado ── */}
       <div className={styles["customers-header"]}>
         <div>
-          <h2 className={styles["customers-title"]}>Clientes</h2>
+          <DSAText variant="title">Clientes</DSAText>
           <p className={styles["customers-sub"]}>
-            {CLIENTES_MOCK.length} clientes registrados
+            {clientes.length} clientes registrados
           </p>
+        </div>
+        <div className={styles["headerAction"]}>
+          <DSAButton onClick={() => setShowClientModal(true)}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              strokeWidth="2.5" strokeLinecap="round" width="16" height="16">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Crear Cliente
+          </DSAButton>
         </div>
       </div>
 
       {/* ── Barra de búsqueda ── */}
-      <div className={styles["customers-toolbar"]}>
-        <div className={styles["search-box"]}>
-          <span className={styles["search-box-icon"]}><SearchIcon /></span>
-          <input
-            type="text"
-            className={styles["search-box-input"]}
-            placeholder="Buscar por nombre, email o teléfono..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          {query && (
-            <button
-              className={styles["search-box-clear"]}
-              onClick={() => setQuery("")}
-              aria-label="Limpiar búsqueda"
-            >
-              <ClearIcon />
-            </button>
-          )}
-        </div>
-
-        {/* Contador de resultados cuando hay búsqueda activa */}
-        {query && (
-          <span className={styles["search-results-count"]}>
-            {clientesFiltrados.length === 0
-              ? "Sin resultados"
-              : `${clientesFiltrados.length} resultado${clientesFiltrados.length !== 1 ? "s" : ""}`}
-          </span>
-        )}
-      </div>
+      <DSASearchBar
+        value={query}
+        onChange={setQuery}
+        placeholder="Buscar por nombre, DNI, email o teléfono..."
+        resultsCount={query ? clientesFiltrados.length : null}
+      />
 
       {/* ── Tabla ── */}
       {clientesFiltrados.length > 0 ? (
         <ClientTable data={clientesFiltrados} />
       ) : (
-        <div className={styles["customers-empty"]}>
-          <div className={styles["customers-empty-icon"]}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-              width="40" height="40">
-              <circle cx="11" cy="11" r="8"/>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        <DSAEmptyState
+          icon={
+            <svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
-          </div>
-          <p className={styles["customers-empty-title"]}>
-            No se encontró "{query}"
-          </p>
-          <p className={styles["customers-empty-sub"]}>
-            Intenta con otro nombre, email o teléfono
-          </p>
-          <button
-            className={styles["customers-empty-btn"]}
-            onClick={() => setQuery("")}
-          >
-            Limpiar búsqueda
-          </button>
-        </div>
+          }
+          title={query ? `No se encontró "${query}"` : "Sin clientes"}
+          subtitle={query ? "Intenta con otro nombre, email o teléfono" : "No hay clientes registrados aún."}
+          action={
+            query ? (
+              <DSAButton variant="outline" color="secondary" onClick={() => setQuery("")}>
+                Limpiar búsqueda
+              </DSAButton>
+            ) : (
+              <DSAButton onClick={() => setShowClientModal(true)}>
+                Registrar primer cliente
+              </DSAButton>
+            )
+          }
+        />
       )}
 
+      {/* ── Client Modal ── */}
+      <DSAClientModal
+        isOpen={showClientModal}
+        onClose={() => setShowClientModal(false)}
+        onCreated={handleClientCreated}
+      />
+
+      {/* ── Toast ── */}
+      <DSAToast
+        isVisible={toast.visible}
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast({ ...toast, visible: false })}
+      />
     </div>
   );
 };
