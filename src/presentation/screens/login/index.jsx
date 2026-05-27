@@ -3,7 +3,7 @@
     import { DSAInput, DSAButton } from "../../components";
     import { useAuth } from "../../hooks/useAuth";
     import { forgotPasswordRequest } from "../../../infrastructure/api/auth.api";
-    import logo from "../../../assets/MetodoPago/Logo.png";
+    // import logo from "../../../assets/MetodoPago/Logo.png";
 
     // ── Iconos ────────────────────────────────────────────────────────────────────
 
@@ -103,7 +103,7 @@
 
                 {/* Marca: logo + nombre */}
                 <div className={styles.ilustrationBrand}>
-                  <img src={logo} alt="Kancha Sports" className={styles.ilustrationLogo} />
+                  <img src={"assets/img/Logo.JPG"} alt="Kancha Sports" className={styles.ilustrationLogo} />
                   <span className={styles.ilustrationBrandName}>Kancha Sports</span>
                 </div>
 
@@ -133,7 +133,7 @@
                     En desktop: este bloque queda oculto via CSS (el logo ya está en la columna izquierda).
                   */}
                   <div className={styles.loginIconBox}>
-                    <img src={logo} alt="Logo" className={styles.logo} />
+                    <img src={"assets/img/Logo.JPG"} alt="Logo" className={styles.logo} />
                     <span className={styles.loginIconBrandName}>Kancha Sports</span>
                   </div>
 
