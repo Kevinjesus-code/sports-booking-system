@@ -1,9 +1,11 @@
+
     import { useState } from "react";
     import styles from "./login.module.css";
     import { DSAInput, DSAButton } from "../../components";
-    import { useAuth } from "../../hooks/useAuth";
+    import { useAuth } from "../../../context/AuthContext";
     import { forgotPasswordRequest } from "../../../infrastructure/api/auth.api";
-    import logo from "../../../assets/MetodoPago/Logo.png";
+    import logo from "/assets/img/Logo.JPG";
+
 
     // ── Iconos ────────────────────────────────────────────────────────────────────
 

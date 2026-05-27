@@ -1,170 +1,185 @@
+import { useState } from "react";
+
+import { useAuth } from "../../hooks/useAuth";
+
 import { DSANavbarClient } from "../../components";
+import ReservationsModal from "../../components/reservations-modal";
+
 import Courts from "./courts/courts";
 import Schedules from "./schedules/schedules";
 import ConfirmReserve from "./confirm-reserve/confirm-reserve";
 import Resumen from "./resumen/resumen";
 import Profile from "./profile/profile";
-import ReservationsModal from "../../components/reservations-modal";
+import Configuration from "./configuration/configuration";
+import Dashboard from "./dashboard/dashboard";
+
 import styles from "./client.module.css";
-import { useMemo, useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
-import { useMyReservations } from "../../hooks/useReservations";
-
-// const CLIENT_DATA = {
-//   nombre: "Juan Pérez",
-//   email: "juan.perez@email.com",
-//   telefono: "912 123 123",
-//   initials: "JP",
-//   documento: "DNI",
-//   numeroDocumento: "12345678",
-//   metodoPago: "Yape",
-//   direccion: "Lima, Perú",
-// };
-
-const generateReservationCode = (id) => `RSV-${String(id).slice(-6).padStart(6, "0")}`;
-
-const getStorageKey = (userId) => `client-reservations:${userId ?? "guest"}`;
-
-const readStoredReservations = (userId) => {
-  try {
-    return JSON.parse(localStorage.getItem(getStorageKey(userId)) || "[]");
-  } catch {
-    return [];
-  }
-};
-
-const saveStoredReservations = (userId, reservations) => {
-  localStorage.setItem(getStorageKey(userId), JSON.stringify(reservations));
-};
-
-const getReservationKey = (reservation) =>
-  String(
-    reservation.codigo ??
-    reservation.id ??
-    `${reservation.courtId ?? reservation.canchaId}-${reservation.fecha ?? reservation.date}-${reservation.startTime ?? reservation.horaInicio}`
-  );
-
-const mergeReservations = (apiReservations = [], savedReservations = []) => {
-  const merged = new Map();
-  apiReservations.forEach((reservation) => merged.set(getReservationKey(reservation), reservation));
-  savedReservations.forEach((reservation) => merged.set(getReservationKey(reservation), reservation));
-  return Array.from(merged.values());
-};
 
 const Client = ({ onLogout }) => {
-  const { logout } = useAuth();
-  const userStr = localStorage.getItem("user");
-  const authUser = userStr ? JSON.parse(userStr) : {};
-  const nombreUsuario = authUser.nombre || authUser.name || "Usuario";
-  const iniciales = nombreUsuario.substring(0, 2).toUpperCase();
-  const { reservations: apiReservations, refetch } = useMyReservations();
+  const { user, logout } = useAuth();
 
-  const [selectedCourt,     setSelectedCourt]     = useState(null);
-  const [selectedSchedule,  setSelectedSchedule]  = useState(null);
-  const [selectedDate,      setSelectedDate]      = useState(null);
-  const [isReserved,        setIsReserved]        = useState(false);
-  const [customerData,      setCustomerData]      = useState(null);
-  const [reservations,      setReservations]      = useState(() => readStoredReservations(authUser.id));
-  const [showModal,         setShowModal]         = useState(false);
-  const [isViewingProfile,  setIsViewingProfile]  = useState(false);
+  // =========================
+  // DEBUG - BORRAR DESPUÉS
+  // =========================
+  
 
-  const visibleReservations = useMemo(
-    () => mergeReservations(apiReservations || [], reservations),
-    [apiReservations, reservations]
-  );
+  // =========================
+  // USER DATA
+  // =========================
+  const storedUser = (() => {
+    try { return JSON.parse(localStorage.getItem("user")); } 
+    catch { return null; }
+  })();
 
+  const activeUser = user ?? storedUser;
+
+  const nombre  = activeUser?.nombre  || activeUser?.nombres  || "";
+  const apellido = activeUser?.apellido || activeUser?.apellidos || "";
+
+  const initials = ((nombre[0] ?? "U") + (apellido[0] ?? "")).toUpperCase();
+  const fullName = `${nombre} ${apellido}`.trim();
+
+
+  // =========================
+  // STATES
+  // =========================
+  const [selectedCourt, setSelectedCourt] = useState(null);
+  const [selectedSchedule, setSelectedSchedule] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  const [isReserved, setIsReserved] = useState(false);
+
+  const [customerData, setCustomerData] = useState(null);
+  const [reservations, setReservations] = useState([]);
+
+  const [showModal, setShowModal] = useState(false);
+
+  const [isViewingProfile, setIsViewingProfile] = useState(false);
+  const [isViewingSettings, setIsViewingSettings] = useState(false);
+
+  // =========================
+  // NAVIGATION HANDLERS
+  // =========================
   const handleHome = () => {
     setSelectedCourt(null);
     setSelectedSchedule(null);
     setSelectedDate(null);
+
     setIsReserved(false);
     setCustomerData(null);
+
+    setIsViewingProfile(false);
+    setIsViewingSettings(false);
+  };
+
+  const handleOpenProfile = () => {
+    setIsViewingProfile(true);
+    setIsViewingSettings(false);
+  };
+
+  const handleOpenSettings = () => {
+    setIsViewingSettings(true);
     setIsViewingProfile(false);
   };
 
-  const handleOpenProfile  = () => setIsViewingProfile(true);
-  const handleBackToClient = () => setIsViewingProfile(false);
+  const handleBackToClient = () => {
+    setIsViewingProfile(false);
+    setIsViewingSettings(false);
+  };
 
-  const handleSelectSchedule  = (schedule, date) => { setSelectedSchedule(schedule); setSelectedDate(date); };
-  const handleBackToSchedules = () => setSelectedSchedule(null);
-  const handleBackToCourts    = () => { setSelectedCourt(null); setSelectedSchedule(null); setSelectedDate(null); };
+  // =========================
+  // RESERVATION FLOW
+  // =========================
+  const handleSelectSchedule = (schedule, date) => {
+    setSelectedSchedule(schedule);
+    setSelectedDate(date);
+  };
+
+  const handleBackToSchedules = () => {
+    setSelectedSchedule(null);
+  };
+
+  const handleBackToCourts = () => {
+    setSelectedCourt(null);
+    setSelectedSchedule(null);
+    setSelectedDate(null);
+  };
 
   const handleConfirmReservation = (reservationFromApi) => {
-    const reservationId = reservationFromApi?.id || Date.now();
-    const codigo = reservationFromApi?.codigo || reservationFromApi?.code || generateReservationCode(reservationId);
-    const courtName = selectedCourt?.titulo || selectedCourt?.nombre || selectedCourt?.name || "Cancha";
-    const scheduleTime =
-      selectedSchedule?.time ||
-      `${selectedSchedule?.startTime ?? ""} - ${selectedSchedule?.endTime ?? ""}`;
-    const totalAmount =
-      reservationFromApi?.totalAmount ??
-      reservationFromApi?.montoTotal ??
-      reservationFromApi?.totalPrice ??
-      reservationFromApi?.precio ??
-      selectedSchedule?.price ??
-      0;
     const fullReservation = {
       ...reservationFromApi,
-      id:          reservationId,
-      codigo,
-      courtId:     selectedCourt?.id,
-      canchaId:    selectedCourt?.id,
-      courtName,
-      cancha:      reservationFromApi?.cancha || courtName,
-      court:       reservationFromApi?.court || selectedCourt,
-      courtIcon:   selectedCourt?.icono ?? "⚽",
-      schedule:    reservationFromApi?.schedule || { ...selectedSchedule, time: scheduleTime },
-      startTime:   selectedSchedule?.startTime,
-      endTime:     selectedSchedule?.endTime,
-      horaInicio:  selectedSchedule?.startTime,
-      horaFin:     selectedSchedule?.endTime,
-      hora:        scheduleTime,
-      date:        selectedDate,
-      fecha:       selectedDate,
-      estado:      reservationFromApi?.estado ?? reservationFromApi?.status ?? "pendiente",
-      status:      reservationFromApi?.status ?? reservationFromApi?.estado ?? "pendiente",
-      totalAmount,
-      totalPrice:  totalAmount,
-      precio:      totalAmount,
-      price:       totalAmount,
+
+      courtName:
+        selectedCourt?.titulo ||
+        selectedCourt?.nombre ||
+        selectedCourt?.name,
+
+      courtIcon: selectedCourt?.icono ?? "⚽",
+
+      startTime: selectedSchedule?.startTime,
+      endTime: selectedSchedule?.endTime,
+
+      date: selectedDate,
+
+      totalAmount:
+        reservationFromApi?.totalAmount ??
+        reservationFromApi?.montoTotal ??
+        selectedSchedule?.price ??
+        0,
     };
+
     setCustomerData(fullReservation);
     setIsReserved(true);
-    refetch();
-    setReservations(prev => {
-      const next = mergeReservations(prev, [fullReservation]);
-      saveStoredReservations(authUser.id, next);
-      return next;
-    });
+
+    setReservations((prev) => [
+      ...prev,
+      {
+        id: reservationFromApi?.id || Date.now(),
+        court: selectedCourt,
+        schedule: selectedSchedule,
+        date: selectedDate,
+      },
+    ]);
   };
 
   const handleNewReservation = () => {
     setIsReserved(false);
+
     setSelectedCourt(null);
     setSelectedSchedule(null);
     setSelectedDate(null);
+
     setCustomerData(null);
   };
 
+  // =========================
+  // AUTH
+  // =========================
   const handleLogout = async () => {
     await logout();
     onLogout();
   };
 
+  // =========================
+  // RENDER
+  // =========================
   return (
     <>
       {isViewingProfile ? (
         <Profile onBack={handleBackToClient} />
+      ) : isViewingSettings ? (
+        <Configuration onBack={handleBackToClient} />
       ) : (
         <>
           <DSANavbarClient
-            initials={iniciales}
-            userName={nombreUsuario}
+            initials={initials}
+            userName={fullName || "Usuario"}
             userRole="Cliente"
             onHome={handleHome}
             onOpenReservations={() => setShowModal(true)}
-            reservationCount={visibleReservations.length}
+            reservationCount={reservations.length}
             onOpenProfile={handleOpenProfile}
+            onOpenSettings={handleOpenSettings}
             onLogout={handleLogout}
           />
 
@@ -190,13 +205,16 @@ const Client = ({ onLogout }) => {
                 onSelectSchedule={handleSelectSchedule}
               />
             ) : (
-              <Courts onSelectCourt={setSelectedCourt} />
+              <Dashboard
+                userName={fullName || "Usuario"}
+                onSelectCourt={setSelectedCourt}
+              />
             )}
           </div>
 
           {showModal && (
             <ReservationsModal
-              reservations={visibleReservations}
+              reservations={reservations}
               onClose={() => setShowModal(false)}
             />
           )}

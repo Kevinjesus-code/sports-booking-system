@@ -1,0 +1,512 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+/* ─── Reset ─────────────────────────────────────────────────────────────────── */
+.apRoot * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── Root ───────────────────────────────────────────────────────────────────── */
+.apRoot {
+  font-family: 'DM Sans', sans-serif;
+  background: #f4f6f4;
+  min-height: 100vh;
+  padding: 32px 24px;
+  color: #1a1f1a;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────────── */
+.apHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 36px;
+}
+
+.apBack {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  border: 1px solid #e0e5e0;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #444;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.apBack:hover {
+  background: #f0f5f0;
+  border-color: #19B55A;
+  color: #19B55A;
+}
+
+.apTitle {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1a1f1a;
+}
+.apTitle span {
+  color: #19B55A;
+}
+
+/* ─── Layout ─────────────────────────────────────────────────────────────────── */
+.apLayout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  max-width: 1000px;
+}
+
+@media (max-width: 768px) {
+  .apLayout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── Sidebar ────────────────────────────────────────────────────────────────── */
+.apSidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.apAvatarCard {
+  background: white;
+  border-radius: 16px;
+  padding: 28px 20px;
+  text-align: center;
+  border: 1px solid #e8ede8;
+}
+
+.apAvatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #19B55A, #0d8a3f);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: 600;
+  color: white;
+  margin: 0 auto 14px;
+  box-shadow: 0 4px 16px rgba(25, 181, 90, 0.25);
+}
+
+.apAvatarName {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1f1a;
+  margin-bottom: 4px;
+}
+
+.apAvatarRole {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: #edfaf3;
+  color: #19B55A;
+  border-radius: 20px;
+  padding: 3px 10px;
+  display: inline-block;
+}
+
+.apStatus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #666;
+  margin-top: 12px;
+}
+
+.apStatusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #19B55A;
+  box-shadow: 0 0 0 2px rgba(25, 181, 90, 0.2);
+}
+
+/* ─── Nav ────────────────────────────────────────────────────────────────────── */
+.apNav {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e8ede8;
+  overflow: hidden;
+}
+
+.apNavItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 13px 18px;
+  background: none;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.15s;
+  border-left: 3px solid transparent;
+  text-align: left;
+}
+.apNavItem:hover {
+  background: #f6faf6;
+  color: #1a1f1a;
+}
+.apNavItem.active {
+  background: #f0faf4;
+  color: #19B55A;
+  border-left-color: #19B55A;
+}
+.apNavItem svg {
+  opacity: 0.7;
+}
+.apNavItem.active svg {
+  opacity: 1;
+}
+
+.apNavDivider {
+  height: 1px;
+  background: #f0f0f0;
+}
+
+/* ─── Meta ───────────────────────────────────────────────────────────────────── */
+.apMeta {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e8ede8;
+  padding: 16px 18px;
+  font-size: 12px;
+  color: #888;
+}
+.apMeta p {
+  margin-bottom: 4px;
+}
+.apMeta strong {
+  color: #444;
+  font-weight: 500;
+}
+
+/* ─── Main panel ─────────────────────────────────────────────────────────────── */
+.apMain {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e8ede8;
+  overflow: hidden;
+}
+
+.apPanelHeader {
+  padding: 24px 28px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.apPanelTitle {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.apPanelSub {
+  font-size: 13px;
+  color: #888;
+  margin-top: 2px;
+}
+
+.apBtnEdit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f4f9f5;
+  border: 1px solid #c8e8d4;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #19B55A;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.apBtnEdit:hover {
+  background: #e8f6ed;
+}
+
+.apPanelBody {
+  padding: 24px 28px;
+}
+
+/* ─── Field grid ─────────────────────────────────────────────────────────────── */
+.apGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 600px) {
+  .apGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.apField label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #999;
+  margin-bottom: 6px;
+}
+
+.apFieldValue {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1f1a;
+  padding: 10px 14px;
+  background: #f8faf8;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  font-family: 'DM Mono', monospace;
+}
+
+.apField input {
+  width: 100%;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  color: #1a1f1a;
+  font-weight: 400;
+  padding: 10px 14px;
+  background: #f8faf8;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  outline: none;
+  transition: border 0.15s;
+}
+.apField input:focus {
+  border-color: #19B55A;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(25, 181, 90, 0.08);
+}
+.apField input.error {
+  border-color: #e53e3e;
+}
+
+.apFieldErr {
+  font-size: 11px;
+  color: #e53e3e;
+  margin-top: 4px;
+}
+
+/* ─── Password input with eye toggle ─────────────────────────────────────────── */
+.apFieldPassword {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.apFieldPassword input {
+  padding-right: 40px; /* espacio para el botón del ojo */
+}
+
+.apEyeBtn {
+  position: absolute;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #999;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+.apEyeBtn:hover {
+  color: #19B55A;
+}
+
+.apSectionDivider {
+  grid-column: 1 / -1;
+  height: 1px;
+  background: #f0f0f0;
+  margin: 4px 0;
+}
+
+.apSectionLabel {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #bbb;
+  margin-bottom: -8px;
+}
+
+/* ─── Security ───────────────────────────────────────────────────────────────── */
+.apSecurityItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid #f4f4f4;
+}
+.apSecurityItem:last-child {
+  border-bottom: none;
+}
+
+.apSecurityLabel {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.apSecuritySub {
+  font-size: 12px;
+  color: #999;
+  margin-top: 2px;
+}
+
+.apBtnGhost {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #444;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.apBtnGhost:hover {
+  border-color: #19B55A;
+  color: #19B55A;
+  background: #f4faf6;
+}
+
+/* ─── Action buttons ─────────────────────────────────────────────────────────── */
+.apActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.apBtnPrimary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #19B55A;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.apBtnPrimary:hover {
+  background: #15a050;
+}
+.apBtnPrimary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.apBtnSecondary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  color: #666;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.apBtnSecondary:hover {
+  border-color: #ccc;
+  color: #333;
+}
+
+/* ─── Toast ──────────────────────────────────────────────────────────────────── */
+.apToast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1a1f1a;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  animation: toastIn 0.25s ease;
+}
+.apToast.success {
+  border-left: 4px solid #19B55A;
+}
+.apToast.error {
+  border-left: 4px solid #e53e3e;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Loading ────────────────────────────────────────────────────────────────── */
+.apLoading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  font-size: 14px;
+  color: #888;
+}
+
+.apSpinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e0e0e0;
+  border-top-color: #19B55A;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin-right: 10px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

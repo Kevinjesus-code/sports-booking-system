@@ -44,3 +44,8 @@
 .input:focus {
   border-color: #22c55e;
 }
+
+.input-icon svg {
+  width: 18px;
+  height: 18px;
+}
