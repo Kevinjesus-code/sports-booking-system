@@ -2,7 +2,7 @@ import { useState } from "react";
 import styles from "./ResetPassword.module.css";
 import { resetPasswordRequest } from "../../../infrastructure/api/auth.api";
 import { Eye, EyeOff } from "lucide-react";
-import logo from "../../../assets/MetodoPago/Logo.png";
+import logo from "/assets/img/Logo.JPG";
 
 function ResetPassword({ token, onDone }) {
   const [password,    setPassword]    = useState("");

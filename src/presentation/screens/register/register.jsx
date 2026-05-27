@@ -1,7 +1,9 @@
 import { useState } from "react";
 import styles from "./register.module.css";
-import { useAuth } from "../../hooks/useAuth";
-import logo from "../../../assets/MetodoPago/Logo.png";
+import logo from "/assets/img/Logo.JPG";
+import { useAuth } from "../../../context/AuthContext";
+
+
 import { Eye, EyeOff } from "lucide-react";
 const Register = ({ onGoToLogin }) => {
   const [nombre,          setNombre]          = useState("");

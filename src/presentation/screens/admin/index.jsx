@@ -1,7 +1,6 @@
 import styles from "./admin.module.css";
 import { DSANavbarVertical, DSATopBar } from "../../components";
 import { useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
 import Dashboard from "./dashboard/dashboard";
 import Courts from "./courts/courts";
 import Reports from "./reports/reports";
@@ -9,6 +8,7 @@ import Schedules from "./schedules/schedules";
 import Users from "./users/users";
 import Configuration from "./configuration/configuration";
 import AdminProfile from "./profile/AdminProfile";
+import { useAuth } from "../../../context/AuthContext";
 
 const Admin = ({ onLogout }) => {
   const { user, logout } = useAuth();
