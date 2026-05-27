@@ -137,7 +137,7 @@
                     <span className={styles.loginIconBrandName}>Kancha Sports</span>
                   </div>
 
-                  <h1 className={styles.loginTitle}>Bienvenido de nuevo</h1>
+                  <h1 className={styles.loginTitle}>Bienvenido</h1>
                   <p className={styles.loginSubtitle}>Ingresa tus datos para <strong>iniciar sesión</strong></p>
                 </div>
 
