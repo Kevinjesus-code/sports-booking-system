@@ -24,18 +24,23 @@ const LogoutIcon = () => (
 );
 
 const Navbar = ({
-  initials = "U",
-  userName = "Usuario",
-  userRole = "Cliente",
   onOpenReservations,
   reservationCount = 5,
   onHome,
   onOpenProfile,
   onOpenSettings,
   onLogout,
+  userName,    
+  userRole,    
+  initials,
 }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef(null);
+
+  // REEMPLAZA con:
+  const displayName     = userName  || "Usuario";
+  const displayRole     = userRole  || "Cliente";
+  const displayInitials = initials  || "U";
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -43,7 +48,6 @@ const Navbar = ({
         setIsProfileOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -61,70 +65,46 @@ const Navbar = ({
       </div>
 
       <div className={styles.right}>
-        <button
-          className={styles.iconBtn}
-          onClick={onOpenReservations}
-          aria-label="Ver mis reservas"
-        >
+        <button className={styles.iconBtn} onClick={onOpenReservations}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18s-3 0-3-7" />
             <path d="M13.73 21a2 2 0 01-3.46 0" />
           </svg>
-          {reservationCount > 0 && (
-            <span className={styles.badge}>{reservationCount}</span>
-          )}
+          {reservationCount > 0 && <span className={styles.badge}>{reservationCount}</span>}
         </button>
 
         <div className={styles.profileWrapper} ref={profileRef}>
           <button
             className={`${styles.profileButton} ${isProfileOpen ? styles.profileButtonActive : ""}`}
-            onClick={() => setIsProfileOpen((current) => !current)}
-            aria-label="Abrir menu de perfil"
-            aria-expanded={isProfileOpen}
+            onClick={() => setIsProfileOpen((prev) => !prev)}
           >
-            <span className={styles.avatar}>{initials}</span>
+            <span className={styles.avatar}>{displayInitials}</span>
             <span className={styles.profileText}>
-              <span className={styles.profileName}>{userName}</span>
-              <span className={styles.profileRole}>{userRole}</span>
+              <span className={styles.profileName}>{displayName}</span>
+              <span className={styles.profileRole}>{displayRole}</span>
             </span>
-            <svg
-              className={`${styles.chevron} ${isProfileOpen ? styles.chevronOpen : ""}`}
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
           </button>
 
           {isProfileOpen && (
             <div className={styles.profileDropdown}>
               <div className={styles.dropdownHeader}>
-                <div className={styles.dropdownAvatar}>{initials}</div>
+                <div className={styles.dropdownAvatar}>{displayInitials}</div>
                 <div>
-                  <p className={styles.dropdownName}>{userName}</p>
-                  <p className={styles.dropdownRole}>{userRole}</p>
+                  <p className={styles.dropdownName}>{displayName}</p>
+                  <p className={styles.dropdownRole}>{displayRole}</p>
                 </div>
               </div>
-
               <div className={styles.dropdownBody}>
                 <button className={styles.dropdownItem} onClick={() => handleProfileAction(onOpenProfile)}>
-                  <UserIcon />
-                  Mi perfil
+                  <UserIcon /> Mi perfil
                 </button>
                 <button className={styles.dropdownItem} onClick={() => handleProfileAction(onOpenSettings)}>
-                  <SettingsIcon />
-                  Configuracion
+                  <SettingsIcon /> Configuración
                 </button>
               </div>
-
               <div className={styles.dropdownFooter}>
                 <button className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`} onClick={() => handleProfileAction(onLogout)}>
-                  <LogoutIcon />
-                  Cerrar sesion
+                  <LogoutIcon /> Cerrar sesión
                 </button>
               </div>
             </div>

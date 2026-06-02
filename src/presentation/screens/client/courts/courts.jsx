@@ -2,14 +2,92 @@ import { useState } from "react";
 import styles from "./court.module.css";
 import { DSACourtCard } from "../../../components";
 import CourtModal from "../../../components/court-modal";
-import { useCourts } from "../../../hooks/useCourts";
 
 const Courts = ({ onSelectCourt }) => {
-  const USERNAME = "Usuario";
   const [modalCourt, setModalCourt] = useState(null);
-  const { courts, loading, error } = useCourts();
 
-
+  const COURT_TYPES = [
+    {
+      id: 1,
+      name: "Fútbol 5 — Cancha A",
+      image: "/assets/img/futbol5.png",
+      price: 40,
+      location: "San Miguel",
+      address: "Av. La Marina 2345, San Miguel, Lima",
+      surface: "Grass sintético",
+      capacity: "10 jugadores",
+      lighting: "Iluminación LED",
+      covered: "Techada",
+      size: "30 × 20 m",
+      bathrooms: "Vestuarios incluidos",
+      rules: [
+        "Tolerancia máxima de 10 min de espera.",
+        "Prohibido el ingreso con zapatos de calle.",
+        "Cancelación gratis hasta 2 horas antes.",
+        "Se requiere pago del 50% al reservar.",
+      ],
+    },
+    {
+      id: 2,
+      name: "Fútbol 7 — Cancha B",
+      image: "/assets/img/futbol7.png",
+      price: 60,
+      location: "Miraflores",
+      address: "Calle Berlín 380, Miraflores, Lima",
+      surface: "Grass híbrido",
+      capacity: "14 jugadores",
+      lighting: "Reflectores halógenos",
+      covered: "Al aire libre",
+      size: "50 × 30 m",
+      bathrooms: "Baños compartidos",
+      rules: [
+        "Tolerancia de 5 minutos al inicio.",
+        "Obligatorio usar tacos o zapatillas deportivas.",
+        "No se permiten bebidas alcohólicas.",
+        "Cancelación con 4 horas de anticipación.",
+      ],
+    },
+    {
+      id: 3,
+      name: "Fútbol 11 — Cancha C",
+      image: "/assets/img/futbol11.png",
+      price: 100,
+      location: "Surco",
+      address: "Av. Primavera 1240, Santiago de Surco, Lima",
+      surface: "Césped natural",
+      capacity: "22 jugadores",
+      lighting: "Sin iluminación nocturna",
+      covered: "Al aire libre",
+      size: "105 × 68 m",
+      bathrooms: "Vestuarios completos",
+      rules: [
+        "Reserva mínima de 2 horas.",
+        "Prohibido el uso de tacos en el área de vestuarios.",
+        "El pago total se realiza al reservar.",
+        "Devolución solo por lluvia intensa.",
+      ],
+    },
+    {
+      id: 4,
+      name: "Vóley — Cancha D",
+      image: "/assets/img/voley.png",
+      price: 30,
+      location: "Barranco",
+      address: "Jr. Unión 890, Barranco, Lima",
+      surface: "Parquet de madera",
+      capacity: "12 jugadores",
+      lighting: "Iluminación LED regulable",
+      covered: "Techada",
+      size: "18 × 9 m",
+      bathrooms: "Baños privados",
+      rules: [
+        "Solo calzado de uso indoor.",
+        "Máximo 2 equipos en espera.",
+        "Cancelación gratis hasta 3 horas antes.",
+        "Se admiten espectadores (máx. 20).",
+      ],
+    },
+  ];
 
   const BENEFITS = [
     {
@@ -50,33 +128,11 @@ const Courts = ({ onSelectCourt }) => {
   ];
 
   return (
-    <main className={styles.wrapper}>
-      {/* Bienvenida */}
-      <section>
-        <h1 className={styles.welcomeTitle}>Hola, {USERNAME} 👋🏻</h1>
-        <p className={styles.welcomeSub}>Reserva tu cancha fácilmente</p>
-      </section>
-
-      {/* Búsqueda */}
-      <div className={styles.searchBox}>
-        <svg width="18" height="18" fill="none" stroke="#94a3b8" strokeWidth="2">
-          <circle cx="8" cy="8" r="6" />
-          <line x1="13" y1="13" x2="17" y2="17" />
-        </svg>
-        <input
-          className={styles.searchInput}
-          type="text"
-          placeholder="Buscar por tipo de cancha, fecha u horario..."
-        />
-      </div>
-
+    <>
       {/* Tipos de canchas */}
       <h2 className={styles.sectionLabel}>Nuestras canchas</h2>
-      {loading && <p>Cargando canchas...</p>}
-      {error && <p>Error: {error}</p>}
-      {!loading && !error && courts.length === 0 && <p>No hay canchas disponibles.</p>}
       <div className={styles.gridTypes}>
-        {courts.map((court) => (
+        {COURT_TYPES.map((court) => (
           <DSACourtCard
             key={court.id}
             court={court}
@@ -121,7 +177,7 @@ const Courts = ({ onSelectCourt }) => {
           onReserve={(c) => { setModalCourt(null); onSelectCourt?.(c); }}
         />
       )}
-    </main>
+    </>
   );
 };
 
