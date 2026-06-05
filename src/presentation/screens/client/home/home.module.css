@@ -1,0 +1,92 @@
+.mainContainer {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column; /* Alinea Navbar arriba y contenido abajo */
+}
+
+.wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    width: 100%;
+}
+
+.welcome h1 { font-size: 32px; font-weight: 700; color: #1e293b; margin: 0; }
+.welcome p { color: #94a3b8; font-size: 16px; margin-top: 5px; }
+
+.searchBoxLarge {
+    margin: 30px 0;
+    background: #fdfdfd;
+    border: 1px solid #edf2f7;
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.searchBoxLarge input { border: none; outline: none; width: 100%; font-size: 15px; background: transparent; }
+
+.sectionLabel { font-size: 19px; font-weight: 700; margin: 45px 0 20px 0; color: #1e293b; }
+
+.gridTypes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.typeCard {
+    border: 1px solid #f1f5f9;
+    border-radius: 16px;
+    padding: 24px;
+    background: white;
+    transition: transform 0.2s;
+}
+
+.typeCard:hover { border-color: #28bc6b; transform: translateY(-4px); }
+
+.iconBg {
+    width: 48px;
+    height: 48px;
+    background: #f0fdf4;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    font-size: 24px;
+}
+
+.gridBenefits {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 40px;
+}
+
+.benefitCard { background: #f8fafc; border-radius: 16px; padding: 25px; }
+
+.ctaGreen {
+    background-color: #28bc6b;
+    border-radius: 20px;
+    padding: 60px;
+    text-align: center;
+    color: white;
+    margin-top: 60px;
+}
+
+.btnWhite {
+    background: white;
+    color: #28bc6b;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+}
