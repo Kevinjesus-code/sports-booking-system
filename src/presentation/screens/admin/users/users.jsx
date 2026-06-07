@@ -10,7 +10,7 @@ import {
 } from "../../../../infrastructure/api/user.api";
 import styles from "./users.module.css";
 
-const ROLES_OPCIONES  = ["CLIENTE", "ADMINISTRADOR", "RECEPCIONISTA"];
+const ROLES_OPCIONES = ["Cliente", "Administrador", "Recepcionista"];
 const ROLES_FILTRO    = ["Todos los roles", ...ROLES_OPCIONES];
 
 // Backend devuelve rol en mayúsculas: "CLIENTE", "ADMIN", "RECEPCIONISTA"
@@ -21,10 +21,13 @@ const rolToLabel = (rol) => {
 };
 
 const labelToRol = (label) => {
-  const map = { Cliente: "CLIENTE", Administrador: "ADMINISTRADOR", Recepcionista: "RECEPCIONISTA" };
+  const map = { 
+    Cliente: "CLIENTE", 
+    Administrador: "ADMIN",
+    Recepcionista: "RECEPCIONISTA" 
+  };
   return map[label] ?? label?.toUpperCase() ?? "CLIENTE";
 };
-
 // Mapea la respuesta del backend a la fila que espera DSAUsersTable
 const toRow = (u) => ({
   id:       u.id,

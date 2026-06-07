@@ -137,16 +137,17 @@ const Courts = () => {
   };
 
   // ── Eliminar ─────────────────────────────────────────────────────────────
-  const handleDelete = async (id) => {
-    if (!window.confirm("¿Eliminar esta cancha? Esta acción no se puede deshacer.")) return;
-    try {
-      await eliminarCanchaRequest(id);
-      await cargar();
-    } catch (err) {
-      console.error("[Courts] error al eliminar:", err);
-      alert("No se pudo eliminar la cancha.");
-    }
-  };
+const handleDelete = async (court) => {
+  const id = court?.id ?? court;
+  if (!window.confirm("¿Eliminar esta cancha?")) return;
+  try {
+    await eliminarCanchaRequest(id);
+    await cargar();
+  } catch (err) {
+    console.error("[Courts] error al eliminar:", err);
+    alert("No se pudo eliminar la cancha.");
+  }
+};
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
