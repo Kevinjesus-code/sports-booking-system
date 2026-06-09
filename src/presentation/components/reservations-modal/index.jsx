@@ -12,7 +12,7 @@ const STATUS_CONFIG = {
   no_asistio: { label: "No asistió", class: "badgeCancelada", icon: "!" },
 };
 
-const ReservationsModal = ({ reservations, onClose }) => {
+const ReservationsModal = ({ reservations, onClose, onCancelled }) => {
   // Lock scroll
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -32,6 +32,40 @@ const ReservationsModal = ({ reservations, onClose }) => {
       const d = new Date(dateStr + "T00:00:00");
       return d.toLocaleDateString("es-PE", { weekday: "short", day: "numeric", month: "short" });
     } catch { return dateStr; }
+  };
+
+  /* ── Cancelación ── */
+  const canCancel = (r) => {
+    const estado = String(r.estado ?? r.status ?? "").toLowerCase();
+    return estado === "confirmada" || estado === "pendiente";
+  };
+
+  const isWithin2Hours = (r) => {
+    const fecha = r.date ?? r.fecha;
+    const hora  = r.schedule?.time ?? r.hora;
+    if (!fecha || !hora) return false;
+    const reservaDateTime = new Date(`${fecha}T${hora}`);
+    const diff = reservaDateTime - new Date();
+    return diff < 2 * 60 * 60 * 1000;
+  };
+
+  const handleCancel = async (reservationId) => {
+    if (!window.confirm("¿Cancelar esta reserva?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`http://localhost:8080/api/reservas/${reservationId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.status === 204) {
+        onCancelled?.(reservationId);
+      } else {
+        const body = await res.json().catch(() => ({}));
+        alert(body.message ?? "No se pudo cancelar la reserva.");
+      }
+    } catch {
+      alert("Error de conexión. Intenta de nuevo.");
+    }
   };
 
   return (
@@ -145,6 +179,20 @@ const ReservationsModal = ({ reservations, onClose }) => {
                       </svg>
                       {r.observaciones}
                     </div>
+                  )}
+
+                  {/* Botón cancelar */}
+                  {canCancel(r) && (
+                    <button
+                      className={styles.cancelBtn}
+                      onClick={() =>
+                        isWithin2Hours(r)
+                          ? alert("No puedes cancelar con menos de 2 horas de anticipación.")
+                          : handleCancel(r.id)
+                      }
+                    >
+                      Cancelar reserva
+                    </button>
                   )}
                 </div>
               );

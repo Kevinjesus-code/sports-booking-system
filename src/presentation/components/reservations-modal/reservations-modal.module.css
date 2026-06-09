@@ -304,3 +304,19 @@
     grid-template-columns: 1fr;
   }
 }
+.cancelBtn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 8px 0;
+  border: 1px solid #ef4444;
+  border-radius: 8px;
+  background: transparent;
+  color: #ef4444;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.cancelBtn:hover {
+  background: #ef4444;
+  color: #fff;
+}

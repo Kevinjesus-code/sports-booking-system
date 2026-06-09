@@ -8,17 +8,7 @@ const Dashboard = ({ userName, onSelectCourt }) => {
         <h1 className={styles.welcomeTitle}>
           Hola, {userName} 👋
         </h1>
-        <p className={styles.welcomeSub}>Reserva tu cancha fácilmente</p>
       </section>
-
-      <div className={styles.searchBox}>
-        <input
-          className={styles.searchInput}
-          type="text"
-          placeholder="Buscar por tipo de cancha..."
-        />
-      </div>
-
       <Courts onSelectCourt={onSelectCourt} />
     </main>
   );
