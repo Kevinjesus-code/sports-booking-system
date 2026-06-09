@@ -43,17 +43,11 @@ const ReservationsModal = ({ reservations = [], onClose, onCancelled }) => {
   // ── ¿Puede cancelar? ────────────────────────────────────────────────────────
   // El backend ya calcula puedeCancelar con la regla de 2h.
   // Si el campo no viene (reservas legacy), evaluamos estado + tiempo.
-  const canCancel = (r) => {
-    if (typeof r.puedeCancelar === "boolean") return r.puedeCancelar;
-    const estado = String(r.estado ?? r.status ?? "").toLowerCase();
-    if (!["confirmada", "pendiente"].includes(estado)) return false;
-    // Fallback: calcular aquí
-    const fecha = r.fecha ?? r.date;
-    const hora  = r.horaInicio ?? r.hora;
-    if (!fecha || !hora) return true;
-    const diff = new Date(`${fecha}T${hora}`) - new Date();
-    return diff > 2 * 60 * 60 * 1000;
-  };
+ const canCancel = (r) => {
+  const estado = String(r.estado ?? r.status ?? "").toLowerCase();
+  // Mostrar botón para cualquier reserva activa
+  return !["cancelada", "finalizada", "en_curso", "no_asistio"].includes(estado);
+};
 
   // ── Cancelar ────────────────────────────────────────────────────────────────
   const handleCancel = async (r) => {
