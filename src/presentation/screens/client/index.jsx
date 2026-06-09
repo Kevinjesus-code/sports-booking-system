@@ -19,42 +19,34 @@ const Client = ({ onLogout }) => {
   const { user, logout } = useAuth();
 
   // =========================
-  // DEBUG - BORRAR DESPUÉS
-  // =========================
-  
-
-  // =========================
   // USER DATA
   // =========================
   const storedUser = (() => {
-    try { return JSON.parse(localStorage.getItem("user")); } 
+    try { return JSON.parse(localStorage.getItem("user")); }
     catch { return null; }
   })();
 
   const activeUser = user ?? storedUser;
 
-  const nombre  = activeUser?.nombre  || activeUser?.nombres  || "";
+  const nombre   = activeUser?.nombre   || activeUser?.nombres   || "";
   const apellido = activeUser?.apellido || activeUser?.apellidos || "";
 
   const initials = ((nombre[0] ?? "U") + (apellido[0] ?? "")).toUpperCase();
   const fullName = `${nombre} ${apellido}`.trim();
 
-
   // =========================
   // STATES
   // =========================
-  const [selectedCourt, setSelectedCourt] = useState(null);
+  const [selectedCourt,    setSelectedCourt]    = useState(null);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate,     setSelectedDate]     = useState(null);
 
-  const [isReserved, setIsReserved] = useState(false);
-
+  const [isReserved,   setIsReserved]   = useState(false);
   const [customerData, setCustomerData] = useState(null);
   const [reservations, setReservations] = useState([]);
+  const [showModal,    setShowModal]    = useState(false);
 
-  const [showModal, setShowModal] = useState(false);
-
-  const [isViewingProfile, setIsViewingProfile] = useState(false);
+  const [isViewingProfile,  setIsViewingProfile]  = useState(false);
   const [isViewingSettings, setIsViewingSettings] = useState(false);
 
   // =========================
@@ -64,10 +56,8 @@ const Client = ({ onLogout }) => {
     setSelectedCourt(null);
     setSelectedSchedule(null);
     setSelectedDate(null);
-
     setIsReserved(false);
     setCustomerData(null);
-
     setIsViewingProfile(false);
     setIsViewingSettings(false);
   };
@@ -108,23 +98,18 @@ const Client = ({ onLogout }) => {
   const handleConfirmReservation = (reservationFromApi) => {
     const fullReservation = {
       ...reservationFromApi,
-
       courtName:
         selectedCourt?.titulo ||
         selectedCourt?.nombre ||
         selectedCourt?.name,
-
-      courtIcon: selectedCourt?.icono ?? "⚽",
-
-      startTime: selectedSchedule?.startTime,
-      endTime: selectedSchedule?.endTime,
-
-      date: selectedDate,
-
+      courtIcon:   selectedCourt?.icono ?? "⚽",
+      startTime:   selectedSchedule?.startTime,
+      endTime:     selectedSchedule?.endTime,
+      date:        selectedDate,
       totalAmount:
         reservationFromApi?.totalAmount ??
-        reservationFromApi?.montoTotal ??
-        selectedSchedule?.price ??
+        reservationFromApi?.montoTotal  ??
+        selectedSchedule?.price         ??
         0,
     };
 
@@ -134,21 +119,29 @@ const Client = ({ onLogout }) => {
     setReservations((prev) => [
       ...prev,
       {
-        id: reservationFromApi?.id || Date.now(),
-        court: selectedCourt,
-        schedule: selectedSchedule,
-        date: selectedDate,
+        id:            reservationFromApi?.id || Date.now(),
+        estado:        reservationFromApi?.estado        ?? "pendiente",
+        fecha:         selectedDate,
+        horaInicio:    selectedSchedule?.startTime,
+        horaFin:       selectedSchedule?.endTime,
+        court:         selectedCourt,
+        schedule:      selectedSchedule,
+        date:          selectedDate,
+        precio:
+          reservationFromApi?.totalAmount ??
+          reservationFromApi?.montoTotal  ??
+          selectedSchedule?.price,
+        clienteNombre: reservationFromApi?.clienteNombre,
+        puedeCancelar: reservationFromApi?.puedeCancelar ?? true,
       },
     ]);
   };
 
   const handleNewReservation = () => {
     setIsReserved(false);
-
     setSelectedCourt(null);
     setSelectedSchedule(null);
     setSelectedDate(null);
-
     setCustomerData(null);
   };
 
@@ -216,6 +209,9 @@ const Client = ({ onLogout }) => {
             <ReservationsModal
               reservations={reservations}
               onClose={() => setShowModal(false)}
+              onCancelled={(id) =>
+                setReservations((prev) => prev.filter((r) => r.id !== id))
+              }
             />
           )}
         </>
