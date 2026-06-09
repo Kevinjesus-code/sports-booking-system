@@ -4,7 +4,6 @@ import { DSACourtCard } from "../../../components";
 import CourtModal from "../../../components/court-modal";
 
 const Courts = ({ onSelectCourt }) => {
-  const USERNAME = "Usuario";
   const [modalCourt, setModalCourt] = useState(null);
 
   const COURT_TYPES = [
@@ -129,26 +128,7 @@ const Courts = ({ onSelectCourt }) => {
   ];
 
   return (
-    <main className={styles.wrapper}>
-      {/* Bienvenida */}
-      <section>
-        <h1 className={styles.welcomeTitle}>Hola, {USERNAME} 👋🏻</h1>
-        <p className={styles.welcomeSub}>Reserva tu cancha fácilmente</p>
-      </section>
-
-      {/* Búsqueda */}
-      <div className={styles.searchBox}>
-        <svg width="18" height="18" fill="none" stroke="#94a3b8" strokeWidth="2">
-          <circle cx="8" cy="8" r="6" />
-          <line x1="13" y1="13" x2="17" y2="17" />
-        </svg>
-        <input
-          className={styles.searchInput}
-          type="text"
-          placeholder="Buscar por tipo de cancha, fecha u horario..."
-        />
-      </div>
-
+    <>
       {/* Tipos de canchas */}
       <h2 className={styles.sectionLabel}>Nuestras canchas</h2>
       <div className={styles.gridTypes}>
@@ -197,7 +177,7 @@ const Courts = ({ onSelectCourt }) => {
           onReserve={(c) => { setModalCourt(null); onSelectCourt?.(c); }}
         />
       )}
-    </main>
+    </>
   );
 };
 
