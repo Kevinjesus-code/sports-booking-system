@@ -258,28 +258,28 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
     const courtName  = court.name || court.titulo || court.nombre || "Cancha";
     try {
       const reservation = await create({
-        canchaId:    court.id,
-        fecha:       date,
+        canchaId:   court.id,
+        fecha:      date,
         horaInicio,
         horaFin,
-        metodoPago:  payment,
+        metodoPago: payment,
       });
       onConfirm?.({
         ...reservation,
         canchaId:    court.id,
-        courtName:   reservation?.courtName || courtName,
+        courtName:   reservation?.courtName || reservation?.nombreCancha || courtName,
         court,
         schedule,
         fecha:       date,
         date,
-        horaInicio,
-        horaFin,
-        startTime:   schedule.startTime,
-        endTime:     schedule.endTime,
+        horaInicio:  reservation?.horaInicio || horaInicio,
+        horaFin:     reservation?.horaFin    || horaFin,
+        startTime:   reservation?.horaInicio || schedule.startTime,
+        endTime:     reservation?.horaFin    || schedule.endTime,
         hora:        schedule.time || `${schedule.startTime} - ${schedule.endTime}`,
-        totalAmount: reservation?.totalAmount ?? reservation?.montoTotal ?? price,
+        totalAmount: reservation?.total ?? reservation?.totalAmount ?? reservation?.montoTotal ?? price,
         metodoPago:  payment,
-        estado:      reservation?.estado ?? "pendiente",
+        estado:      reservation?.estado,   // ✅ sin fallback — viene "confirmada" del backend
         customer:    { nombre, telefono },
         observaciones,
       });
@@ -287,7 +287,7 @@ export default function ConfirmReserve({ court, schedule, date, onBack, onConfir
       // apiError capturado por el hook
     }
   };
-
+  
   return (
     <div className={styles.container}>
 

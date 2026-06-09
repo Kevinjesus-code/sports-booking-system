@@ -1,7 +1,8 @@
+// presentation/components/reservations-modal/index.jsx
 import styles from "./reservations-modal.module.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-/* ── Status config ── */
+// ── Configuración de estados ──────────────────────────────────────────────────
 const STATUS_CONFIG = {
   confirmada: { label: "Confirmada", class: "badgeConfirmada", icon: "✓" },
   pendiente:  { label: "Pendiente",  class: "badgePendiente",  icon: "◷" },
@@ -12,72 +13,86 @@ const STATUS_CONFIG = {
   no_asistio: { label: "No asistió", class: "badgeCancelada",  icon: "!" },
 };
 
-const ReservationsModal = ({ reservations, onClose, onCancelled }) => {
+// ── Props: reservations, onClose, onCancelled (opcional, para refetch externo) ─
+const ReservationsModal = ({ reservations = [], onClose, onCancelled }) => {
+  const [cancelling, setCancelling] = useState(null); // id de la reserva en proceso
 
-  // Lock scroll
+  // Bloquear scroll
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = ""; };
   }, []);
 
-  // ESC to close
+  // Cerrar con ESC
   useEffect(() => {
     const h = (e) => { if (e.key === "Escape") onClose?.(); };
     document.addEventListener("keydown", h);
     return () => document.removeEventListener("keydown", h);
   }, [onClose]);
 
+  // ── Helpers de fecha ────────────────────────────────────────────────────────
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
     try {
-      const d = new Date(dateStr + "T00:00:00");
-      return d.toLocaleDateString("es-PE", {
+      return new Date(dateStr + "T00:00:00").toLocaleDateString("es-PE", {
         weekday: "short", day: "numeric", month: "short",
       });
     } catch { return dateStr; }
   };
 
-  /* ── Cancelación ── */
-
-  // Usa puedeCancelar del backend si existe; si no, evalúa el estado
+  // ── ¿Puede cancelar? ────────────────────────────────────────────────────────
+  // El backend ya calcula puedeCancelar con la regla de 2h.
+  // Si el campo no viene (reservas legacy), evaluamos estado + tiempo.
   const canCancel = (r) => {
     if (typeof r.puedeCancelar === "boolean") return r.puedeCancelar;
     const estado = String(r.estado ?? r.status ?? "").toLowerCase();
-    return estado === "confirmada" || estado === "pendiente";
-  };
-
-  // horaInicio viene del backend como "HH:mm:ss" o "HH:mm"
-  const isWithin2Hours = (r) => {
+    if (!["confirmada", "pendiente"].includes(estado)) return false;
+    // Fallback: calcular aquí
     const fecha = r.fecha ?? r.date;
-    const hora  = r.horaInicio ?? r.schedule?.startTime ?? r.hora;
-    if (!fecha || !hora) return false;
-    const reservaDateTime = new Date(`${fecha}T${hora}`);
-    const diff = reservaDateTime - new Date();
-    return diff < 2 * 60 * 60 * 1000;
+    const hora  = r.horaInicio ?? r.hora;
+    if (!fecha || !hora) return true;
+    const diff = new Date(`${fecha}T${hora}`) - new Date();
+    return diff > 2 * 60 * 60 * 1000;
   };
 
-  const handleCancel = async (reservationId) => {
-    if (!window.confirm("¿Cancelar esta reserva?")) return;
+  // ── Cancelar ────────────────────────────────────────────────────────────────
+  const handleCancel = async (r) => {
+    if (!window.confirm(`¿Cancelar la reserva ${r.codigo ?? r.id}?`)) return;
+
+    // Verificación local de 2h (doble seguro)
+    const fecha = r.fecha ?? r.date;
+    const hora  = r.horaInicio ?? r.hora;
+    if (fecha && hora) {
+      const diff = new Date(`${fecha}T${hora}`) - new Date();
+      if (diff < 2 * 60 * 60 * 1000) {
+        alert("No puedes cancelar con menos de 2 horas de anticipación.");
+        return;
+      }
+    }
+
+    setCancelling(r.id);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(
-        `http://localhost:8080/api/reservas/${reservationId}`,
-        {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await fetch(`http://localhost:8080/api/reservas/${r.id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       if (res.status === 204) {
-        onCancelled?.(reservationId);
+        // ✅ Notificar al padre para que recargue la lista desde el backend
+        onCancelled?.(r.id);
       } else {
         const body = await res.json().catch(() => ({}));
-        alert(body.message ?? "No se pudo cancelar la reserva.");
+        alert(body.message ?? body.error ?? "No se pudo cancelar la reserva.");
       }
     } catch {
       alert("Error de conexión. Intenta de nuevo.");
+    } finally {
+      setCancelling(null);
     }
   };
 
+  // ── Render ──────────────────────────────────────────────────────────────────
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
@@ -130,18 +145,21 @@ const ReservationsModal = ({ reservations, onClose, onCancelled }) => {
           ) : (
             reservations.map((r) => {
               const raw    = String(r.estado ?? r.status ?? "pendiente").toLowerCase();
-              const status = STATUS_CONFIG[raw] || STATUS_CONFIG.pendiente;
+              const status = STATUS_CONFIG[raw] ?? STATUS_CONFIG.pendiente;
+              const isCancelling = cancelling === r.id;
+
               return (
                 <div key={r.id} className={styles.card}>
 
-                  {/* Card header */}
+                  {/* Cabecera de tarjeta */}
                   <div className={styles.cardHeader}>
                     <div className={styles.cardIcon}>
-                      {r.court?.icono || "⚽"}
+                      {r.court?.icono ?? "⚽"}
                     </div>
                     <div className={styles.cardHeaderInfo}>
                       <span className={styles.cardCourtName}>
-                        {r.court?.titulo || r.nombreCancha || r.cancha || "Cancha"}
+                        {/* ✅ Usa nombreCancha que devuelve el backend */}
+                        {r.nombreCancha ?? r.court?.titulo ?? r.cancha ?? "Cancha"}
                       </span>
                       <span className={`${styles.badge} ${styles[status.class]}`}>
                         <span className={styles.badgeIcon}>{status.icon}</span>
@@ -150,7 +168,7 @@ const ReservationsModal = ({ reservations, onClose, onCancelled }) => {
                     </div>
                   </div>
 
-                  {/* Card details */}
+                  {/* Detalles */}
                   <div className={styles.cardDetails}>
                     <div className={styles.detailItem}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
@@ -160,7 +178,7 @@ const ReservationsModal = ({ reservations, onClose, onCancelled }) => {
                         <line x1="8"  y1="2" x2="8"  y2="6" />
                         <line x1="3"  y1="10" x2="21" y2="10" />
                       </svg>
-                      <span>{formatDate(r.fecha || r.date)}</span>
+                      <span>{formatDate(r.fecha ?? r.date)}</span>
                     </div>
 
                     <div className={styles.detailItem}>
@@ -170,9 +188,7 @@ const ReservationsModal = ({ reservations, onClose, onCancelled }) => {
                         <polyline points="12 6 12 12 16 14" />
                       </svg>
                       <span>
-                        {r.horaInicio ?? r.schedule?.startTime ?? "—"}
-                        {" – "}
-                        {r.horaFin ?? r.schedule?.endTime ?? "—"}
+                        {r.horaInicio ?? "—"} – {r.horaFin ?? "—"}
                       </span>
                     </div>
 
@@ -182,12 +198,10 @@ const ReservationsModal = ({ reservations, onClose, onCancelled }) => {
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                         <circle cx="12" cy="7" r="4" />
                       </svg>
-                      <span>
-                        {r.clienteNombre || r.customer?.nombre || r.cliente || "Cliente"}
-                      </span>
+                      <span>{r.clienteNombre ?? "Cliente"}</span>
                     </div>
 
-                    {(r.precio || r.price || r.total) && (
+                    {(r.total != null) && (
                       <div className={styles.detailItem}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                           stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -195,36 +209,32 @@ const ReservationsModal = ({ reservations, onClose, onCancelled }) => {
                           <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                         </svg>
                         <span className={styles.priceValue}>
-                          S/ {Number(r.precio ?? r.price ?? r.total).toFixed(2)}
+                          S/ {Number(r.total).toFixed(2)}
                         </span>
                       </div>
                     )}
                   </div>
 
-                  {/* Observaciones */}
-                  {r.observaciones && (
-                    <div className={styles.cardNote}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                        <circle cx="12" cy="12" r="10" />
-                        <line x1="12" y1="16" x2="12"   y2="12" />
-                        <line x1="12" y1="8"  x2="12.01" y2="8" />
-                      </svg>
-                      {r.observaciones}
+                  {/* Código */}
+                  {r.codigo && (
+                    <div style={{
+                      marginTop: 8, padding: "6px 10px",
+                      background: "#f0fdf4", borderRadius: 6,
+                      fontSize: 12, color: "#16a34a", fontWeight: 700,
+                      letterSpacing: 1,
+                    }}>
+                      {r.codigo}
                     </div>
                   )}
 
-                  {/* Botón cancelar */}
+                  {/* ✅ Botón cancelar — visible solo si puedeCancelar=true del backend */}
                   {canCancel(r) && (
                     <button
                       className={styles.cancelBtn}
-                      onClick={() =>
-                        isWithin2Hours(r)
-                          ? alert("No puedes cancelar con menos de 2 horas de anticipación.")
-                          : handleCancel(r.id)
-                      }
+                      disabled={isCancelling}
+                      onClick={() => handleCancel(r)}
                     >
-                      Cancelar reserva
+                      {isCancelling ? "Cancelando..." : "Cancelar reserva"}
                     </button>
                   )}
 

@@ -1,60 +1,49 @@
-// hooks/useReservations.js
+// presentation/hooks/useReservations.js
 import { useState, useEffect, useCallback } from "react";
 import { reservationRepository } from "../../infrastructure/repositories/reservationRepositoryImpl";
 
-/** Disponibilidad por cancha y fecha (solo datos del backend). */
+// ─── Disponibilidad por cancha y fecha ───────────────────────────────────────
 export function useCourtAvailability(courtId, date) {
-  const [slots, setSlots] = useState([]);
+  const [slots,   setSlots]   = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error,   setError]   = useState(null);
 
   useEffect(() => {
-    if (!courtId || !date) {
-      setSlots([]);
-      setLoading(false);
-      setError(null);
-      return;
-    }
-
+    if (!courtId || !date) { setSlots([]); setLoading(false); setError(null); return; }
     let ignore = false;
     setLoading(true);
     setError(null);
-
     reservationRepository
       .getCourtAvailability(courtId, date)
-      .then((data) => {
-        if (!ignore) setSlots(data ?? []);
-      })
-      .catch((err) => {
+      .then((data)  => { if (!ignore) setSlots(data ?? []); })
+      .catch((err)  => {
         if (!ignore) {
           setSlots([]);
           setError(err.response?.data?.error ?? err.message ?? "Error al cargar horarios");
         }
       })
-      .finally(() => {
-        if (!ignore) setLoading(false);
-      });
-
-    return () => {
-      ignore = true;
-    };
+      .finally(()   => { if (!ignore) setLoading(false); });
+    return () => { ignore = true; };
   }, [courtId, date]);
 
   return { slots, loading, error };
 }
 
-/** Reservas del usuario autenticado (GET /api/reservas/mias). */
+// ─── ✅ Reservas del cliente autenticado (GET /api/reservas/mias) ─────────────
+//  - Se carga al montar y cada vez que se llama `refetch()`
+//  - `refetch` se expone para que navbar-client lo llame al abrir el modal
+//    y también tras cancelar una reserva.
 export function useMyReservations(fecha, estado) {
   const [reservations, setReservations] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading,      setLoading]      = useState(false);
+  const [error,        setError]        = useState(null);
 
-  const fetch = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const params = {};
-      if (fecha) params.fecha = fecha;
+      if (fecha)  params.fecha  = fecha;
       if (estado) params.estado = estado;
       const data = await reservationRepository.getMine(params);
       setReservations(data ?? []);
@@ -65,55 +54,34 @@ export function useMyReservations(fecha, estado) {
     }
   }, [fecha, estado]);
 
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
-  return { reservations, loading, error, refetch: fetch };
+  // ✅ Cancelar desde el modal y refrescar la lista automáticamente
+  const cancelAndRefresh = useCallback(async (reservaId) => {
+    await reservationRepository.cancel(reservaId);
+    await fetchData();          // recarga desde backend tras cancelar
+  }, [fetchData]);
+
+  return { reservations, loading, error, refetch: fetchData, cancelAndRefresh };
 }
 
-/** @deprecated Prefer useMyReservations para clientes */
+// ─── @deprecated – usar useMyReservations ────────────────────────────────────
 export function useReservations(userId) {
-  const [reservations, setReservations] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const fetch = useCallback(async () => {
-    if (!userId) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await reservationRepository.getMine({});
-      setReservations(data ?? []);
-    } catch (err) {
-      setError(err.message ?? "Error al cargar reservas");
-    } finally {
-      setLoading(false);
-    }
-  }, [userId]);
-
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
-
-  return { reservations, loading, error, refetch: fetch };
+  return useMyReservations(null, null);
 }
 
-/**
- * Listado recepción/admin.
- * @param {object|string} [filtersOrFecha] { fecha, canchaId, estado, clienteId, clienteDni } o string fecha legada
- */
+// ─── Listado recepción / admin ────────────────────────────────────────────────
 export function useAllReservations(filtersOrFecha) {
   const [reservations, setReservations] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading,      setLoading]      = useState(false);
+  const [error,        setError]        = useState(null);
 
   const serialized =
     typeof filtersOrFecha === "object" && filtersOrFecha !== null
       ? JSON.stringify(filtersOrFecha)
       : String(filtersOrFecha ?? "");
 
-  const fetch = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -130,9 +98,7 @@ export function useAllReservations(filtersOrFecha) {
     }
   }, [serialized]);
 
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const updateEstado = useCallback(async (id, estado) => {
     const updated = await reservationRepository.updateEstado(id, estado);
@@ -146,12 +112,13 @@ export function useAllReservations(filtersOrFecha) {
     return updated;
   }, []);
 
-  return { reservations, loading, error, refetch: fetch, updateEstado, reprogramar };
+  return { reservations, loading, error, refetch: fetchData, updateEstado, reprogramar };
 }
 
+// ─── Hook para crear reserva ──────────────────────────────────────────────────
 export function useCreateReservation() {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error,   setError]   = useState(null);
 
   const create = useCallback(async (data) => {
     setLoading(true);
@@ -169,9 +136,10 @@ export function useCreateReservation() {
   return { create, loading, error };
 }
 
+// ─── Hook para cancelar reserva ──────────────────────────────────────────────
 export function useCancelReservation() {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error,   setError]   = useState(null);
 
   const cancel = useCallback(async (reservationId) => {
     setLoading(true);
