@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./navbar.module.css";
 import { useMyReservations } from "../../hooks/useReservations";
 import ReservationsModal from "../reservations-modal";
+
 // ── Iconos ────────────────────────────────────────────────────────────────────
 const UserIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"
@@ -38,10 +39,8 @@ const Navbar = ({
   userName,
   userRole,
   initials,
-  // ⚠️ onOpenReservations y reservationCount ya NO se usan como props:
-  // el navbar los gestiona internamente con useMyReservations
 }) => {
-  const [isProfileOpen,       setIsProfileOpen]       = useState(false);
+  const [isProfileOpen,         setIsProfileOpen]         = useState(false);
   const [showReservationsModal, setShowReservationsModal] = useState(false);
   const profileRef = useRef(null);
 
@@ -49,11 +48,12 @@ const Navbar = ({
   const displayRole     = userRole  || "Cliente";
   const displayInitials = initials  || "U";
 
-  // ✅ Historial real desde el backend
+  // ✅ Historial real + cancelar + limpiar historial
   const {
     reservations,
     refetch: refetchReservations,
     cancelAndRefresh,
+    clearHistoryAndRefresh,
   } = useMyReservations(null, null);
 
   // ✅ Badge: solo reservas activas (confirmada o pendiente)
@@ -80,10 +80,14 @@ const Navbar = ({
     setShowReservationsModal(true);
   };
 
-  // ✅ Tras cancelar → la lista se recarga automáticamente (cancelAndRefresh lo hace)
+  // ✅ Tras cancelar → recarga automática desde backend
   const handleCancelled = async (reservaId) => {
     await cancelAndRefresh(reservaId);
-    // El modal se mantiene abierto con la lista actualizada
+  };
+
+  // ✅ Limpiar historial → recarga automática desde backend
+  const handleClearHistory = async () => {
+    await clearHistoryAndRefresh();
   };
 
   const handleProfileAction = (callback) => {
@@ -106,7 +110,6 @@ const Navbar = ({
               <path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18s-3 0-3-7" />
               <path d="M13.73 21a2 2 0 01-3.46 0" />
             </svg>
-            {/* ✅ Badge con conteo real de reservas activas */}
             {activeCount > 0 && (
               <span className={styles.badge}>{activeCount}</span>
             )}
@@ -162,12 +165,13 @@ const Navbar = ({
         </div>
       </nav>
 
-      {/* ✅ Modal de reservas — gestionado internamente por el navbar */}
+      {/* ✅ Modal con cancelar + limpiar historial */}
       {showReservationsModal && (
         <ReservationsModal
           reservations={reservations}
           onClose={() => setShowReservationsModal(false)}
           onCancelled={handleCancelled}
+          onClearHistory={handleClearHistory}
         />
       )}
     </>

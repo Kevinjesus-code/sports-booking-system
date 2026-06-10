@@ -1,8 +1,7 @@
-// presentation/hooks/useReservations.js
+// src/presentation/hooks/useReservations.js
 import { useState, useEffect, useCallback } from "react";
 import { reservationRepository } from "../../infrastructure/repositories/reservationRepositoryImpl";
 
-// ─── Disponibilidad por cancha y fecha ───────────────────────────────────────
 export function useCourtAvailability(courtId, date) {
   const [slots,   setSlots]   = useState([]);
   const [loading, setLoading] = useState(false);
@@ -29,10 +28,6 @@ export function useCourtAvailability(courtId, date) {
   return { slots, loading, error };
 }
 
-// ─── ✅ Reservas del cliente autenticado (GET /api/reservas/mias) ─────────────
-//  - Se carga al montar y cada vez que se llama `refetch()`
-//  - `refetch` se expone para que navbar-client lo llame al abrir el modal
-//    y también tras cancelar una reserva.
 export function useMyReservations(fecha, estado) {
   const [reservations, setReservations] = useState([]);
   const [loading,      setLoading]      = useState(false);
@@ -56,21 +51,24 @@ export function useMyReservations(fecha, estado) {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  // ✅ Cancelar desde el modal y refrescar la lista automáticamente
   const cancelAndRefresh = useCallback(async (reservaId) => {
     await reservationRepository.cancel(reservaId);
-    await fetchData();          // recarga desde backend tras cancelar
+    await fetchData();
   }, [fetchData]);
 
-  return { reservations, loading, error, refetch: fetchData, cancelAndRefresh };
+  // ✅ NUEVO: limpiar historial y refrescar lista
+  const clearHistoryAndRefresh = useCallback(async () => {
+    await reservationRepository.clearHistory();
+    await fetchData();
+  }, [fetchData]);
+
+  return { reservations, loading, error, refetch: fetchData, cancelAndRefresh, clearHistoryAndRefresh };
 }
 
-// ─── @deprecated – usar useMyReservations ────────────────────────────────────
 export function useReservations(userId) {
   return useMyReservations(null, null);
 }
 
-// ─── Listado recepción / admin ────────────────────────────────────────────────
 export function useAllReservations(filtersOrFecha) {
   const [reservations, setReservations] = useState([]);
   const [loading,      setLoading]      = useState(false);
@@ -87,8 +85,7 @@ export function useAllReservations(filtersOrFecha) {
     try {
       const data = await reservationRepository.getAll(
         typeof filtersOrFecha === "object" && filtersOrFecha !== null
-          ? filtersOrFecha
-          : filtersOrFecha
+          ? filtersOrFecha : filtersOrFecha
       );
       setReservations(data ?? []);
     } catch (err) {
@@ -115,7 +112,6 @@ export function useAllReservations(filtersOrFecha) {
   return { reservations, loading, error, refetch: fetchData, updateEstado, reprogramar };
 }
 
-// ─── Hook para crear reserva ──────────────────────────────────────────────────
 export function useCreateReservation() {
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState(null);
@@ -136,7 +132,6 @@ export function useCreateReservation() {
   return { create, loading, error };
 }
 
-// ─── Hook para cancelar reserva ──────────────────────────────────────────────
 export function useCancelReservation() {
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState(null);
