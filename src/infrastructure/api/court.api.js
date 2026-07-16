@@ -33,6 +33,14 @@ export const courtApi = {
     return res.data;
   },
 
+  // PATCH /canchas/{id}/status
+  updateStatus: async (id, disponible) => {
+    const res = await client.patch(`/canchas/${id}/status`, null, {
+      params: { disponible }
+    });
+    return res.data;
+  },
+
   // DELETE /canchas/{id}
   delete: async (id) => {
     const res = await client.delete(`/canchas/${id}`);

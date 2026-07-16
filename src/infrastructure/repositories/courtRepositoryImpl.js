@@ -30,6 +30,11 @@ class CourtRepositoryImpl {
     return this._toModel(raw);
   }
 
+  async updateStatus(id, disponible) {
+    const raw = await courtApi.updateStatus(id, disponible);
+    return this._toModel(raw);
+  }
+
   async delete(id) {
     return courtApi.delete(id);
   }

@@ -157,7 +157,7 @@ const Admin = ({ onLogout }) => {
           onOpenSettings={handleOpenSettings}
           onLogout={handleLogout}
         />
-        <div>{renderContenido()}</div>
+        <div className={styles["renderContent"]}>{renderContenido()}</div>
       </main>
     </div>
   );

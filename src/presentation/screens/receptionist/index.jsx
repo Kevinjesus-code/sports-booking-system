@@ -311,7 +311,7 @@ const Recepcionist = () => {
           </div>
         )}
 
-        <div>{renderContenido()}</div>
+        <div className={styles["renderContent"]}>{renderContenido()}</div>
       </main>
     </div>
   );
