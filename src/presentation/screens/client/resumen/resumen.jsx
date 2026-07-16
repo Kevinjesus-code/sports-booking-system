@@ -1,6 +1,7 @@
 // presentation/screens/client/resumen/resumen.jsx
 import { useEffect } from "react";
 import styles from "./resumen.module.css";
+import { reservationApi } from "../../../../infrastructure/api/reservation.api";
 
 // ── Mapa de estados igual que reservations-modal ─────────────────────────────
 const STATUS_CONFIG = {
@@ -49,6 +50,127 @@ const Resumen = ({ reservation, onNewReservation, onViewReservations }) => {
   const horaFin    = reservation.horaFin    ?? reservation.endTime   ?? "—";
 
   // ── Cancha ────────────────────────────────────────────────────────────────
+const handleDescargarComprobante = async () => {
+    let data;
+    try {
+      data = await reservationApi.getComprobante(reservation.id);
+    } catch (err) {
+      console.error("Error al cargar comprobante:", err);
+      alert("No se pudo cargar el comprobante. Intenta de nuevo.");
+      return;
+    }
+
+    const win = window.open("", "_blank", "width=700,height=900");
+    if (!win) return;
+
+    const fechaFmt = new Date(data.fecha + "T00:00:00").toLocaleDateString("es-PE", {
+      weekday: "long", year: "numeric", month: "long", day: "numeric",
+    });
+
+    win.document.write(`
+      <!DOCTYPE html>
+      <html lang="es">
+      <head>
+        <meta charset="UTF-8" />
+        <title>Comprobante ${data.numero}</title>
+        <style>
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0fdf4; padding: 30px; }
+          .sheet {
+            max-width: 560px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+            border: 1px solid #e5e7eb;
+          }
+          .header {
+            background: linear-gradient(135deg, #0a0a0a 0%, #16a34a 60%, #22c55e 100%);
+            padding: 28px 24px;
+            text-align: center;
+          }
+          .header img { width: 72px; height: auto; margin-bottom: 10px; }
+          .header p {
+            color: rgba(255,255,255,0.6);
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 600;
+          }
+          .body { padding: 32px 36px; }
+          .badge {
+            display: block;
+            width: fit-content;
+            margin: 0 auto 20px;
+            background: #dcfce7;
+            color: #16a34a;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 6px 18px;
+            border-radius: 999px;
+            border: 1px solid #86efac;
+          }
+          .title { text-align: center; font-size: 20px; font-weight: 800; color: #111827; margin-bottom: 24px; }
+          .code-box {
+            text-align: center;
+            background: #f0fdf4;
+            border: 2px dashed #86efac;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 24px;
+          }
+          .code-box .lbl { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; }
+          .code-box .val { font-size: 24px; font-weight: 800; color: #16a34a; letter-spacing: 2px; margin-top: 4px; }
+          table { width: 100%; border-collapse: collapse; }
+          td { padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+          td.label { color: #6b7280; }
+          td.value { font-weight: 600; text-align: right; color: #111827; }
+          .total-row td { border-bottom: none; border-top: 2px solid #111827; padding-top: 18px; font-size: 16px; }
+          .total-row td.value { color: #16a34a; font-weight: 800; font-size: 20px; }
+          .footer { text-align: center; padding: 20px; background: #0a0a0a; }
+          .footer p:first-child { color: #22c55e; font-size: 13px; font-weight: 700; letter-spacing: 1px; }
+          .footer p { color: #6b7280; font-size: 10px; margin-top: 6px; line-height: 1.6; }
+        </style>
+      </head>
+      <body>
+        <div class="sheet">
+          <div class="header">
+            <img src="https://res.cloudinary.com/dwz1bhkt9/image/upload/v1781067164/logo_vwflmq.png" alt="Kancha Sports" />
+            <p>Sports Booking System</p>
+          </div>
+          <div class="body">
+            <span class="badge">${data.estado}</span>
+            <h1 class="title">Comprobante de Pago</h1>
+            <div class="code-box">
+              <p class="lbl">N° Comprobante</p>
+              <p class="val">${data.numero}</p>
+            </div>
+            <table>
+              <tr><td class="label">Código de reserva</td><td class="value">${data.codigoReserva}</td></tr>
+              <tr><td class="label">Cliente</td><td class="value">${data.clienteNombre}</td></tr>
+              <tr><td class="label">Cancha</td><td class="value">${data.nombreCancha}</td></tr>
+              <tr><td class="label">Fecha</td><td class="value">${fechaFmt}</td></tr>
+              <tr><td class="label">Horario</td><td class="value">${data.horaInicio} – ${data.horaFin}</td></tr>
+              <tr><td class="label">Método de pago</td><td class="value">${data.metodoPago}</td></tr>
+              <tr class="total-row"><td class="label">Total pagado</td><td class="value">S/ ${Number(data.montoTotal).toFixed(2)}</td></tr>
+            </table>
+          </div>
+          <div class="footer">
+            <p>KANCHA SPORTS</p>
+            <p>Emitido el ${new Date(data.fechaEmision).toLocaleString("es-PE")}<br/>©Todos lo Derechos Reservados.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `);
+    win.document.close();
+    win.focus();
+    setTimeout(() => win.print(), 400);
+  };
+
   const nombreCancha =
     reservation.nombreCancha ??
     reservation.courtName ??
@@ -196,6 +318,9 @@ const Resumen = ({ reservation, onNewReservation, onViewReservations }) => {
         </button>
         <button className={styles.secondaryBtn} onClick={onNewReservation}>
           Nueva reserva
+        </button>
+        <button className={styles.secondaryBtn} onClick={handleDescargarComprobante}>
+           Descargar comprobante
         </button>
       </div>
 

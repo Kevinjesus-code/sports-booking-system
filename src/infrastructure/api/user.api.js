@@ -14,6 +14,13 @@ export const changeEmailRequest = (datos) =>
 export const changePasswordRequest = (datos) =>
   client.put('/perfil/password', datos);
 
+// ─── Preferencias de notificaciones ───────────────────────────────────────
+export const getNotificacionesRequest = () =>
+  client.get('/perfil/notificaciones');
+
+export const updateNotificacionesRequest = (datos) =>
+  client.put('/perfil/notificaciones', datos);
+
 // ─── Admin: gestión de usuarios ───────────────────────────────────────────
 
 /** GET /admin/usuarios */

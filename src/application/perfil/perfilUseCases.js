@@ -5,6 +5,8 @@ import {
   updatePerfilRequest,
   changeEmailRequest,
   changePasswordRequest,
+  getNotificacionesRequest,
+  updateNotificacionesRequest,
 } from '../../infrastructure/api/user.api';
 
 export const getPerfil = async () => {
@@ -20,7 +22,6 @@ export const updatePerfil = async (datos) => {
 
 export const cambiarEmail = async (datos) => {
   const { data } = await changeEmailRequest(datos);
-  // El backend devuelve nuevo token porque el email es el subject del JWT
   localStorage.setItem('token', data.token);
   localStorage.setItem('user', JSON.stringify({
     nombre:   data.nombre,
@@ -33,4 +34,16 @@ export const cambiarEmail = async (datos) => {
 
 export const cambiarPassword = async (datos) => {
   await changePasswordRequest(datos);
+};
+
+// ─── Preferencias de notificaciones ───────────────────────────────────────
+
+export const getPreferenciasNotificaciones = async () => {
+  const { data } = await getNotificacionesRequest();
+  return data;
+};
+
+export const updatePreferenciasNotificaciones = async (settings) => {
+  const { data } = await updateNotificacionesRequest(settings);
+  return data;
 };
