@@ -11,10 +11,41 @@ import {
   DSAEmptyState,
   DSASearchBar,
   DSALoadingSpinner,
+  DSAClientModal,
 } from "../../../components";
 import { useAllReservations, useCreateReservation } from "../../../hooks/useReservations";
 import { useCourts } from "../../../hooks/useCourts";
 import { clienteApi } from "../../../../infrastructure/api/cliente.api";
+
+/* ── Helpers de validación de fecha/hora ── */
+const getTodayStr = () => new Date().toISOString().split("T")[0];
+
+const getNowTimeStr = () => {
+  const now = new Date();
+  return `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+};
+
+const validateDateTime = (fecha, horaInicio, horaFin) => {
+  const errors = {};
+  const today = getTodayStr();
+
+  if (fecha && fecha < today) {
+    errors.fecha = "No puedes seleccionar una fecha pasada";
+  }
+
+  if (horaInicio && horaFin && horaFin <= horaInicio) {
+    errors.horaFin = "La hora fin debe ser posterior a la hora inicio";
+  }
+
+  if (fecha === today && horaInicio) {
+    const now = getNowTimeStr();
+    if (horaInicio < now) {
+      errors.horaInicio = "La hora inicio debe ser posterior a la hora actual";
+    }
+  }
+
+  return errors;
+};
 
 const ESTADO_FILTER = [
   { value: "", label: "Todos los estados" },
@@ -26,9 +57,17 @@ const ESTADO_FILTER = [
   { value: "no_asistio", label: "No asistió" },
 ];
 
-const INITIAL_FORM = { dni: "", cliente: "", telefono: "", canchaId: "", fecha: "", horaInicio: "", horaFin: "", observaciones: "" };
+const INITIAL_FORM = { dni: "", cliente: "", telefono: "", canchaId: "", fecha: "", horaInicio: "", horaFin: "", observaciones: "", metodoPago: "Efectivo" };
 
-const Reservations = ({ onNavigate }) => {
+const METODO_PAGO_OPTIONS = [
+  { value: "Efectivo", label: "Efectivo" },
+  { value: "Yape", label: "Yape" },
+  { value: "Plin", label: "Plin" },
+  { value: "Transferencia", label: "Transferencia" },
+  { value: "Tarjeta", label: "Tarjeta" },
+];
+
+const Reservations = () => {
   const [query, setQuery] = useState("");
   const [filtroEstado, setFiltroEstado] = useState("");
   const [filtroFecha, setFiltroFecha] = useState("");
@@ -53,6 +92,7 @@ const Reservations = ({ onNavigate }) => {
   const [clienteNotFound, setClienteNotFound] = useState(false);
   const [dniLoading, setDniLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  const [showInlineClientModal, setShowInlineClientModal] = useState(false);
 
   // ── Detalle / Acciones ──
   const [selectedReservation, setSelectedReservation] = useState(null);
@@ -131,6 +171,11 @@ const Reservations = ({ onNavigate }) => {
     if (!form.fecha) errors.fecha = "Fecha requerida";
     if (!form.horaInicio) errors.horaInicio = "Hora inicio requerida";
     if (!form.horaFin) errors.horaFin = "Hora fin requerida";
+
+    // Validaciones de fecha/hora lógicas
+    const dtErrors = validateDateTime(form.fecha, form.horaInicio, form.horaFin);
+    Object.assign(errors, dtErrors);
+
     if (Object.keys(errors).length > 0) { setFormErrors(errors); return; }
 
     try {
@@ -140,7 +185,8 @@ const Reservations = ({ onNavigate }) => {
         fecha: form.fecha,
         horaInicio: form.horaInicio,
         horaFin: form.horaFin,
-        metodoPago: "Efectivo",
+        metodoPago: form.metodoPago || "Efectivo",
+        estado: "pendiente",
       });
       closeCreate();
       refetch();
@@ -149,6 +195,30 @@ const Reservations = ({ onNavigate }) => {
       setToast({ visible: true, message: err.response?.data?.error ?? "Error al crear reserva", type: "error" });
     }
   }, [form, createReservation, refetch]);
+
+  // ── Inline client creation callback ──
+  const handleInlineClientCreated = (newClient) => {
+    setShowInlineClientModal(false);
+    setClienteNotFound(false);
+    // Set the newly created client as the found client
+    const found = {
+      id: newClient.id,
+      nombre: newClient.nombre?.split(' ')[0] ?? newClient.nombre,
+      apellido: newClient.nombre?.split(' ').slice(1).join(' ') ?? '',
+      dni: newClient.dni,
+      email: newClient.email,
+      telefono: newClient.telefono,
+    };
+    setClienteFound(found);
+    setForm(prev => ({
+      ...prev,
+      cliente: newClient.nombre,
+      telefono: newClient.telefono ?? '',
+      clienteId: newClient.id,
+    }));
+    setCreateStep(2);
+    setToast({ visible: true, message: "Cliente creado exitosamente", type: "success" });
+  };
 
   const closeCreate = () => {
     setShowCreateModal(false);
@@ -191,6 +261,14 @@ const Reservations = ({ onNavigate }) => {
 
   const handleSaveEdit = async () => {
     if (!editFecha || !editHoraInicio || !editHoraFin) return;
+
+    // Validación de fecha/hora al reprogramar
+    const dtErrors = validateDateTime(editFecha, editHoraInicio, editHoraFin);
+    if (Object.keys(dtErrors).length > 0) {
+      setToast({ visible: true, message: Object.values(dtErrors)[0], type: "error" });
+      return;
+    }
+
     try {
       await reprogramar(editingReservation.id, {
         fecha: editFecha,
@@ -342,7 +420,7 @@ const Reservations = ({ onNavigate }) => {
                   <p className={styles.notFoundTitle}>Cliente no encontrado</p>
                   <p className={styles.notFoundSub}>El DNI <strong>{form.dni}</strong> no está registrado en el sistema.</p>
                 </div>
-                <DSAButton variant="outline" color="primary" onClick={() => onNavigate?.("clientes")}>
+                <DSAButton variant="outline" color="primary" onClick={() => setShowInlineClientModal(true)}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" width="14" height="14">
                     <line x1="12" y1="5" x2="12" y2="19" />
                     <line x1="5" y1="12" x2="19" y2="12" />
@@ -365,6 +443,11 @@ const Reservations = ({ onNavigate }) => {
                 <div className={styles.clientCardName}>{clienteFound.nombre} {clienteFound.apellido}</div>
                 <div className={styles.clientCardMeta}>DNI: {clienteFound.dni} · {clienteFound.telefono}</div>
                 <div className={styles.clientCardMeta}>{clienteFound.email}</div>
+                {clienteFound.penalizacion > 0 && (
+                  <div style={{ color: '#dc2626', fontSize: '12px', fontWeight: 'bold', marginTop: '4px' }}>
+                    ⚠️ Penalidad pendiente: S/ {clienteFound.penalizacion}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -385,10 +468,39 @@ const Reservations = ({ onNavigate }) => {
               label="Fecha *"
               type="date"
               value={form.fecha}
-              onChange={v => setForm(p => ({ ...p, fecha: v }))}
+              min={getTodayStr()}
+              onChange={v => {
+                setForm(p => ({ ...p, fecha: v }));
+                if (formErrors.fecha) setFormErrors(p => ({ ...p, fecha: "" }));
+              }}
+              error={formErrors.fecha}
             />
-            <DSAInput label="Hora inicio *" type="time" value={form.horaInicio} onChange={v => setForm(p => ({ ...p, horaInicio: v }))} />
-            <DSAInput label="Hora fin *" type="time" value={form.horaFin} onChange={v => setForm(p => ({ ...p, horaFin: v }))} />
+            <DSAInput
+              label="Hora inicio *"
+              type="time"
+              value={form.horaInicio}
+              onChange={v => {
+                setForm(p => ({ ...p, horaInicio: v }));
+                if (formErrors.horaInicio) setFormErrors(p => ({ ...p, horaInicio: "" }));
+              }}
+              error={formErrors.horaInicio}
+            />
+            <DSAInput
+              label="Hora fin *"
+              type="time"
+              value={form.horaFin}
+              onChange={v => {
+                setForm(p => ({ ...p, horaFin: v }));
+                if (formErrors.horaFin) setFormErrors(p => ({ ...p, horaFin: "" }));
+              }}
+              error={formErrors.horaFin}
+            />
+            <DSASelect
+              label="Método de pago"
+              value={form.metodoPago}
+              onChange={v => setForm(p => ({ ...p, metodoPago: v }))}
+              options={METODO_PAGO_OPTIONS}
+            />
             <DSAInput
               label="Observaciones"
               placeholder="Notas adicionales (opcional)"
@@ -396,7 +508,9 @@ const Reservations = ({ onNavigate }) => {
               onChange={v => setForm(p => ({ ...p, observaciones: v }))}
             />
             {Object.keys(formErrors).length > 0 && (
-              <div className={styles.errorMsg}>Completa todos los campos requeridos</div>
+              <div className={styles.errorMsg}>
+                {formErrors.fecha || formErrors.horaInicio || formErrors.horaFin || formErrors.cancha || "Completa todos los campos requeridos"}
+              </div>
             )}
           </div>
         )}
@@ -548,14 +662,28 @@ const Reservations = ({ onNavigate }) => {
           </>
         }
       >
-        <DSAInput label="Nueva fecha" type="date" value={editFecha} onChange={setEditFecha} />
+        <DSAInput label="Nueva fecha" type="date" value={editFecha} min={getTodayStr()} onChange={setEditFecha} />
         <DSAInput label="Hora inicio" type="time" value={editHoraInicio} onChange={setEditHoraInicio} />
         <DSAInput label="Hora fin" type="time" value={editHoraFin} onChange={setEditHoraFin} />
+        {(() => {
+          const dtErrors = validateDateTime(editFecha, editHoraInicio, editHoraFin);
+          const firstError = Object.values(dtErrors)[0];
+          return firstError ? (
+            <div className={styles.errorMsg}>{firstError}</div>
+          ) : null;
+        })()}
         <div className={styles.infoNote}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" width="14" height="14"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
           Solo se puede editar la fecha y hora. La cancha no puede cambiarse.
         </div>
       </DSAModal>
+
+      {/* ══════════ MODAL: CREAR CLIENTE INLINE ══════════ */}
+      <DSAClientModal
+        isOpen={showInlineClientModal}
+        onClose={() => setShowInlineClientModal(false)}
+        onCreated={handleInlineClientCreated}
+      />
 
       {/* Toast */}
       <DSAToast

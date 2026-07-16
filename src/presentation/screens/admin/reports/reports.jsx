@@ -1,75 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { Download } from "lucide-react";
 import { DSAStatCard, DSAText, DSABarChart, DSALineChart, DSACard, DSAResumenCard } from "../../../components";
+import { reservationApi } from "../../../../infrastructure/api/reservation.api";
 import styles from "./reports.module.css";
 
-const periodos = ["Esta semana", "Este mes", "Este año"];
-
-const dataPorPeriodo = {
-  "Esta semana": {
-    bar: {
-      dataset: [
-        { reservas: 40000, month: "Lun" }, { reservas: 55000, month: "Mar" },
-        { reservas: 48000, month: "Mié" }, { reservas: 62000, month: "Jue" },
-        { reservas: 70000, month: "Vie" }, { reservas: 80000, month: "Sáb" },
-        { reservas: 45000, month: "Dom" },
-      ],
-      config: { xKey: "month", dataKey: "reservas", label: "Ingresos", yLabel: "Ingresos", height: 280 },
-    },
-    line: {
-      data: { xValues: ["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"], yValues: [8,12,10,15,18,22,14] },
-      config: { label: "Reservas", color: "#22c55e", curve: "natural", height: 280 },
-    },
-    stats: [
-      { id: "reservas", title: "Total Reservas (Semana)", value: 18,        subtext: "+5% vs semana anterior", iconBg: "#fce7f3", iconColor: "#db2777" },
-      { id: "ingresos", title: "Ingresos (Semana)",       value: "$95.000",  subtext: "+3% vs semana anterior", iconBg: "#fef3c7", iconColor: "#d97706" },
-      { id: "crec",     title: "Crecimiento",             value: "5%",       subtext: "+1% vs semana anterior", iconBg: "#dcfce7", iconColor: "#16a34a" },
-    ],
-    resumen: { totalReservas: 18, ingresos: "$95.000", promedio: "$5.277", canchaPopular: "Fútbol 5", ocupacion: "65%" },
-  },
-  "Este mes": {
-    bar: {
-      dataset: [
-        { reservas: 180000, month: "Ene" }, { reservas: 220000, month: "Feb" },
-        { reservas: 240000, month: "Mar" }, { reservas: 260000, month: "Abr" },
-        { reservas: 270000, month: "May" }, { reservas: 360000, month: "Jun" },
-      ],
-      config: { xKey: "month", dataKey: "reservas", label: "Ingresos", yLabel: "Ingresos", height: 280 },
-    },
-    line: {
-      data: { xValues: ["Ene","Feb","Mar","Abr","May","Jun"], yValues: [43,48,61,57,67,72] },
-      config: { label: "Reservas", color: "#22c55e", curve: "natural", height: 280 },
-    },
-    stats: [
-      { id: "reservas", title: "Total Reservas (Mes)", value: 72,          subtext: "+10% vs mes anterior", iconBg: "#fce7f3", iconColor: "#db2777" },
-      { id: "ingresos", title: "Ingresos (Mes)",       value: "$360.000",  subtext: "+8% vs mes anterior",  iconBg: "#fef3c7", iconColor: "#d97706" },
-      { id: "crec",     title: "Crecimiento",          value: "15%",       subtext: "+5% vs mes anterior",  iconBg: "#dcfce7", iconColor: "#16a34a" },
-    ],
-    resumen: { totalReservas: 315, ingresos: "$1.775.000", promedio: "$5.635", canchaPopular: "Fútbol 5", ocupacion: "78%" },
-  },
-  "Este año": {
-    bar: {
-      dataset: [
-        { reservas: 180000, month: "Ene" }, { reservas: 220000, month: "Feb" },
-        { reservas: 240000, month: "Mar" }, { reservas: 260000, month: "Abr" },
-        { reservas: 270000, month: "May" }, { reservas: 360000, month: "Jun" },
-        { reservas: 310000, month: "Jul" }, { reservas: 290000, month: "Ago" },
-        { reservas: 330000, month: "Sep" }, { reservas: 350000, month: "Oct" },
-        { reservas: 380000, month: "Nov" }, { reservas: 420000, month: "Dic" },
-      ],
-      config: { xKey: "month", dataKey: "reservas", label: "Ingresos", yLabel: "Ingresos", height: 280 },
-    },
-    line: {
-      data: { xValues: ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"], yValues: [43,48,61,57,67,72,68,64,70,75,80,88] },
-      config: { label: "Reservas", color: "#22c55e", curve: "natural", height: 280 },
-    },
-    stats: [
-      { id: "reservas", title: "Total Reservas (Año)", value: 841,          subtext: "+22% vs año anterior", iconBg: "#fce7f3", iconColor: "#db2777" },
-      { id: "ingresos", title: "Ingresos (Año)",       value: "$3.810.000", subtext: "+18% vs año anterior", iconBg: "#fef3c7", iconColor: "#d97706" },
-      { id: "crec",     title: "Crecimiento",          value: "22%",        subtext: "+7% vs año anterior",  iconBg: "#dcfce7", iconColor: "#16a34a" },
-    ],
-    resumen: { totalReservas: 841, ingresos: "$3.810.000", promedio: "$4.530", canchaPopular: "Fútbol 5", ocupacion: "85%" },
-  },
-};
+const periodos = ["Hoy", "Esta semana", "Este mes", "Este año"];
 
 const iconos = [
   (<><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></>),
@@ -79,14 +14,181 @@ const iconos = [
 
 const Reports = () => {
   const [periodo, setPeriodo] = useState("Este mes");
-  const { bar, line, stats, resumen } = dataPorPeriodo[periodo];
+  const [reservas, setReservas] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        // Traer todas las reservas para armar el reporte
+        const data = await reservationApi.getAll();
+        // Solo tener en cuenta reservas pagadas/confirmadas/completadas para ingresos?
+        // Asumiremos que todas aportan a las estadísticas, excluyendo las CANCELADAS
+        setReservas(data.filter(r => r.estado !== 'CANCELADA'));
+      } catch (error) {
+        console.error("Error fetching report data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const reportData = useMemo(() => {
+    const now = new Date();
+    let filtered = [];
+    let titlePeriod = "";
+    let barDataset = [];
+    let lineData = { xValues: [], yValues: [] };
+
+    if (periodo === "Hoy") {
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      filtered = reservas.filter(r => new Date(r.fecha) >= today && new Date(r.fecha) < new Date(today.getTime() + 86400000));
+      titlePeriod = "Hoy";
+      
+      const hours = ["08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00"];
+      const grouped = Array(hours.length).fill(0);
+      const ingresos = Array(hours.length).fill(0);
+      
+      filtered.forEach(r => {
+        const h = parseInt(r.horaInicio.split(":")[0]);
+        let idx = Math.floor((h - 8) / 2);
+        if (idx < 0) idx = 0;
+        if (idx >= hours.length) idx = hours.length - 1;
+        grouped[idx]++;
+        ingresos[idx] += r.total || 0;
+      });
+      
+      barDataset = hours.map((h, i) => ({ month: h, reservas: ingresos[i] }));
+      lineData.xValues = hours;
+      lineData.yValues = hours.map((_, i) => grouped[i]);
+
+    } else if (periodo === "Esta semana") {
+      const day = now.getDay() || 7;
+      const startOfWeek = new Date(now);
+      startOfWeek.setHours(0,0,0,0);
+      startOfWeek.setDate(now.getDate() - day + 1);
+      
+      filtered = reservas.filter(r => new Date(r.fecha) >= startOfWeek);
+      titlePeriod = "Semana";
+      
+      const days = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+      const grouped = { 0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0 };
+      const ingresos = { 0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0 };
+      
+      filtered.forEach(r => {
+        const d = new Date(r.fecha).getDay() || 7;
+        const idx = d - 1;
+        grouped[idx]++;
+        ingresos[idx] += r.total || 0;
+      });
+      
+      barDataset = days.map((d, i) => ({ month: d, reservas: ingresos[i] }));
+      lineData.xValues = days;
+      lineData.yValues = days.map((_, i) => grouped[i]);
+
+    } else if (periodo === "Este mes") {
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      filtered = reservas.filter(r => new Date(r.fecha) >= startOfMonth);
+      titlePeriod = "Mes";
+
+      const weeks = ["Sem 1", "Sem 2", "Sem 3", "Sem 4"];
+      const grouped = { 0:0, 1:0, 2:0, 3:0 };
+      const ingresos = { 0:0, 1:0, 2:0, 3:0 };
+      
+      filtered.forEach(r => {
+        const date = new Date(r.fecha).getDate();
+        let weekIdx = Math.floor((date - 1) / 7);
+        if (weekIdx > 3) weekIdx = 3;
+        grouped[weekIdx]++;
+        ingresos[weekIdx] += r.total || 0;
+      });
+      
+      barDataset = weeks.map((w, i) => ({ month: w, reservas: ingresos[i] }));
+      lineData.xValues = weeks;
+      lineData.yValues = weeks.map((_, i) => grouped[i]);
+
+    } else if (periodo === "Este año") {
+      const startOfYear = new Date(now.getFullYear(), 0, 1);
+      filtered = reservas.filter(r => new Date(r.fecha) >= startOfYear);
+      titlePeriod = "Año";
+
+      const months = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+      const grouped = Array(12).fill(0);
+      const ingresos = Array(12).fill(0);
+      
+      filtered.forEach(r => {
+        const m = new Date(r.fecha).getMonth();
+        grouped[m]++;
+        ingresos[m] += r.total || 0;
+      });
+
+      barDataset = months.map((m, i) => ({ month: m, reservas: ingresos[i] }));
+      lineData.xValues = months;
+      lineData.yValues = months.map((_, i) => grouped[i]);
+    }
+
+    const totalReservas = filtered.length;
+    const totalIngresos = filtered.reduce((sum, r) => sum + (r.total || 0), 0);
+    const promedio = totalReservas ? (totalIngresos / totalReservas) : 0;
+    
+    const courtsCount = {};
+    filtered.forEach(r => {
+      courtsCount[r.nombreCancha] = (courtsCount[r.nombreCancha] || 0) + 1;
+    });
+    let popularCourt = "-";
+    let maxCount = 0;
+    for (let c in courtsCount) {
+      if (courtsCount[c] > maxCount) {
+        maxCount = courtsCount[c];
+        popularCourt = c;
+      }
+    }
+
+    return {
+      bar: {
+        dataset: barDataset,
+        config: { xKey: "month", dataKey: "reservas", label: "Ingresos", yLabel: "Ingresos", height: 280 },
+      },
+      line: {
+        data: lineData,
+        config: { label: "Reservas", color: "#22c55e", curve: "natural", height: 280 },
+      },
+      stats: [
+        { id: "reservas", title: `Total Reservas (${titlePeriod})`, value: totalReservas, subtext: "Datos reales", iconBg: "#fce7f3", iconColor: "#db2777" },
+        { id: "ingresos", title: `Ingresos (${titlePeriod})`, value: `S/ ${totalIngresos.toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, subtext: "Datos reales", iconBg: "#fef3c7", iconColor: "#d97706" },
+        { id: "promedio", title: "Promedio por Reserva", value: `S/ ${promedio.toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, subtext: "Datos reales", iconBg: "#dcfce7", iconColor: "#16a34a" },
+      ],
+      resumen: { 
+        totalReservas: totalReservas, 
+        ingresos: `S/ ${totalIngresos.toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 
+        promedio: `S/ ${promedio.toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 
+        canchaPopular: popularCourt, 
+        ocupacion: "N/A" 
+      }
+    };
+  }, [reservas, periodo]);
+
+  const { bar, line, stats, resumen } = reportData;
+
+  const handleExport = () => {
+    // Aún no funciona
+    console.log("Export functionality to be implemented");
+  };
 
   return (
     <div>
       <div className={styles["containerHeaderReports"]}>
-        <div>
-          <DSAText variant="title">Reportes</DSAText>
-          <DSAText variant="text" color="#6B7280">Análisis de rendimiento y estadísticas</DSAText>
+        <div className={styles["headerTop"]}>
+          <div>
+            <DSAText variant="title">Reportes</DSAText>
+            <DSAText variant="text" color="#6B7280">Análisis de rendimiento y estadísticas</DSAText>
+          </div>
+          <button className={styles["exportBtn"]} onClick={handleExport}>
+            <Download size={18} />
+            Exportar
+          </button>
         </div>
         <div className={styles["periodoTabs"]}>
           {periodos.map((p) => (
@@ -101,33 +203,39 @@ const Reports = () => {
         </div>
       </div>
 
-      <div className={styles["containerCardsReports"]}>
-        {stats.map((item, i) => (
-          <DSAStatCard
-            key={item.id}
-            title={item.title}
-            value={item.value}
-            icon={iconos[i]}
-            iconBg={item.iconBg}
-            iconColor={item.iconColor}
-          />
-        ))}
-      </div>
+      {loading ? (
+        <div style={{ padding: '2rem', textAlign: 'center', color: '#6b7280' }}>Cargando datos...</div>
+      ) : (
+        <>
+          <div className={styles["containerCardsReports"]}>
+            {stats.map((item, i) => (
+              <DSAStatCard
+                key={item.id}
+                title={item.title}
+                value={item.value}
+                icon={iconos[i]}
+                iconBg={item.iconBg}
+                iconColor={item.iconColor}
+              />
+            ))}
+          </div>
 
-      <div className={styles["containerCardsGraphics"]}>
-        <DSACard>
-          <DSAText variant="subtitle">Tendencia de Reservas</DSAText>
-          <DSALineChart data={line.data} config={line.config} />
-        </DSACard>
-        <DSACard>
-          <DSAText variant="subtitle">Ingresos Mensuales</DSAText>
-          <DSABarChart dataset={bar.dataset} config={bar.config} />
-        </DSACard>
-      </div>
+          <div className={styles["containerCardsGraphics"]}>
+            <DSACard>
+              <DSAText variant="subtitle">Tendencia de Reservas</DSAText>
+              <DSALineChart data={line.data} config={line.config} />
+            </DSACard>
+            <DSACard>
+              <DSAText variant="subtitle">Ingresos Mensuales</DSAText>
+              <DSABarChart dataset={bar.dataset} config={bar.config} />
+            </DSACard>
+          </div>
 
-      <div className={styles["containerResumen"]}>
-        <DSAResumenCard data={resumen} />
-      </div>
+          <div className={styles["containerResumen"]}>
+            <DSAResumenCard data={resumen} />
+          </div>
+        </>
+      )}
     </div>
   );
 };
