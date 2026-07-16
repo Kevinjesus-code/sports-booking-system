@@ -56,4 +56,11 @@ export const reservationApi = {
     const res = await client.delete("/api/reservas/historial/limpiar");
     return res.data;
   },
+
+  // ✅ NUEVO: obtener comprobante de una reserva
+  getComprobante: async (reservaId) => {
+    const res = await client.get(`/api/reservas/${reservaId}/comprobante`);
+    return res.data;
+  },
+
 };

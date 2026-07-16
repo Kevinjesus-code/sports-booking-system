@@ -248,4 +248,21 @@
     flex-direction: row;
     gap: 1.5rem;
   }
+
+  .actionButtons {
+  flex-wrap: wrap;
+}
+
+.actionButtons button {
+  min-width: 140px;
+}
+
+@media (max-width: 599px) {
+  .actionButtons {
+    flex-direction: column;
+  }
+  .actionButtons button {
+    min-width: 100%;
+  }
+}
 }

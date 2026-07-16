@@ -119,4 +119,5 @@
 @media (max-width: 760px) {
   .header { flex-direction: column; }
   .saveBar { padding: 12px 16px; }
+  .errorMsg { color: #dc2626; font-size: 13px; font-weight: 600; }
 }

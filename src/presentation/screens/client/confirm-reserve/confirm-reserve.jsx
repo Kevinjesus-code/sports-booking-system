@@ -4,11 +4,11 @@ import styles from "./confirm-reserve.module.css";
 
 // ─── Logos ────────────────────────────────────────────────────────────────────
 const PAYMENT_LOGOS = {
-  efectivo:      "/assets/MetodoPago/efectivo.png",
+  efectivo:      "/assets/MetodoPago/pago_Efectivo.png",
   tarjeta:       "/assets/MetodoPago/visa.png",
   yape:          "/assets/MetodoPago/yape.webp",
   plin:          "/assets/MetodoPago/plin.png",
-  transferencia: "/assets/MetodoPago/efectivo.png",
+  transferencia: "/assets/MetodoPago/transferencia.jpeg",
 };
 
 const PAYMENT_METHODS = [
