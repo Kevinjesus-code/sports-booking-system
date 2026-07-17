@@ -1,8 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./navbar-vertical.module.css";
+// import logo from "../../../assets/Logo.png";
 
-const NavbarVertical = ({ contenido = [], onChange}) => {
+const NavbarVertical = ({ contenido = [], onChange, isOpen }) => {
   const [activeItem, setActiveItem] = useState("dashboard");
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formattedTime = currentTime.toLocaleTimeString("es-PE", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
   const handleClick = (item) => {
     setActiveItem(item.id);
@@ -10,21 +22,10 @@ const NavbarVertical = ({ contenido = [], onChange}) => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles["navbar-container"]} ${isOpen ? styles["is-open"] : ""}`}>
       {/* Header / Logo */}
-      <div className={styles.header}>
-        <div className={styles.logo}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            class="bi bi-calendar4"
-            viewBox="0 0 16 16"
-          >
-            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v1h14V3a1 1 0 0 0-1-1zm13 3H1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1z" />
-          </svg>
-        </div>
+      <div className={styles["header"]}>
+        {/* <img src={logo} alt="Logo Kancha" className={styles["brand-logo"]} /> */}
         <span className={styles["brand-name"]}>Kancha</span>
       </div>
 
@@ -33,7 +34,7 @@ const NavbarVertical = ({ contenido = [], onChange}) => {
         {contenido.map((item) => (
           <li
             key={item.id}
-            className={`${styles["nav-item"]} ${activeItem === item.id ? styles.active : ""}`}
+            className={`${styles["nav-item"]} ${activeItem === item.id ? styles["active"] : ""}`}
             onClick={() => handleClick(item)}
           >
             <span className={styles["nav-icon"]}>{item.icon}</span>
@@ -41,6 +42,19 @@ const NavbarVertical = ({ contenido = [], onChange}) => {
           </li>
         ))}
       </ul>
+
+      <div className={styles["clock-card"]} aria-label="Hora actual">
+        <span className={styles["clock-icon"]}>
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 7v5l3 2" />
+          </svg>
+        </span>
+        <div>
+          <span className={styles["clock-label"]}>Hora actual</span>
+          <span className={styles["clock-time"]}>{formattedTime}</span>
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,11 +1,33 @@
+/* register.module.css
+   Layout idéntico al login y reset-password:
+   ilustración izquierda (desktop) + formulario derecha */
+
+/* ── Layout ─────────────────────────────────────────────────────────────────── */
+
 .register-container {
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+}
+
+/* Columna izquierda — oculta en móvil */
+.ilustration-col {
+  display: none;
+}
+
+.ilustration {
+  width: 70%;
+  object-fit: contain;
+}
+
+/* Columna derecha */
+.form-col {
+  width: 100%;
+  display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #ffffff;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  padding: 24px;
+  padding: 32px 16px;
   box-sizing: border-box;
 }
 
@@ -17,27 +39,39 @@
   align-items: center;
 }
 
+/* ── Header ──────────────────────────────────────────────────────────────────── */
+
 .register-header {
   text-align: center;
   margin-bottom: 28px;
 }
 
 .register-icon-box {
-  width: 64px;
-  height: 64px;
-  background-color: #fce7f3;
+  width: 65px;
+  height: 65px;
+  background-color: #ffffff;
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 20px auto;
+  margin: 0 auto 16px auto;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.08),
+    0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+.logo {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  border-radius: 12px;
 }
 
 .register-title {
-  font-size: 26px;
+  font-size: 1.75rem;
   font-weight: 700;
   color: #111827;
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
 }
 
 .register-subtitle {
@@ -46,13 +80,30 @@
   margin: 0;
 }
 
+/* ── Card ────────────────────────────────────────────────────────────────────── */
+
 .register-card {
   width: 100%;
   background-color: #f9fafb;
   border-radius: 20px;
   padding: 28px;
   box-sizing: border-box;
+  margin-bottom: 20px;
 }
+
+/* ── Error banner ────────────────────────────────────────────────────────────── */
+
+.error-banner {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #dc2626;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+}
+
+/* ── Campos ──────────────────────────────────────────────────────────────────── */
 
 .row {
   display: grid;
@@ -108,6 +159,8 @@
   color: #9ca3af;
 }
 
+/* ── Términos ────────────────────────────────────────────────────────────────── */
+
 .terms-row {
   display: flex;
   align-items: flex-start;
@@ -137,6 +190,8 @@
   text-decoration: underline;
 }
 
+/* ── Botón ───────────────────────────────────────────────────────────────────── */
+
 .register-btn {
   width: 100%;
   height: 48px;
@@ -147,13 +202,24 @@
   color: white;
   border: none;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, transform 0.1s;
   margin-bottom: 20px;
 }
 
-.register-btn:hover {
+.register-btn:hover:not(:disabled) {
   background-color: #16a34a;
 }
+
+.register-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.register-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ── Link login ──────────────────────────────────────────────────────────────── */
 
 .login-link {
   text-align: center;
@@ -171,4 +237,63 @@
 
 .login-link a:hover {
   text-decoration: underline;
+}
+
+
+/* ── Botón ojo ───────────────────────────────────────────────────────────────── */
+
+.eye-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #9ca3af;
+  padding: 0;
+  flex-shrink: 0;
+  transition: color 0.15s;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+}
+
+.eye-btn:hover { color: #374151; }
+.eye-btn:focus { outline: none; box-shadow: none; }
+
+
+
+
+/* ── Footer ──────────────────────────────────────────────────────────────────── */
+
+.footer {
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: center;
+  margin-top: 4px;
+}
+
+/* ── Desktop ─────────────────────────────────────────────────────────────────── */
+
+@media (min-width: 1024px) {
+  .register-container {
+    flex-direction: row;
+  }
+
+  .ilustration-col {
+    display: flex;
+    width: 50%;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+    background-color: #22c55e18;
+    position: sticky;
+    top: 0;
+  }
+
+  .form-col {
+    width: 50%;
+    min-height: 100vh;
+    overflow-y: auto;
+    padding: 48px 32px;
+  }
 }

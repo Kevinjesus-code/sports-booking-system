@@ -1,11 +1,150 @@
-.containerHeader{
-    padding: 15px 10px;
-    margin-bottom: 10px;
+:root {
+  --spacing-sm: 0.625rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --max-width: 1280px;
 }
-.containerCards{
-    display: flex;
-    gap: 10px;
+
+.containerHeader {
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  box-sizing: border-box;
 }
-.containerReservations{
-    margin-top: 10px;
+
+.headerTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.dateInput {
+  padding: 6px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
+  background-color: #ffffff;
+  outline: none;
+  cursor: pointer;
+}
+
+.dateInput:focus {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.15);
+}
+
+.filterBtn {
+  padding: 6px 16px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.filterBtn:hover {
+  background-color: #f3f4f6;
+}
+
+.containerCards {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: clamp(0.5rem, 2vw, 1.5rem);
+  width: 100%;
+  padding: 0 var(--spacing-md);
+  box-sizing: border-box;
+  max-width: var(--max-width);
+  margin-inline: auto;
+}
+
+.containerCards > * {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.containerReservations {
+  margin-top: clamp(0.75rem, 2vw, 1.5rem);
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding: 0 var(--spacing-md);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+@media (min-width: 600px) {
+  .containerHeader {
+    padding: var(--spacing-md) var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .containerCards {
+    flex-direction: row;
+    padding: 0 var(--spacing-lg);
+  }
+
+  .containerCards > * {
+    flex: 1 1 calc(50% - 1rem);
+    min-width: 200px;
+  }
+
+  .containerReservations {
+    padding: 0 var(--spacing-lg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .containerHeader {
+    padding: var(--spacing-lg) 2rem;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .containerCards {
+    padding: 0 2rem;
+  }
+
+  .containerCards > * {
+    flex: 1 1 calc(33.333% - 1rem);
+  }
+
+  .containerReservations {
+    margin-top: var(--spacing-lg);
+    padding: 0 2rem;
+  }
+}
+
+@media (min-width: 1440px) {
+  .containerHeader {
+    padding: var(--spacing-lg) 3rem;
+  }
+
+  .containerCards {
+    padding: 0 3rem;
+  }
+
+  .containerCards > * {
+    flex: 1 1 calc(33.333% - 1rem);
+  }
+
+  .containerReservations {
+    padding: 0 3rem;
+  }
 }

@@ -1,12 +1,10 @@
 import styles from "./courts-table.module.css";
 
-const CourtsTable = ({ data = [] }) => {
+const CourtsTable = ({ data = [], onEdit, onDelete }) => {
   const getStatusClass = (state) => {
     switch (state) {
       case "Disponible":
         return styles["status-available"];
-      case "Ocupada":
-        return styles["status-occupied"];
       case "Mantenimiento":
         return styles["status-maintenance"];
       default:
@@ -30,40 +28,38 @@ const CourtsTable = ({ data = [] }) => {
           <tbody>
             {data.map((item) => (
               <tr key={item.id}>
-                <td>{item.nombre}</td>
+                <td className={styles.name}>{item.nombre}</td>
                 <td>{item.type}</td>
                 <td>
                   <span
-                    className={`${styles.status} ${getStatusClass(
-                      item.state
-                    )}`}
+                    className={`${styles.status} ${getStatusClass(item.state)}`}
                   >
                     {item.state}
                   </span>
                 </td>
 
                 <td className={styles.actions}>
-                  <button className={`${styles["icon-btn"]} ${styles.edit}`}>
+                  <button
+                    className={`${styles["icon-btn"]} ${styles.edit}`}
+                    onClick={() => onEdit?.(item)}
+                    title="Editar cancha"
+                  >
                     <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
                     >
                       <path d="M3 21l3.5-1 11-11a2 2 0 0 0-3-3l-11 11L3 21z" />
                     </svg>
                   </button>
 
-                  <button className={`${styles["icon-btn"]} ${styles.delete}`}>
+                  <button
+                    className={`${styles["icon-btn"]} ${styles.delete}`}
+                    onClick={() => onDelete?.(item)}
+                    title="Eliminar cancha"
+                  >
                     <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
                     >
                       <path d="M3 6h18" />
                       <path d="M8 6V4h8v2" />

@@ -1,6 +1,54 @@
-.containerClients {
-    margin-top: 10px;
+/* ─────────────────────────────────────────
+   CUSTOMERS SCREEN
+───────────────────────────────────────── */
+.customers-screen {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 20px;
+  padding: 24px 16px;
+  max-width: 1280px;
+  margin-inline: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ─── Header ─── */
+.customers-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.customers-sub {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-top: 3px;
+}
+
+.headerAction {
+  width: 180px;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 599px) {
+  .customers-screen {
+    gap: 16px;
+    padding: 16px 12px;
+  }
+
+  .customers-header {
+    flex-direction: column;
+  }
+
+  .headerAction {
+    width: 100%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .customers-screen {
+    padding: 32px 32px;
+  }
 }

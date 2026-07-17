@@ -44,3 +44,24 @@
 .input:focus {
   border-color: #22c55e;
 }
+
+.input-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.input-error {
+  border-color: #dc2626 !important;
+}
+
+.input-error:focus {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.error-text {
+  font-size: 12px;
+  color: #dc2626;
+  font-weight: 500;
+  margin-top: 2px;
+}

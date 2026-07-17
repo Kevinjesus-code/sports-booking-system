@@ -1,23 +1,26 @@
 .container {
-  padding: 24px;
-  max-width: 800px; /* narrowed because forms look better */
+  padding: clamp(1rem, 2.5vw, 1.5rem) clamp(0.75rem, 2vw, 1rem);
+  max-width: 800px;
   margin: 0 auto;
-  font-family: system-ui, -apple-system, sans-serif;
   color: #333;
+  box-sizing: border-box;
+  width: 100%;
 }
 
+/* ── Header ── */
 .header {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: clamp(0.75rem, 2vw, 1rem);
+  margin-bottom: clamp(1rem, 2.5vw, 1.5rem);
 }
 
 .backButton {
   background: #f3f4f6;
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -25,181 +28,331 @@
   cursor: pointer;
   color: #6b7280;
   transition: background 0.2s;
+  flex-shrink: 0;
 }
 
 .backButton:hover {
   background: #e5e7eb;
 }
 
+.headerText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
 .title {
   margin: 0;
-  font-size: 24px;
+  font-size: clamp(1.25rem, 4vw, 1.5rem);
   font-weight: 600;
   color: #111827;
 }
 
 .subtitle {
-  margin: 4px 0 0 0;
-  font-size: 14px;
+  margin: 0.25rem 0 0 0;
+  font-size: clamp(0.75rem, 1.8vw, 0.8125rem);
   color: #6b7280;
 }
 
+/* ── Columnas ── */
+.leftCol,
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+/* ── Summary ── */
 .summaryCard {
-  background-color: #10b981;
-  color: white;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+  background-color: #19B55A;
+  color: #ffffff;
+  border-radius: 0.875rem;
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  box-shadow: 0 4px 6px -1px rgba(25, 181, 90, 0.2);
 }
 
 .summaryTitle {
-  font-size: 14px;
+  font-size: clamp(0.75rem, 1.8vw, 0.8125rem);
   font-weight: 500;
-  margin-bottom: 16px;
+  margin-bottom: clamp(0.75rem, 2vw, 1rem);
   opacity: 0.9;
 }
 
 .summaryCourt {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 20px;
+  gap: clamp(0.5rem, 1.5vw, 0.75rem);
+  font-size: clamp(1.125rem, 3vw, 1.25rem);
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: clamp(0.75rem, 2vw, 1rem);
 }
 
 .courtIcon {
   background: rgba(255, 255, 255, 0.2);
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 1.125rem;
 }
 
 .summaryDetails {
   display: flex;
-  gap: 32px;
+  flex-direction: column;
+  gap: clamp(0.5rem, 1.5vw, 0.75rem);
   border-top: 1px solid rgba(255, 255, 255, 0.2);
-  padding-top: 16px;
+  padding-top: clamp(0.75rem, 2vw, 1rem);
 }
 
 .detailItem {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: clamp(0.5rem, 1.5vw, 0.75rem);
+  font-size: clamp(0.8125rem, 2vw, 0.9375rem);
   font-weight: 500;
 }
 
+/* ── Form ── */
 .formContainer {
   background: #f8fafc;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 24px;
+  border-radius: 0.875rem;
+  padding: clamp(1rem, 2.5vw, 1.5rem);
 }
 
 .formTitle {
-  font-size: 16px;
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
   font-weight: 600;
   color: #374151;
-  margin-bottom: 20px;
+  margin: 0 0 clamp(0.75rem, 2vw, 1rem) 0;
 }
 
 .formGroup {
-  margin-bottom: 16px;
+  margin-top: clamp(0.75rem, 2vw, 1rem);
 }
 
 .label {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: clamp(0.5rem, 1.5vw, 0.75rem);
+  font-size: clamp(0.8125rem, 2vw, 0.9375rem);
   font-weight: 500;
   color: #4b5563;
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
 }
 
 .label svg {
-  color: #10b981;
+  color: #19B55A;
 }
 
-.input, .textarea {
+.input,
+.textarea {
   width: 100%;
-  padding: 12px 16px;
+  padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(0.75rem, 2vw, 1rem);
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 15px;
-  font-family: inherit;
+  border-radius: 0.5rem;
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
   color: #1f2937;
-  background: white;
+  background: #ffffff;
   transition: border-color 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
 }
 
-.input:focus, .textarea:focus {
+.input:focus,
+.textarea:focus {
   outline: none;
-  border-color: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  border-color: #19B55A;
+  box-shadow: 0 0 0 3px rgba(25, 181, 90, 0.1);
 }
 
 .textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 80px;
 }
 
-.input::placeholder, .textarea::placeholder {
+.input::placeholder,
+.textarea::placeholder {
   color: #9ca3af;
 }
 
-.actions {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 24px;
+/* ── Payment ── */
+.paymentContainer {
+  background: #f8fafc;
+  border-radius: 0.875rem;
+  padding: clamp(1rem, 2.5vw, 1.5rem);
 }
 
-.cancelBtn, .confirmBtn {
+.paymentGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: clamp(0.75rem, 2vw, 1rem);
+}
+
+.paymentOption {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 8px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+
+.paymentOption:hover {
+  border-color: #19B55A;
+  box-shadow: 0 2px 8px rgba(25, 181, 90, 0.1);
+}
+
+.paymentSelected {
+  border-color: #19B55A;
+  box-shadow: 0 0 0 3px rgba(25, 181, 90, 0.15);
+}
+
+.paymentLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.paymentCheck {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 18px;
+  height: 18px;
+  background: #19B55A;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+/* ── Payment Info (colores exactos del diseño original) ── */
+.paymentInfo {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid;
+  margin-top: 0.75rem;
+}
+
+.paymentYape {
+  border-color: #7C3AED;
+  background: #FAF5FF;
+}
+
+.paymentPlin {
+  border-color: #0284C7;
+  background: #F0F9FF;
+}
+
+.paymentCash {
+  border-color: #16A34A;
+  background: #F0FDF4;
+}
+
+.paymentInfoTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 4px 0;
+}
+
+.paymentInfoText {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Botones ── */
+.actions {
+  display: flex;
+  gap: clamp(0.5rem, 1.5vw, 0.75rem);
+}
+
+.cancelBtn,
+.confirmBtn {
   flex: 1;
-  padding: 14px 24px;
-  border-radius: 8px;
-  font-size: 16px;
+  padding: 0.875rem clamp(1rem, 2.5vw, 1.5rem);
+  border-radius: 0.5rem;
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
-  text-align: center;
 }
 
 .cancelBtn {
-  background: white;
+  background: #ffffff;
   border: 1px solid #e5e7eb;
   color: #4b5563;
 }
 
 .cancelBtn:hover {
   background: #f9fafb;
-  color: #1f2937;
 }
 
 .confirmBtn {
-  background: #10b981;
-  border: 1px solid #10b981;
-  color: white;
+  background: #19B55A;
+  border: 1px solid #19B55A;
+  color: #ffffff;
 }
 
 .confirmBtn:hover {
-  background: #059669;
-  border-color: #059669;
+  background: #159a4c;
 }
 
 .note {
-  background: #ecfdf5;
+  background: #d1fae5;
   color: #065f46;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
   text-align: center;
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .paymentGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1000px;
+    padding: clamp(1.25rem, 3vw, 2rem) clamp(1rem, 2.5vw, 1.5rem);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
+    column-gap: 2rem;
+    align-items: start;
+  }
+
+  .header {
+    grid-column: 1 / -1;
+  }
+
+  .leftCol {
+    grid-column: 1;
+  }
+
+  .rightCol {
+    grid-column: 2;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1100px;
+    column-gap: 3rem;
+  }
 }

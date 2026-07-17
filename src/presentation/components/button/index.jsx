@@ -11,7 +11,7 @@ const Button = ({
 }) => {
   return (
     <button
-      className={`${styles.btn} ${styles[`btn-${variant}-${color}`]}`}
+      className={`${styles["btn"]} ${styles[`btn-${variant}-${color}`]}`}
       disabled={disabled}
       onClick={onClick}
     >

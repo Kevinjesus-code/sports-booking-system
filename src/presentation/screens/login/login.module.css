@@ -1,0 +1,465 @@
+/* login.module.css — rediseño visual mejorado */
+
+/* ── Layout principal ──────────────────────────────────────────────────────── */
+
+.loginContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* ── Columna izquierda — ilustración ──────────────────────────────────────── */
+
+.containerIlustration {
+  display: none;
+}
+
+.ilustrationInner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 48px 48px 0 48px;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+/* Marca dentro de la columna izquierda */
+.ilustrationBrand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.ilustrationLogo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.14);
+}
+
+.ilustrationBrandName {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1a2e1a;
+  letter-spacing: -0.01em;
+}
+
+.ilustrationTagline {
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: #1a2e1a;
+  line-height: 1.15;
+  margin: 0 0 auto 0;
+  letter-spacing: -0.035em;
+  max-width: 380px;
+}
+
+.ilustrationTagline em {
+  font-style: normal;
+  color: #16a34a;
+}
+
+.ilustration {
+  width: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: bottom center;
+  margin-top: auto;
+  display: block;
+  /* Imagen completa sin recorte: altura automática basada en el ancho */
+  flex-shrink: 0;
+  max-height: none;
+}
+
+/* ── Columna derecha — formulario ─────────────────────────────────────────── */
+
+.container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  box-sizing: border-box;
+}
+
+/* ── Contenido ─────────────────────────────────────────────────────────────── */
+
+.loginContent {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loginHeader {
+  text-align: center;
+  margin-bottom: 28px;
+  width: 100%;
+}
+
+/* Logo visible solo en móvil (en desktop está en la columna izquierda) */
+.loginIconBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 auto 20px auto;
+}
+
+.logo {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.loginIconBrandName {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a2e1a;
+  letter-spacing: -0.01em;
+}
+
+.loginTitle {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.loginSubtitle {
+  font-size: 15px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.loginSubtitle strong {
+  color: #111827;
+  font-weight: 600;
+}
+
+/* ── Card ──────────────────────────────────────────────────────────────────── */
+
+.loginCard {
+  width: 100%;
+  background-color: #f9fafb;
+  border-radius: 20px;
+  padding: 32px;
+  box-sizing: border-box;
+  margin-bottom: 28px;
+  border: 1px solid #f0f0f0;
+}
+
+/* ── Toggle de contraseña ──────────────────────────────────────────────────── */
+
+.passwordWrapper {
+  position: relative;
+}
+
+.eyeToggle {
+  position: absolute;
+  /* Centrado verticalmente dentro del input, excluyendo el label (~22px) */
+  bottom: 0;
+  right: 14px;
+  height: 48px;         /* altura típica del input */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  color: #9ca3af;
+  transition: color 0.15s, background-color 0.15s;
+  z-index: 2;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+}
+
+.eyeToggle:hover {
+  color: #374151;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.eyeToggle:focus { outline: none; box-shadow: none; }
+
+.eyeToggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Error ─────────────────────────────────────────────────────────────────── */
+
+.errorMsg {
+  color: #ef4444;
+  font-size: 0.8125rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 4px 0 12px;
+}
+
+/* ── Opciones ──────────────────────────────────────────────────────────────── */
+
+.loginOptions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+.loginCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  cursor: pointer;
+  user-select: none;
+}
+
+.loginCheckbox input[type="checkbox"] {
+  accent-color: #22c55e;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.loginForgot {
+  color: #22c55e;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: color 0.15s;
+}
+
+.loginForgot:hover {
+  color: #16a34a;
+  text-decoration: underline;
+}
+
+/* ── Botón submit ──────────────────────────────────────────────────────────── */
+
+.loginButtonWrapper {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.loginButtonWrapper .btn {
+  width: 100%;
+  height: 48px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 600;
+  background-color: #22c55e;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.loginButtonWrapper .btn:hover { background-color: #16a34a; }
+
+/* ── Registro ──────────────────────────────────────────────────────────────── */
+
+.loginRegister {
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.loginRegister span {
+  color: #22c55e;
+  font-weight: 600;
+  transition: color 0.15s;
+}
+
+.loginRegister span:hover {
+  color: #16a34a;
+  text-decoration: underline;
+}
+
+/* ── Footer ────────────────────────────────────────────────────────────────── */
+
+.loginFooter {
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: center;
+}
+
+/* ── Modal ─────────────────────────────────────────────────────────────────── */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(17, 24, 39, 0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+  animation: fadeIn 0.18s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modalCard {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 40px 32px 32px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 4px 16px rgba(0, 0, 0, 0.08);
+  animation: slideUp 0.2s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.modalClose {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #9ca3af;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.modalClose:hover { color: #374151; background-color: #f3f4f6; }
+.modalClose svg { width: 18px; height: 18px; }
+
+.modalTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 8px 0;
+}
+
+.modalSubtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.modalButtonWrapper {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.modalSuccess {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.modalSuccessIcon {
+  width: 56px;
+  height: 56px;
+  background-color: #dcfce7;
+  color: #16a34a;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* ── Desktop ───────────────────────────────────────────────────────────────── */
+
+@media (min-width: 1024px) {
+  .loginContainer {
+    flex-direction: row;
+  }
+
+  /* Columna izquierda: altura fija 100vh, sin overflow */
+  .containerIlustration {
+    display: flex;
+    width: 50%;
+    height: 100vh;
+    align-items: stretch;
+    justify-content: center;
+    background: linear-gradient(160deg, #f0fdf4 0%, #dcfce7 45%, #bbf7d0 100%);
+    position: sticky;
+    top: 0;
+    overflow: hidden;
+  }
+
+  /* inner: flex column con altura exacta 100vh */
+  .ilustrationInner {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    padding: 44px 44px 0 44px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  /*
+    La imagen toma el espacio sobrante (flex: 1) y nunca sale de su caja
+    (min-height: 0 es clave para que flex respete el límite).
+    object-fit: contain garantiza que se vea completa sin recortes.
+  */
+  .ilustration {
+    display: block;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    object-fit: contain;
+    object-position: bottom center;
+    margin-top: 20px;
+  }
+
+  /* En desktop el logo mobile se oculta, ya está en la columna izquierda */
+  .loginIconBox {
+    display: none;
+  }
+
+  .container {
+    width: 50%;
+    min-height: 100vh;
+    padding: 56px 56px;
+  }
+
+  .loginTitle {
+    font-size: 2.4rem;
+  }
+}
