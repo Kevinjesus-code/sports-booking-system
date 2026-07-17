@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import styles from "./configuration.module.css";
-import { getConfiguracionRequest, updateConfiguracionRequest } from "../../../../infrastructure/api/configuration.api";
 
 const Configuration = ({ onBack }) => {
   const [settings, setSettings] = useState({
@@ -34,52 +33,16 @@ const Configuration = ({ onBack }) => {
   });
 
   const [saved, setSaved] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchConfig = async () => {
-      try {
-        const response = await getConfiguracionRequest();
-        if (response.data) {
-          // Extraer la hora sin los segundos si es necesario
-          const data = { ...response.data };
-          if (data.horaApertura && data.horaApertura.length > 5) data.horaApertura = data.horaApertura.slice(0, 5);
-          if (data.horaCierre && data.horaCierre.length > 5) data.horaCierre = data.horaCierre.slice(0, 5);
-          
-          setSettings(data);
-        }
-      } catch (error) {
-        console.error("Error fetching config:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchConfig();
-  }, []);
 
   const update = (field, value) => {
     setSettings((prev) => ({ ...prev, [field]: value }));
     setSaved(false);
   };
 
-  const handleSave = async () => {
-    try {
-      const response = await updateConfiguracionRequest(settings);
-      if (response.data) {
-        const data = { ...response.data };
-        if (data.horaApertura && data.horaApertura.length > 5) data.horaApertura = data.horaApertura.slice(0, 5);
-        if (data.horaCierre && data.horaCierre.length > 5) data.horaCierre = data.horaCierre.slice(0, 5);
-        setSettings(data);
-        setSaved(true);
-        setTimeout(() => setSaved(false), 3000);
-      }
-    } catch (error) {
-      console.error("Error saving config:", error);
-      alert("Error al guardar la configuración");
-    }
+  const handleSave = () => {
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
   };
-
-  if (loading) return <div style={{ padding: 40 }}>Cargando...</div>;
 
   return (
     <div className={styles.screen}>
@@ -147,36 +110,167 @@ const Configuration = ({ onBack }) => {
           </label>
         </section>
 
-        {/* Horarios de operación */}
+        {/* Políticas */}
         <section className={styles.panel}>
           <h2>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="9" y1="13" x2="15" y2="13" />
+              <line x1="9" y1="17" x2="15" y2="17" />
             </svg>
-            Horarios de operación
+            Políticas
           </h2>
-          <p className={styles.panelDesc}>Define las horas de apertura y cierre. Al guardar se generarán los intervalos de 1 hora para todas las canchas.</p>
 
-          <div className={styles.timeRow}>
-            <label className={styles.field}>
-              Hora de apertura
+          <label className={styles.field}>
+            Horas mínimas para cancelar
+            <div className={styles.inputUnit}>
               <input
-                type="time"
-                value={settings.horaApertura || "08:00"}
-                onChange={(e) => update("horaApertura", e.target.value)}
+                type="number"
+                min={0}
+                value={settings.cancellationHours}
+                onChange={(e) => update("cancellationHours", Number(e.target.value))}
+              />
+              <span>horas</span>
+            </div>
+          </label>
+
+          <label className={styles.field}>
+            Días máximos de anticipación para reservar
+            <div className={styles.inputUnit}>
+              <input
+                type="number"
+                min={1}
+                max={90}
+                value={settings.maxAdvanceDays}
+                onChange={(e) => update("maxAdvanceDays", Number(e.target.value))}
+              />
+              <span>días</span>
+            </div>
+          </label>
+
+          <label className={styles.toggleRow}>
+            <span>
+              <strong>Requerir depósito al reservar</strong>
+              <small>El cliente paga un porcentaje por adelantado.</small>
+            </span>
+            <input
+              type="checkbox"
+              checked={settings.requireDeposit}
+              onChange={(e) => update("requireDeposit", e.target.checked)}
+            />
+          </label>
+
+          {settings.requireDeposit && (
+            <label className={styles.field}>
+              Porcentaje de depósito
+              <div className={styles.inputUnit}>
+                <input
+                  type="number"
+                  min={10}
+                  max={100}
+                  step={5}
+                  value={settings.depositPercent}
+                  onChange={(e) => update("depositPercent", Number(e.target.value))}
+                />
+                <span>%</span>
+              </div>
+            </label>
+          )}
+
+          <label className={styles.toggleRow}>
+            <span>
+              <strong>Confirmación automática</strong>
+              <small>Las reservas se aprueban sin revisión manual.</small>
+            </span>
+            <input
+              type="checkbox"
+              checked={settings.autoConfirm}
+              onChange={(e) => update("autoConfirm", e.target.checked)}
+            />
+          </label>
+        </section>
+
+        {/* Métodos de pago */}
+        <section className={styles.panel}>
+          <h2>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="1" y="4" width="22" height="16" rx="2" />
+              <line x1="1" y1="10" x2="23" y2="10" />
+            </svg>
+            Métodos de pago habilitados
+          </h2>
+          <p className={styles.panelDesc}>Solo los métodos activos estarán disponibles para los clientes.</p>
+
+          {[
+            { key: "yapeEnabled",  label: "Yape",                    desc: "Pagos por código QR." },
+            { key: "plinEnabled",  label: "Plin",                    desc: "Pagos por código QR." },
+            { key: "cardEnabled",  label: "Tarjeta de crédito/débito", desc: "Visa, Mastercard y otras." },
+            { key: "cashEnabled",  label: "Efectivo en cancha",       desc: "Cobro presencial al llegar." },
+          ].map(({ key, label, desc }) => (
+            <label key={key} className={styles.toggleRow}>
+              <span>
+                <strong>{label}</strong>
+                <small>{desc}</small>
+              </span>
+              <input
+                type="checkbox"
+                checked={settings[key]}
+                onChange={(e) => update(key, e.target.checked)}
               />
             </label>
+          ))}
+        </section>
 
-            <label className={styles.field}>
-              Hora de cierre
+        {/* Alertas del sistema */}
+        <section className={styles.panel}>
+          <h2>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+            Alertas del sistema
+          </h2>
+
+          <label className={styles.field}>
+            Correo que recibe las alertas
+            <input
+              type="email"
+              placeholder="admin@kancha.pe"
+              value={settings.alertEmail}
+              onChange={(e) => update("alertEmail", e.target.value)}
+            />
+          </label>
+
+          {[
+            { key: "alertNewReservation", label: "Nueva reserva",   desc: "Notificar cuando un cliente reserva." },
+            { key: "alertCancellation",   label: "Cancelación",     desc: "Notificar cuando se cancela una reserva." },
+            { key: "alertDailyReport",    label: "Reporte diario",  desc: "Resumen automático al cierre del día." },
+          ].map(({ key, label, desc }) => (
+            <label key={key} className={styles.toggleRow}>
+              <span>
+                <strong>{label}</strong>
+                <small>{desc}</small>
+              </span>
               <input
-                type="time"
-                value={settings.horaCierre || "22:00"}
-                onChange={(e) => update("horaCierre", e.target.value)}
+                type="checkbox"
+                checked={settings[key]}
+                onChange={(e) => update(key, e.target.checked)}
               />
             </label>
-          </div>
+          ))}
+
+          <label className={`${styles.toggleRow} ${styles.danger}`}>
+            <span>
+              <strong>Modo mantenimiento</strong>
+              <small>Bloquea el acceso de clientes al sistema.</small>
+            </span>
+            <input
+              type="checkbox"
+              checked={settings.maintenanceMode}
+              onChange={(e) => update("maintenanceMode", e.target.checked)}
+            />
+          </label>
         </section>
 
       </div>
